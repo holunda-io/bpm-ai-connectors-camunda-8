@@ -1,7 +1,0 @@
-{
-  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
-  "name": "Get Weather Forecast",
-  "id": "d0217850-b338-42ba-bcaa-1c20d16670b7",
-  "appliesTo": ["bpmn:ServiceTask"],
-  "properties": []
-}

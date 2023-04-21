@@ -13,7 +13,7 @@ import java.util.*
 @OptIn(BetaOpenAI::class)
 @OutboundConnector(
     name = "c8-gpt-extractdata",
-    inputVariables = ["description", "context"],
+    inputVariables = ["description", "context", "apiKey"],
     type = "c8-gpt-extractdata"
 )
 class ExtractDataFunction : OutboundConnectorFunction {
@@ -27,10 +27,10 @@ class ExtractDataFunction : OutboundConnectorFunction {
         return executeConnector(connectorRequest)
     }
 
-    private fun executeConnector(connectorRequest: ExtractDataRequest): ExtractDataResult {
+    private fun executeConnector(connectorRequest: ExtractDataRequest): String {
         LOG.info("Executing my connector with request {}", connectorRequest)
-        println("DESCRIPTION: " + connectorRequest.description + ", CONTEXT:" + connectorRequest.context)
-        val openAIClient = OpenAIClient(connectorRequest.apiKey!!)
+        LOG.info("DESCRIPTION: " + connectorRequest.description + ", CONTEXT:" + connectorRequest.context + ", apiKey: " + connectorRequest.apiKey)
+        val openAIClient = OpenAIClient(connectorRequest.apiKey ?: throw RuntimeException("No apiKey"))
 
         val jsonOutputParser = JsonOutputParser().apply {
             requireField("result",
@@ -41,8 +41,8 @@ class ExtractDataFunction : OutboundConnectorFunction {
             )
         }
         val prompt = GenericTaskPrompt(
-            connectorRequest.message!!,
-            mapOf("input" to connectorRequest.input!!),
+            connectorRequest.description!!,
+            mapOf("input" to connectorRequest.context!!),
             jsonOutputParser.getFormatInstructions()
         )
         val fixingParser = OutputFixingParser(prompt, jsonOutputParser, openAIClient)
@@ -54,7 +54,7 @@ class ExtractDataFunction : OutboundConnectorFunction {
 
         LOG.info("Worker result: $result")
 
-        return ExtractDataResult(Gson().toJson(result))
+        return Gson().toJson(result)
     }
 
     companion object {

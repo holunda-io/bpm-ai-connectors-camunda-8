@@ -39,6 +39,19 @@
       }
     },
     {
+      "label": "OpenAI API Key",
+      "description": "The OpenAI API Key to use",
+      "type": "String",
+      "value": "secrets.OPENAI_API_KEY",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
       "label": "Context",
       "group": "input",
       "type": "Text",
@@ -83,17 +96,6 @@
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"
-      }
-    },
-    {
-      "label": "Error Expression",
-      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/\" target=\"_blank\">documentation</a>.",
-      "group": "errors",
-      "type": "Text",
-      "feel": "required",
-      "binding": {
-        "type": "zeebe:taskHeader",
-        "key": "errorExpression"
       }
     }
   ]

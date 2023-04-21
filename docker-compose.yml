@@ -97,6 +97,7 @@ services:
     environment:
       - ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
       - ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
+    env_file: connector-secrets.txt
     volumes:
       - ./target/camunda-8-connector-gpt-0.1.0-SNAPSHOT-with-dependencies.jar:/opt/app/connector.jar
 
