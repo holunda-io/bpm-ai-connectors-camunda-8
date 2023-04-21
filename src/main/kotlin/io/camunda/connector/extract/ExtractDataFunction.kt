@@ -13,7 +13,7 @@ import java.util.*
 @OptIn(BetaOpenAI::class)
 @OutboundConnector(
     name = "c8-gpt-extractdata",
-    inputVariables = ["message", "businessKey"],
+    inputVariables = ["description", "context"],
     type = "c8-gpt-extractdata"
 )
 class ExtractDataFunction : OutboundConnectorFunction {
@@ -29,7 +29,7 @@ class ExtractDataFunction : OutboundConnectorFunction {
 
     private fun executeConnector(connectorRequest: ExtractDataRequest): ExtractDataResult {
         LOG.info("Executing my connector with request {}", connectorRequest)
-
+        println("DESCRIPTION: " + connectorRequest.description + ", CONTEXT:" + connectorRequest.context)
         val openAIClient = OpenAIClient(connectorRequest.apiKey!!)
 
         val jsonOutputParser = JsonOutputParser().apply {
