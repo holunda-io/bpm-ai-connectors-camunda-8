@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>connector-template</name>
+  <name>camunda-8-connector-gpt</name>
   <description>Camunda Connector Template</description>
   <groupId>io.camunda.connector</groupId>
-  <artifactId>connector-template</artifactId>
+  <artifactId>camunda-8-connector-gpt</artifactId>
   <packaging>jar</packaging>
   <version>0.1.0-SNAPSHOT</version>
 
@@ -85,6 +85,21 @@
       <version>${version.jackson}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.10.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.aallam.openai</groupId>
+      <artifactId>openai-client</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-client-apache</artifactId>
+      <version>2.2.4</version>
+    </dependency>
 
     <!-- test dependencies -->
     <dependency>

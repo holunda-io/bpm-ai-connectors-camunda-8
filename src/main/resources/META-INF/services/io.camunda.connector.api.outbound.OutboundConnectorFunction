@@ -1,1 +1,1 @@
-io.camunda.connector.GPTExtractDataFunction
+io.camunda.connector.extract.ExtractDataFunction

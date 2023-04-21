@@ -1,6 +1,6 @@
-package io.camunda.connector
+package io.camunda.connector.extract
 
-class MyConnectorRequest {
+class ExtractDataRequest {
     var message: String? = null
     var businessKey: String? = null
 }
