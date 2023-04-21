@@ -45,6 +45,20 @@
       }
     },
     {
+      "label": "OpenAI API Key",
+      "description": "The OpenAI API Key to use",
+      "type": "String",
+      "value": "=\"secrets.OPENAI_API_KEY\"",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
       "label": "Message",
       "group": "compose",
       "type": "Text",

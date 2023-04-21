@@ -6,13 +6,12 @@ import com.aallam.openai.api.http.*
 import com.aallam.openai.api.model.*
 import com.aallam.openai.client.*
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.*
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(BetaOpenAI::class)
-class OpenAIClient(@Value("\${openai.apikey}") apiKey: String) {
+class OpenAIClient(apiKey: String) {
 
     private val openAI = OpenAI(OpenAIConfig(
         token = apiKey,

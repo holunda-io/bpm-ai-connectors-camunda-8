@@ -92,14 +92,27 @@
     </dependency>
     <dependency>
       <groupId>com.aallam.openai</groupId>
-      <artifactId>openai-client</artifactId>
+      <artifactId>openai-client-jvm</artifactId>
       <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-apache</artifactId>
+      <artifactId>ktor-client-core-jvm</artifactId>
       <version>2.2.4</version>
     </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-client-apache-jvm</artifactId>
+      <version>2.2.4</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core-jvm -->
+    <dependency>
+      <groupId>org.jetbrains.kotlinx</groupId>
+      <artifactId>kotlinx-coroutines-core-jvm</artifactId>
+      <version>1.6.4</version>
+    </dependency>
+
 
     <!-- test dependencies -->
     <dependency>
@@ -267,7 +280,7 @@
             </goals>
             <configuration>
               <sourceDirs>
-                <source>src/main/java</source>
+                <source>src/main/kotlin</source>
                 <source>target/generated-sources/annotations</source>
               </sourceDirs>
             </configuration>
