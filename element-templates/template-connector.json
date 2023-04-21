@@ -59,7 +59,17 @@
       }
     },
     {
-      "label": "Message",
+      "label": "Input",
+      "group": "compose",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "input"
+      }
+    },
+    {
+      "label": "Prompt",
       "group": "compose",
       "type": "Text",
       "feel": "optional",
