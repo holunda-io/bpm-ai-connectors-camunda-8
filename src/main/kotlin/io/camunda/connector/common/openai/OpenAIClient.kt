@@ -44,7 +44,7 @@ class OpenAIClient(apiKey: String) {
 }
 
 @OptIn(BetaOpenAI::class)
-fun List<ChatMessage>.latest() = this.last().content
+fun List<ChatMessage>.completionContent() = this.last().content
 
 @OptIn(BetaOpenAI::class)
 fun ChatCompletion.first() = this.choices.first().message

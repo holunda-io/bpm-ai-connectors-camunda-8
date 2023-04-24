@@ -1,14 +1,15 @@
-package io.camunda.connector.common.prompt
+package io.camunda.connector.generic
 
 import com.aallam.openai.api.*
 import com.aallam.openai.api.chat.*
 import com.google.gson.*
 import com.google.gson.reflect.*
+import io.camunda.connector.common.prompt.*
 
 @OptIn(BetaOpenAI::class)
 class GenericTaskPrompt(
     private val taskDescription: String,
-    private val inputVariables: Map<String, Any?>,
+    private val inputJson: String,
     private val formatInstructions: String
 ) : Prompt {
 
@@ -19,11 +20,9 @@ class GenericTaskPrompt(
         ),
         ChatMessage(
             ChatRole.User,
-            USER_PROMPT.format(taskDescription, gson.toJson(inputVariables))
+            USER_PROMPT.format(taskDescription, inputJson)
         ),
     )
-
-    private val gson = Gson()
 
     companion object {
         private val SYSTEM_PROMPT = """
@@ -32,7 +31,7 @@ class GenericTaskPrompt(
             Your job is to help users execute their business processes in a smart and efficient way.
             
             You will receive a task description and a JSON with input values for the task.
-            
+           
             %s
         """.trimIndent()
 

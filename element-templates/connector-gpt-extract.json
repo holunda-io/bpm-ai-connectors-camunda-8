@@ -1,0 +1,157 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "GPT Data Extraction Connector",
+  "id": "io.camunda.connector.extract.v1",
+  "description": "Extracts information from structured or unstructured input data",
+  "version": 1,
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+"
+  },
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": ["bpmn:Task"],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "general",
+      "label": "General"
+    },
+    {
+      "id": "input",
+      "label": "Input"
+    },
+    {
+      "id": "extract",
+      "label": "Data Extraction"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    },
+    {
+      "id": "errors",
+      "label": "Errors"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "gpt-extract",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      }
+    },
+    {
+      "label": "OpenAI API Key",
+      "description": "The OpenAI API Key to use",
+      "type": "Hidden",
+      "value": "secrets.OPENAI_API_KEY",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "model",
+      "label": "GPT Model",
+      "group": "general",
+      "type": "Dropdown",
+      "value": "gpt-3.5-turbo",
+      "choices": [
+        { "name": "Standard precision, fast, cheap", "value": "gpt-3.5-turbo" },
+        { "name": "Highest precision, slow, expensive", "value": "gpt-4" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "model"
+      }
+    },
+    {
+      "label": "Input Variables",
+      "group": "input",
+      "description": "Map of input variables to extract data from. Key should be the variable name. Value is the variable itself as FEEL expression.",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "inputJson"
+      },
+      "value": "{ \"myVariable\": myVariable }",
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Extraction Fields",
+      "description": "Specify what to extract from the input. Must be a map from result field names to descriptions of what to extract into that field.",
+      "group": "extract",
+      "type": "Text",
+      "feel": "optional",
+      "value": "={\n  name: \"full name\",\n  birthdate: \"birthday in ISO format\"\n}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "extractionJson"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Missing Data Behavior",
+      "description": "What to do if requested data is not present in the input",
+      "group": "extract",
+      "type": "Dropdown",
+      "value": "NULL",
+      "choices": [
+        { "name": "Return Null", "value": "NULL" },
+        { "name": "Return Empty String", "value": "EMPTY" },
+        { "name": "Throw Error", "value": "ERROR" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "missingDataBehavior"
+      }
+    },
+    {
+      "label": "Result Variable",
+      "description": "Name of variable to store the result in",
+      "group": "output",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultVariable"
+      }
+    },
+    {
+      "label": "Result Expression",
+      "description": "Expression to map the result into process variables",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    },
+    {
+      "label": "Error Expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
+      "group": "errors",
+      "type": "Text",
+      "value": "=if error.code = \"NULL\" then\n  bpmnError(\"NULL\", \"One or more values are null.\")\nelse null",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "errorExpression"
+      }
+    }
+  ]
+}

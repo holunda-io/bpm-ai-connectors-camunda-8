@@ -24,7 +24,7 @@ class OutputFixingParser<R>(
     private fun tryToFixOutput(completion: String): R {
         val history = prompt.buildPrompt() + ChatMessage(ChatRole.Assistant, completion)
         val c = openAIClient.chatCompletion(buildFixingPrompt(), history)
-        return outputParser.parse(c.latest())
+        return outputParser.parse(c.completionContent())
     }
 
     private fun buildFixingPrompt() = listOf(

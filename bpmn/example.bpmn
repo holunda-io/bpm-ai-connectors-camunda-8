@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_026ao2z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+  <bpmn:process id="Process_1fzbo11" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1lhn5rr" sourceRef="StartEvent_1" targetRef="Activity_1lgm3ee" />
+    <bpmn:endEvent id="Event_017uq1p" name="Ended">
+      <bpmn:incoming>Flow_0c7bwgw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0c7bwgw" sourceRef="Activity_01zbvjd" targetRef="Event_017uq1p" />
+    <bpmn:startEvent id="StartEvent_1" name="Email received">
+      <bpmn:outgoing>Flow_1lhn5rr</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_01zbvjd" name="Extract customer data" zeebe:modelerTemplate="io.camunda.connector.extract.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="gpt-extract" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
+          <zeebe:input source="gpt-3.5-turbo" target="model" />
+          <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
+          <zeebe:input source="={&#10;  name: &#34;full name&#34;,&#10;  birthdate: &#34;birthday in ISO format&#34;&#10;}" target="extractionJson" />
+          <zeebe:input source="ERROR" target="missingDataBehavior" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="result" />
+          <zeebe:header key="errorExpression" value="=if error.code = &#34;NULL&#34; then&#10;  bpmnError(&#34;NULL&#34;, &#34;One or more values are null.&#34;)&#10;else null" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_048rpii</bpmn:incoming>
+      <bpmn:outgoing>Flow_0c7bwgw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_01oht24" attachedToRef="Activity_01zbvjd">
+      <bpmn:outgoing>Flow_0g9pdk3</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0mopd1n" errorRef="Error_131f88n" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_0db6xeo" name="No birthday found">
+      <bpmn:incoming>Flow_0g9pdk3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0g9pdk3" sourceRef="Event_01oht24" targetRef="Event_0db6xeo" />
+    <bpmn:sequenceFlow id="Flow_048rpii" sourceRef="Activity_1lgm3ee" targetRef="Activity_01zbvjd" />
+    <bpmn:serviceTask id="Activity_1lgm3ee" name="Calculate sum" zeebe:modelerTemplate="io.camunda.connector.generic.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0zLjUgMjAuNDk5OUM0LjMzIDIxLjMyOTkgNS42NyAyMS4zMjk5IDYuNSAyMC40OTk5TDE5LjUgNy40OTk5NEMyMC4zMyA2LjY2OTk0IDIwLjMzIDUuMzI5OTQgMTkuNSA0LjQ5OTk0QzE4LjY3IDMuNjY5OTQgMTcuMzMgMy42Njk5NCAxNi41IDQuNDk5OTRMMy41IDE3LjQ5OTlDMi42NyAxOC4zMjk5IDIuNjcgMTkuNjY5OSAzLjUgMjAuNDk5OVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjAxIDguOTg5OTlMMTUuMDEgNS45ODk5OSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNOC41IDIuNDRMMTAgMkw5LjU2IDMuNUwxMCA1TDguNSA0LjU2TDcgNUw3LjQ0IDMuNUw3IDJMOC41IDIuNDRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTQuNSA4LjQ0TDYgOEw1LjU2IDkuNUw2IDExTDQuNSAxMC41NkwzIDExTDMuNDQgOS41TDMgOEw0LjUgOC40NFoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuNSAxMy40NEwyMSAxM0wyMC41NiAxNC41TDIxIDE2TDE5LjUgMTUuNTZMMTggMTZMMTguNDQgMTQuNUwxOCAxM0wxOS41IDEzLjQ0WiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="gpt-generic" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
+          <zeebe:input source="gpt-3.5-turbo" target="model" />
+          <zeebe:input source="={}" target="inputJson" />
+          <zeebe:input source="Calculate 1 + 2 * 5 and store the result in the result field. Also describe the reasoning behind your result." target="taskDescription" />
+          <zeebe:input source="={&#10;  result: &#34;the result of the task&#34;,&#10;  reasoning: &#34;the reasoning behind the task result&#34;&#10;}" target="outputFormat" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="result" />
+          <zeebe:header key="resultExpression" value="={sum: number(result)}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1lhn5rr</bpmn:incoming>
+      <bpmn:outgoing>Flow_048rpii</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:error id="Error_131f88n" name="Null" errorCode="NULL" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1fzbo11">
+      <bpmndi:BPMNShape id="Event_0ub9z0k_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="172" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="142" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16cblgu_di" bpmnElement="Activity_1lgm3ee">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_017uq1p_di" bpmnElement="Event_017uq1p">
+        <dc:Bounds x="582" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="584" y="142" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0v12yuq_di" bpmnElement="Activity_01zbvjd">
+        <dc:Bounds x="420" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0db6xeo_di" bpmnElement="Event_0db6xeo">
+        <dc:Bounds x="582" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="557" y="265" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0u1hndy_di" bpmnElement="Event_01oht24">
+        <dc:Bounds x="452" y="139" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1lhn5rr_di" bpmnElement="Flow_1lhn5rr">
+        <di:waypoint x="208" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c7bwgw_di" bpmnElement="Flow_0c7bwgw">
+        <di:waypoint x="520" y="117" />
+        <di:waypoint x="582" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g9pdk3_di" bpmnElement="Flow_0g9pdk3">
+        <di:waypoint x="470" y="175" />
+        <di:waypoint x="470" y="240" />
+        <di:waypoint x="582" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_048rpii_di" bpmnElement="Flow_048rpii">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="420" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

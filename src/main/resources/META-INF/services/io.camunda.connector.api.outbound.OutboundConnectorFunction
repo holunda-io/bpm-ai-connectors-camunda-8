@@ -1,1 +1,2 @@
+io.camunda.connector.generic.GenericFunction
 io.camunda.connector.extract.ExtractDataFunction

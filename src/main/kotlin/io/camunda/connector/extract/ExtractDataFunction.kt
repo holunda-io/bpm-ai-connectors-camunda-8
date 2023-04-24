@@ -1,60 +1,70 @@
 package io.camunda.connector.extract
 
 import com.aallam.openai.api.*
-import com.google.gson.Gson
-import io.camunda.connector.api.annotation.OutboundConnector
-import io.camunda.connector.api.outbound.OutboundConnectorContext
-import io.camunda.connector.api.outbound.OutboundConnectorFunction
+import com.google.gson.reflect.*
+import io.camunda.connector.api.annotation.*
+import io.camunda.connector.api.error.*
+import io.camunda.connector.api.outbound.*
+import io.camunda.connector.common.*
+import io.camunda.connector.common.json.*
 import io.camunda.connector.common.openai.*
 import io.camunda.connector.common.prompt.*
-import org.slf4j.LoggerFactory
+import io.camunda.connector.generic.*
+import org.slf4j.*
 import java.util.*
 
 @OptIn(BetaOpenAI::class)
 @OutboundConnector(
-    name = "c8-gpt-extractdata",
-    inputVariables = ["description", "context", "apiKey"],
-    type = "c8-gpt-extractdata"
+    name = "gpt-extract",
+    inputVariables = ["inputJson", "extractionJson", "missingDataBehavior", "model", "apiKey"],
+    type = "gpt-extract"
 )
 class ExtractDataFunction : OutboundConnectorFunction {
 
     @Throws(Exception::class)
     override fun execute(context: OutboundConnectorContext): Any {
-        LOG.info("Executing my connector with request")
+        LOG.info("Executing ExtractDataFunction")
         val connectorRequest = context.getVariablesAsType(ExtractDataRequest::class.java)
+        LOG.info("Request: {}", connectorRequest)
         context.validate(connectorRequest)
         context.replaceSecrets(connectorRequest)
         return executeConnector(connectorRequest)
     }
 
-    private fun executeConnector(connectorRequest: ExtractDataRequest): String {
-        LOG.info("Executing my connector with request {}", connectorRequest)
-        LOG.info("DESCRIPTION: " + connectorRequest.description + ", CONTEXT:" + connectorRequest.context + ", apiKey: " + connectorRequest.apiKey)
-        val openAIClient = OpenAIClient(connectorRequest.apiKey ?: throw RuntimeException("No apiKey"))
+    private fun executeConnector(request: ExtractDataRequest): Map<String, String?> {
+        val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
 
-        val jsonOutputParser = JsonOutputParser().apply {
-            requireField("result",
-                "Contains the result of your decision based on the input values and the task description."
-            )
-            requireField("reasoning",
-                "Contains a short and concise description of your reasoning for the \"result\" decision"
-            )
-        }
-        val prompt = GenericTaskPrompt(
-            connectorRequest.description!!,
-            mapOf("input" to connectorRequest.context!!),
+        val jsonOutputParser = JsonOutputParser(
+            jsonSchema = request.extractionJson?.jsonToMap() ?: emptyMap()
+        )
+
+        val prompt = ExtractDataPrompt(
+            request.inputJson!!,
             jsonOutputParser.getFormatInstructions()
         )
+
         val fixingParser = OutputFixingParser(prompt, jsonOutputParser, openAIClient)
 
-        LOG.info("Prompt: ${prompt.buildPrompt()}")
+        LOG.info("ExtractDataFunction prompt: ${prompt.buildPrompt()}")
 
-        val chatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
-        val result = fixingParser.parse(chatHistory.latest())
+        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
+        var result = fixingParser.parse(completedChatHistory.completionContent())
 
-        LOG.info("Worker result: $result")
+        result = when (request.missingDataBehavior) {
+            MissingDataBehavior.EMPTY -> {
+                result.mapValues { it.value ?: "" }
+            }
+            MissingDataBehavior.ERROR -> {
+                if (result.values.any { it == null }) {
+                    throw ConnectorException("NULL", "One or more result values are null")
+                } else result
+            }
+            else -> result
+        }
 
-        return Gson().toJson(result)
+        LOG.info("ExtractDataFunction result: $result")
+
+        return result
     }
 
     companion object {
