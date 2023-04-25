@@ -1,2 +1,3 @@
 io.camunda.connector.generic.GenericFunction
 io.camunda.connector.extract.ExtractDataFunction
+io.camunda.connector.decide.DecideFunction

@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_026ao2z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_026ao2z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.9.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
   <bpmn:process id="Process_1fzbo11" isExecutable="true">
-    <bpmn:sequenceFlow id="Flow_1lhn5rr" sourceRef="StartEvent_1" targetRef="Activity_1lgm3ee" />
-    <bpmn:endEvent id="Event_017uq1p" name="Ended">
-      <bpmn:incoming>Flow_0c7bwgw</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0c7bwgw" sourceRef="Activity_01zbvjd" targetRef="Event_017uq1p" />
+    <bpmn:sequenceFlow id="Flow_1lhn5rr" sourceRef="StartEvent_1" targetRef="Activity_01zbvjd" />
+    <bpmn:sequenceFlow id="Flow_0c7bwgw" sourceRef="Activity_01zbvjd" targetRef="Activity_0qr9wpe" />
     <bpmn:startEvent id="StartEvent_1" name="Email received">
       <bpmn:outgoing>Flow_1lhn5rr</bpmn:outgoing>
     </bpmn:startEvent>
@@ -16,44 +13,120 @@
           <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
           <zeebe:input source="gpt-3.5-turbo" target="model" />
           <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
-          <zeebe:input source="={&#10;  name: &#34;full name&#34;,&#10;  birthdate: &#34;birthday in ISO format&#34;&#10;}" target="extractionJson" />
-          <zeebe:input source="ERROR" target="missingDataBehavior" />
+          <zeebe:input source="={&#10;  firstname: &#34;first name&#34;,&#10;  lastname: &#34;last name&#34;&#10;}" target="extractionJson" />
+          <zeebe:input source="NULL" target="missingDataBehavior" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultVariable" value="result" />
+          <zeebe:header key="resultVariable" value="customerInfo" />
           <zeebe:header key="errorExpression" value="=if error.code = &#34;NULL&#34; then&#10;  bpmnError(&#34;NULL&#34;, &#34;One or more values are null.&#34;)&#10;else null" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_048rpii</bpmn:incoming>
+      <bpmn:incoming>Flow_1lhn5rr</bpmn:incoming>
       <bpmn:outgoing>Flow_0c7bwgw</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_01oht24" attachedToRef="Activity_01zbvjd">
+    <bpmn:boundaryEvent id="Event_01oht24" name="No subscription number" attachedToRef="Activity_0vidx0a">
       <bpmn:outgoing>Flow_0g9pdk3</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0mopd1n" errorRef="Error_131f88n" />
     </bpmn:boundaryEvent>
-    <bpmn:endEvent id="Event_0db6xeo" name="No birthday found">
-      <bpmn:incoming>Flow_0g9pdk3</bpmn:incoming>
+    <bpmn:endEvent id="Event_0db6xeo" name="Subscription No. Requested">
+      <bpmn:incoming>Flow_0fhfdz4</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_0g9pdk3" sourceRef="Event_01oht24" targetRef="Event_0db6xeo" />
-    <bpmn:sequenceFlow id="Flow_048rpii" sourceRef="Activity_1lgm3ee" targetRef="Activity_01zbvjd" />
-    <bpmn:serviceTask id="Activity_1lgm3ee" name="Calculate sum" zeebe:modelerTemplate="io.camunda.connector.generic.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0zLjUgMjAuNDk5OUM0LjMzIDIxLjMyOTkgNS42NyAyMS4zMjk5IDYuNSAyMC40OTk5TDE5LjUgNy40OTk5NEMyMC4zMyA2LjY2OTk0IDIwLjMzIDUuMzI5OTQgMTkuNSA0LjQ5OTk0QzE4LjY3IDMuNjY5OTQgMTcuMzMgMy42Njk5NCAxNi41IDQuNDk5OTRMMy41IDE3LjQ5OTlDMi42NyAxOC4zMjk5IDIuNjcgMTkuNjY5OSAzLjUgMjAuNDk5OVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjAxIDguOTg5OTlMMTUuMDEgNS45ODk5OSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNOC41IDIuNDRMMTAgMkw5LjU2IDMuNUwxMCA1TDguNSA0LjU2TDcgNUw3LjQ0IDMuNUw3IDJMOC41IDIuNDRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTQuNSA4LjQ0TDYgOEw1LjU2IDkuNUw2IDExTDQuNSAxMC41NkwzIDExTDMuNDQgOS41TDMgOEw0LjUgOC40NFoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuNSAxMy40NEwyMSAxM0wyMC41NiAxNC41TDIxIDE2TDE5LjUgMTUuNTZMMTggMTZMMTguNDQgMTQuNUwxOCAxM0wxOS41IDEzLjQ0WiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
+    <bpmn:sequenceFlow id="Flow_0g9pdk3" sourceRef="Event_01oht24" targetRef="Activity_19nzqo8" />
+    <bpmn:serviceTask id="Activity_0qr9wpe" name="Determine customer intention" zeebe:modelerTemplate="io.camunda.connector.decide.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0yMCAxNEMyMS4xMDQ2IDE0IDIyIDEzLjEwNDYgMjIgMTJDMjIgMTAuODk1NCAyMS4xMDQ2IDEwIDIwIDEwQzE4Ljg5NTQgMTAgMTggMTAuODk1NCAxOCAxMkMxOCAxMy4xMDQ2IDE4Ljg5NTQgMTQgMjAgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCA2QzIxLjEwNDYgNiAyMiA1LjEwNDU3IDIyIDRDMjIgMi44OTU0MyAyMS4xMDQ2IDIgMjAgMkMxOC44OTU0IDIgMTggMi44OTU0MyAxOCA0QzE4IDUuMTA0NTcgMTguODk1NCA2IDIwIDZaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCAyMkMyMS4xMDQ2IDIyIDIyIDIxLjEwNDYgMjIgMjBDMjIgMTguODk1NCAyMS4xMDQ2IDE4IDIwIDE4QzE4Ljg5NTQgMTggMTggMTguODk1NCAxOCAyMEMxOCAyMS4xMDQ2IDE4Ljg5NTQgMjIgMjAgMjJaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik00IDE0QzUuMTA0NTcgMTQgNiAxMy4xMDQ2IDYgMTJDNiAxMC44OTU0IDUuMTA0NTcgMTAgNCAxMEMyLjg5NTQzIDEwIDIgMTAuODk1NCAyIDEyQzIgMTMuMTA0NiAyLjg5NTQzIDE0IDQgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02IDEySDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xOCA0SDE0QzEyIDQgMTEgNSAxMSA3VjE3QzExIDE5IDEyIDIwIDE0IDIwSDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="gpt-generic" />
+        <zeebe:taskDefinition type="gpt-decide" />
+        <zeebe:ioMapping>
+          <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
+          <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
+          <zeebe:input source="gpt-3.5-turbo" target="model" />
+          <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="input" />
+          <zeebe:input source="Decide what the intention of the customer&#39;s mail is." target="instructions" />
+          <zeebe:input source="STRING" target="outputType" />
+          <zeebe:input source="=[&#10;  &#34;CANCEL_SUBSCRIPTION&#34;,&#10;  &#34;CHANGE_SUBSCRIPTION&#34;,&#10;  &#34;COMPLAINT&#34;,&#10;  &#34;OTHER&#34;&#10;]" target="possibleValues" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={intention: decision}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0c7bwgw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s28elp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0p0ay6x">
+      <bpmn:incoming>Flow_1s28elp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rwnrqs</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0bgcl2d</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1a5wjil</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1jkz7mj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1s28elp" sourceRef="Activity_0qr9wpe" targetRef="Gateway_0p0ay6x" />
+    <bpmn:endEvent id="Event_1o5twhg" name="Subscription Cancelled">
+      <bpmn:incoming>Flow_011n3y8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0rwnrqs" sourceRef="Gateway_0p0ay6x" targetRef="Activity_0vidx0a">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "CANCEL_SUBSCRIPTION"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1qsv1yn" name="Subscription Changed">
+      <bpmn:incoming>Flow_1we5m4t</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0bgcl2d" sourceRef="Gateway_0p0ay6x" targetRef="Activity_0ft7zqe">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "CHANGE_SUBSCRIPTION"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1hxbwfm" name="Complaint ingored">
+      <bpmn:incoming>Flow_1a5wjil</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1a5wjil" sourceRef="Gateway_0p0ay6x" targetRef="Event_1hxbwfm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "COMPLAINT"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_10qzvjk" name="Other ignored">
+      <bpmn:incoming>Flow_044gqut</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1jkz7mj" sourceRef="Gateway_0p0ay6x" targetRef="Activity_08rmjph">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "OTHER"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="Activity_0g98l86" name="Cancel subscription">
+      <bpmn:incoming>Flow_07i65vl</bpmn:incoming>
+      <bpmn:outgoing>Flow_011n3y8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_011n3y8" sourceRef="Activity_0g98l86" targetRef="Event_1o5twhg" />
+    <bpmn:sequenceFlow id="Flow_1we5m4t" sourceRef="Activity_0ft7zqe" targetRef="Event_1qsv1yn" />
+    <bpmn:userTask id="Activity_0ft7zqe" name="Change Subscription">
+      <bpmn:incoming>Flow_0bgcl2d</bpmn:incoming>
+      <bpmn:outgoing>Flow_1we5m4t</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_07i65vl" sourceRef="Activity_0vidx0a" targetRef="Activity_0g98l86" />
+    <bpmn:serviceTask id="Activity_0vidx0a" name="Extract subscription number" zeebe:modelerTemplate="io.camunda.connector.extract.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="gpt-extract" />
         <zeebe:ioMapping>
           <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
           <zeebe:input source="gpt-3.5-turbo" target="model" />
-          <zeebe:input source="={}" target="inputJson" />
-          <zeebe:input source="Calculate 1 + 2 * 5 and store the result in the result field. Also describe the reasoning behind your result." target="taskDescription" />
-          <zeebe:input source="={&#10;  result: &#34;the result of the task&#34;,&#10;  reasoning: &#34;the reasoning behind the task result&#34;&#10;}" target="outputFormat" />
+          <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
+          <zeebe:input source="={ subscriptionNo: &#34;subscription number without possible leading &#39;#&#39;, &#39;No.&#39;, etc.&#34; }" target="extractionJson" />
+          <zeebe:input source="ERROR" target="missingDataBehavior" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultVariable" value="result" />
-          <zeebe:header key="resultExpression" value="={sum: number(result)}" />
+          <zeebe:header key="resultExpression" value="={subscriptionNo: subscriptionNo}" />
+          <zeebe:header key="errorExpression" value="=if error.code = &#34;NULL&#34; then&#10;  bpmnError(&#34;NULL&#34;, &#34;One or more values are null.&#34;)&#10;else null" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1lhn5rr</bpmn:incoming>
-      <bpmn:outgoing>Flow_048rpii</bpmn:outgoing>
+      <bpmn:incoming>Flow_0rwnrqs</bpmn:incoming>
+      <bpmn:outgoing>Flow_07i65vl</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:task id="Activity_19nzqo8" name="Formulate reply mail">
+      <bpmn:incoming>Flow_0g9pdk3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ctqxcp</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0ctqxcp" sourceRef="Activity_19nzqo8" targetRef="Activity_01ubt82" />
+    <bpmn:task id="Activity_01ubt82" name="Send reply mail">
+      <bpmn:incoming>Flow_0ctqxcp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fhfdz4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0fhfdz4" sourceRef="Activity_01ubt82" targetRef="Event_0db6xeo" />
+    <bpmn:sequenceFlow id="Flow_044gqut" sourceRef="Activity_08rmjph" targetRef="Event_10qzvjk" />
+    <bpmn:userTask id="Activity_08rmjph" name="Process mail">
+      <bpmn:incoming>Flow_1jkz7mj</bpmn:incoming>
+      <bpmn:outgoing>Flow_044gqut</bpmn:outgoing>
+    </bpmn:userTask>
   </bpmn:process>
   <bpmn:error id="Error_131f88n" name="Null" errorCode="NULL" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -64,44 +137,133 @@
           <dc:Bounds x="154" y="142" width="73" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_16cblgu_di" bpmnElement="Activity_1lgm3ee">
-        <dc:Bounds x="270" y="77" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_017uq1p_di" bpmnElement="Event_017uq1p">
-        <dc:Bounds x="582" y="99" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="584" y="142" width="32" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0v12yuq_di" bpmnElement="Activity_01zbvjd">
-        <dc:Bounds x="420" y="77" width="100" height="80" />
+        <dc:Bounds x="260" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0db6xeo_di" bpmnElement="Event_0db6xeo">
-        <dc:Bounds x="582" y="222" width="36" height="36" />
+        <dc:Bounds x="1212" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="557" y="265" width="87" height="14" />
+          <dc:Bounds x="1190" y="255" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06i94mk_di" bpmnElement="Activity_0qr9wpe">
+        <dc:Bounds x="420" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0p0ay6x_di" bpmnElement="Gateway_0p0ay6x" isMarkerVisible="true">
+        <dc:Bounds x="585" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o5twhg_di" bpmnElement="Event_1o5twhg">
+        <dc:Bounds x="1212" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="142" width="61" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qsv1yn_di" bpmnElement="Event_1qsv1yn">
+        <dc:Bounds x="1212" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="365" width="61" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hxbwfm_di" bpmnElement="Event_1hxbwfm">
+        <dc:Bounds x="1212" y="542" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1186" y="585" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10qzvjk_di" bpmnElement="Event_10qzvjk">
+        <dc:Bounds x="1212" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1196" y="485" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g98l86_di" bpmnElement="Activity_0g98l86">
+        <dc:Bounds x="870" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12b9sty_di" bpmnElement="Activity_0ft7zqe">
+        <dc:Bounds x="700" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jdy3f0_di" bpmnElement="Activity_0vidx0a">
+        <dc:Bounds x="700" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19nzqo8_di" bpmnElement="Activity_19nzqo8">
+        <dc:Bounds x="870" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01ubt82_di" bpmnElement="Activity_01ubt82">
+        <dc:Bounds x="1040" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_137zg0b_di" bpmnElement="Activity_08rmjph">
+        <dc:Bounds x="700" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0u1hndy_di" bpmnElement="Event_01oht24">
-        <dc:Bounds x="452" y="139" width="36" height="36" />
+        <dc:Bounds x="729" y="139" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="752" y="176" width="76" height="27" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1lhn5rr_di" bpmnElement="Flow_1lhn5rr">
         <di:waypoint x="208" y="117" />
-        <di:waypoint x="270" y="117" />
+        <di:waypoint x="260" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0c7bwgw_di" bpmnElement="Flow_0c7bwgw">
-        <di:waypoint x="520" y="117" />
-        <di:waypoint x="582" y="117" />
+        <di:waypoint x="360" y="117" />
+        <di:waypoint x="420" y="117" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0g9pdk3_di" bpmnElement="Flow_0g9pdk3">
-        <di:waypoint x="470" y="175" />
-        <di:waypoint x="470" y="240" />
-        <di:waypoint x="582" y="240" />
+        <di:waypoint x="747" y="175" />
+        <di:waypoint x="747" y="230" />
+        <di:waypoint x="870" y="230" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_048rpii_di" bpmnElement="Flow_048rpii">
-        <di:waypoint x="370" y="117" />
-        <di:waypoint x="420" y="117" />
+      <bpmndi:BPMNEdge id="Flow_1s28elp_di" bpmnElement="Flow_1s28elp">
+        <di:waypoint x="520" y="117" />
+        <di:waypoint x="585" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rwnrqs_di" bpmnElement="Flow_0rwnrqs">
+        <di:waypoint x="635" y="117" />
+        <di:waypoint x="700" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bgcl2d_di" bpmnElement="Flow_0bgcl2d">
+        <di:waypoint x="610" y="142" />
+        <di:waypoint x="610" y="340" />
+        <di:waypoint x="700" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a5wjil_di" bpmnElement="Flow_1a5wjil">
+        <di:waypoint x="610" y="142" />
+        <di:waypoint x="610" y="560" />
+        <di:waypoint x="1212" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jkz7mj_di" bpmnElement="Flow_1jkz7mj">
+        <di:waypoint x="610" y="142" />
+        <di:waypoint x="610" y="460" />
+        <di:waypoint x="700" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_011n3y8_di" bpmnElement="Flow_011n3y8">
+        <di:waypoint x="970" y="117" />
+        <di:waypoint x="1212" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1we5m4t_di" bpmnElement="Flow_1we5m4t">
+        <di:waypoint x="800" y="340" />
+        <di:waypoint x="1212" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07i65vl_di" bpmnElement="Flow_07i65vl">
+        <di:waypoint x="800" y="117" />
+        <di:waypoint x="870" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ctqxcp_di" bpmnElement="Flow_0ctqxcp">
+        <di:waypoint x="970" y="230" />
+        <di:waypoint x="1040" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fhfdz4_di" bpmnElement="Flow_0fhfdz4">
+        <di:waypoint x="1140" y="230" />
+        <di:waypoint x="1212" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_044gqut_di" bpmnElement="Flow_044gqut">
+        <di:waypoint x="800" y="460" />
+        <di:waypoint x="1212" y="460" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

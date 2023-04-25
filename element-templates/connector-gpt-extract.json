@@ -94,7 +94,7 @@
       "description": "Specify what to extract from the input. Must be a map from result field names to descriptions of what to extract into that field.",
       "group": "extract",
       "type": "Text",
-      "feel": "optional",
+      "feel": "required",
       "value": "={\n  name: \"full name\",\n  birthdate: \"birthday in ISO format\"\n}",
       "binding": {
         "type": "zeebe:input",

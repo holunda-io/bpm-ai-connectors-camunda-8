@@ -1,0 +1,161 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "GPT Decision Connector",
+  "id": "io.camunda.connector.decide.v1",
+  "description": "Makes decisions based on input variables",
+  "version": 1,
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0yMCAxNEMyMS4xMDQ2IDE0IDIyIDEzLjEwNDYgMjIgMTJDMjIgMTAuODk1NCAyMS4xMDQ2IDEwIDIwIDEwQzE4Ljg5NTQgMTAgMTggMTAuODk1NCAxOCAxMkMxOCAxMy4xMDQ2IDE4Ljg5NTQgMTQgMjAgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCA2QzIxLjEwNDYgNiAyMiA1LjEwNDU3IDIyIDRDMjIgMi44OTU0MyAyMS4xMDQ2IDIgMjAgMkMxOC44OTU0IDIgMTggMi44OTU0MyAxOCA0QzE4IDUuMTA0NTcgMTguODk1NCA2IDIwIDZaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCAyMkMyMS4xMDQ2IDIyIDIyIDIxLjEwNDYgMjIgMjBDMjIgMTguODk1NCAyMS4xMDQ2IDE4IDIwIDE4QzE4Ljg5NTQgMTggMTggMTguODk1NCAxOCAyMEMxOCAyMS4xMDQ2IDE4Ljg5NTQgMjIgMjAgMjJaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik00IDE0QzUuMTA0NTcgMTQgNiAxMy4xMDQ2IDYgMTJDNiAxMC44OTU0IDUuMTA0NTcgMTAgNCAxMEMyLjg5NTQzIDEwIDIgMTAuODk1NCAyIDEyQzIgMTMuMTA0NiAyLjg5NTQzIDE0IDQgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02IDEySDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xOCA0SDE0QzEyIDQgMTEgNSAxMSA3VjE3QzExIDE5IDEyIDIwIDE0IDIwSDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg=="
+  },
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": ["bpmn:Task"],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "general",
+      "label": "General"
+    },
+    {
+      "id": "input",
+      "label": "Input"
+    },
+    {
+      "id": "decision",
+      "label": "Decision"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "gpt-decide",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      }
+    },
+    {
+      "label": "OpenAI API Key",
+      "description": "The OpenAI API Key to use",
+      "type": "Hidden",
+      "value": "secrets.OPENAI_API_KEY",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "model",
+      "label": "GPT Model",
+      "group": "general",
+      "type": "Dropdown",
+      "value": "gpt-3.5-turbo",
+      "choices": [
+        { "name": "Standard precision, fast, cheap", "value": "gpt-3.5-turbo" },
+        { "name": "Highest precision, slow, expensive", "value": "gpt-4" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "model"
+      }
+    },
+    {
+      "label": "Input Variables",
+      "group": "input",
+      "description": "Map of input variables to consider for the decision. Key should be the variable name. Value is the variable itself as FEEL expression.",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "inputJson"
+      },
+      "value": "{ \"myVariable\": myVariable }",
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Instructions",
+      "description": "Instructions on what and how to decide.",
+      "group": "decision",
+      "type": "Text",
+      "feel": "optional",
+      "value": "Decide what the intention of the customer's mail is.",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "instructions"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "outputType",
+      "label": "Output Type",
+      "group": "decision",
+      "type": "Dropdown",
+      "value": "STRING",
+      "choices": [
+        { "name": "Boolean", "value": "BOOLEAN" },
+        { "name": "Numeric", "value": "NUMERIC" },
+        { "name": "String", "value": "STRING" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "outputType"
+      }
+    },
+    {
+      "label": "Possible Values",
+      "description": "Optional list of possible output values. If not provided, the model can output any value of the given type.",
+      "group": "decision",
+      "type": "Text",
+      "feel": "required",
+      "value": "=[\n  \"CANCEL_SUBSCRIPTION\",\n  \"CHANGE_SUBSCRIPTION\",\n  \"COMPLAINT\",\n  \"OTHER\"\n]",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "possibleValues"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "outputType",
+        "oneOf": ["NUMERIC", "STRING"]
+      }
+    },
+    {
+      "label": "Result Variable",
+      "description": "Name of variable to store the result in",
+      "group": "output",
+      "type": "String",
+      "value": "decision",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultVariable"
+      }
+    },
+    {
+      "label": "Result Expression",
+      "description": "Expression to map the result into process variables",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    }
+  ]
+}

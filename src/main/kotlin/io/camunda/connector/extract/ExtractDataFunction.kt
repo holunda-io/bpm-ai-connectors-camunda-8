@@ -49,6 +49,7 @@ class ExtractDataFunction : OutboundConnectorFunction {
 
         val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
         var result = fixingParser.parse(completedChatHistory.completionContent())
+            .mapValues { if (it.value?.lowercase() == "null") null else it.value }
 
         result = when (request.missingDataBehavior) {
             MissingDataBehavior.EMPTY -> {

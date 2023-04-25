@@ -90,6 +90,7 @@ services:
       - elastic:/usr/share/elasticsearch/data
     networks:
       - camunda-platform
+
   connector:
     image: camunda/connectors:0.7.0
     networks:
