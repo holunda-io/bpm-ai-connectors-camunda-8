@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
   "name": "GPT Decision Connector",
-  "id": "io.camunda.connector.decide.v1",
+  "id": "io.holunda.connector.decide.v1",
   "description": "Makes decisions based on input variables",
   "version": 1,
   "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",

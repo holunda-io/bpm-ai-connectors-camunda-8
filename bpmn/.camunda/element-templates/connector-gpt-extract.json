@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
   "name": "GPT Data Extraction Connector",
-  "id": "io.camunda.connector.extract.v1",
+  "id": "io.holunda.connector.extract.v1",
   "description": "Extracts information from structured or unstructured input data",
   "version": 1,
   "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",

@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
   "name": "GPT Compose Connector",
-  "id": "io.camunda.connector.compose.v1",
+  "id": "io.holunda.connector.compose.v1",
   "description": "Composes a body for an e-mail or letter in any language",
   "version": 1,
   "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
