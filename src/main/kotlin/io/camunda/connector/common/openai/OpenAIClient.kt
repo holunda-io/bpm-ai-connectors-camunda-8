@@ -15,7 +15,7 @@ class OpenAIClient(apiKey: String) {
 
     private val openAI = OpenAI(OpenAIConfig(
         token = apiKey,
-        timeout = Timeout(socket = 60.seconds)
+        timeout = Timeout(socket = (60 * 5).seconds)
     ))
 
     fun getModels() = runBlocking { openAI.models() }

@@ -51,7 +51,7 @@
       <bpmn:incoming>Flow_0c7bwgw</bpmn:incoming>
       <bpmn:outgoing>Flow_1s28elp</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_0p0ay6x">
+    <bpmn:exclusiveGateway id="Gateway_0p0ay6x" name="Intention?">
       <bpmn:incoming>Flow_1s28elp</bpmn:incoming>
       <bpmn:outgoing>Flow_0rwnrqs</bpmn:outgoing>
       <bpmn:outgoing>Flow_0bgcl2d</bpmn:outgoing>
@@ -77,10 +77,10 @@
     <bpmn:sequenceFlow id="Flow_1a5wjil" sourceRef="Gateway_0p0ay6x" targetRef="Event_1hxbwfm">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "COMPLAINT"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:endEvent id="Event_10qzvjk" name="Other ignored">
+    <bpmn:endEvent id="Event_10qzvjk" name="Mail processed">
       <bpmn:incoming>Flow_044gqut</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1jkz7mj" sourceRef="Gateway_0p0ay6x" targetRef="Activity_08rmjph">
+    <bpmn:sequenceFlow id="Flow_1jkz7mj" sourceRef="Gateway_0p0ay6x" targetRef="Activity_1s5l65q">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "OTHER"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:task id="Activity_0g98l86" name="Cancel subscription">
@@ -124,9 +124,40 @@
     <bpmn:sequenceFlow id="Flow_0fhfdz4" sourceRef="Activity_01ubt82" targetRef="Event_0db6xeo" />
     <bpmn:sequenceFlow id="Flow_044gqut" sourceRef="Activity_08rmjph" targetRef="Event_10qzvjk" />
     <bpmn:userTask id="Activity_08rmjph" name="Process mail">
-      <bpmn:incoming>Flow_1jkz7mj</bpmn:incoming>
+      <bpmn:incoming>Flow_00jaqqd</bpmn:incoming>
       <bpmn:outgoing>Flow_044gqut</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_1s5l65q" name="Decide if spam" zeebe:modelerTemplate="io.camunda.connector.decide.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0yMCAxNEMyMS4xMDQ2IDE0IDIyIDEzLjEwNDYgMjIgMTJDMjIgMTAuODk1NCAyMS4xMDQ2IDEwIDIwIDEwQzE4Ljg5NTQgMTAgMTggMTAuODk1NCAxOCAxMkMxOCAxMy4xMDQ2IDE4Ljg5NTQgMTQgMjAgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCA2QzIxLjEwNDYgNiAyMiA1LjEwNDU3IDIyIDRDMjIgMi44OTU0MyAyMS4xMDQ2IDIgMjAgMkMxOC44OTU0IDIgMTggMi44OTU0MyAxOCA0QzE4IDUuMTA0NTcgMTguODk1NCA2IDIwIDZaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCAyMkMyMS4xMDQ2IDIyIDIyIDIxLjEwNDYgMjIgMjBDMjIgMTguODk1NCAyMS4xMDQ2IDE4IDIwIDE4QzE4Ljg5NTQgMTggMTggMTguODk1NCAxOCAyMEMxOCAyMS4xMDQ2IDE4Ljg5NTQgMjIgMjAgMjJaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik00IDE0QzUuMTA0NTcgMTQgNiAxMy4xMDQ2IDYgMTJDNiAxMC44OTU0IDUuMTA0NTcgMTAgNCAxMEMyLjg5NTQzIDEwIDIgMTAuODk1NCAyIDEyQzIgMTMuMTA0NiAyLjg5NTQzIDE0IDQgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02IDEySDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xOCA0SDE0QzEyIDQgMTEgNSAxMSA3VjE3QzExIDE5IDEyIDIwIDE0IDIwSDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="gpt-decide" />
+        <zeebe:ioMapping>
+          <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
+          <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
+          <zeebe:input source="gpt-3.5-turbo" target="model" />
+          <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="input" />
+          <zeebe:input source="Decide if the mail is spam and not from a customer." target="instructions" />
+          <zeebe:input source="BOOLEAN" target="outputType" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={isSpam: decision, isSpamReasoning: reasoning}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jkz7mj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kpll75</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1kpll75" sourceRef="Activity_1s5l65q" targetRef="Gateway_0s3agty" />
+    <bpmn:exclusiveGateway id="Gateway_0s3agty" name="Spam?" default="Flow_00jaqqd">
+      <bpmn:incoming>Flow_1kpll75</bpmn:incoming>
+      <bpmn:outgoing>Flow_00jaqqd</bpmn:outgoing>
+      <bpmn:outgoing>Flow_12j0vak</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_00jaqqd" name="No spam" sourceRef="Gateway_0s3agty" targetRef="Activity_08rmjph" />
+    <bpmn:endEvent id="Event_15cs3na" name="Mail ignored">
+      <bpmn:incoming>Flow_12j0vak</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_12j0vak" name="Spam" sourceRef="Gateway_0s3agty" targetRef="Event_15cs3na">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isSpam</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmn:error id="Error_131f88n" name="Null" errorCode="NULL" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -152,6 +183,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0p0ay6x_di" bpmnElement="Gateway_0p0ay6x" isMarkerVisible="true">
         <dc:Bounds x="585" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="586" y="62" width="49" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1o5twhg_di" bpmnElement="Event_1o5twhg">
         <dc:Bounds x="1212" y="99" width="36" height="36" />
@@ -165,16 +199,10 @@
           <dc:Bounds x="1200" y="365" width="61" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1hxbwfm_di" bpmnElement="Event_1hxbwfm">
-        <dc:Bounds x="1212" y="542" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1186" y="585" width="90" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_10qzvjk_di" bpmnElement="Event_10qzvjk">
         <dc:Bounds x="1212" y="442" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1196" y="485" width="68" height="14" />
+          <dc:Bounds x="1193" y="485" width="74" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0g98l86_di" bpmnElement="Activity_0g98l86">
@@ -196,8 +224,30 @@
         <dc:Bounds x="1040" y="190" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_137zg0b_di" bpmnElement="Activity_08rmjph">
+      <bpmndi:BPMNShape id="BPMNShape_1dunq3j" bpmnElement="Activity_1s5l65q">
         <dc:Bounds x="700" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0s3agty_di" bpmnElement="Gateway_0s3agty" isMarkerVisible="true">
+        <dc:Bounds x="865" y="435" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="873" y="405" width="35" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hxbwfm_di" bpmnElement="Event_1hxbwfm">
+        <dc:Bounds x="1212" y="672" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1185" y="648" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15cs3na_di" bpmnElement="Event_15cs3na">
+        <dc:Bounds x="1212" y="552" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1200" y="595" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_137zg0b_di" bpmnElement="Activity_08rmjph">
+        <dc:Bounds x="1040" y="420" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0u1hndy_di" bpmnElement="Event_01oht24">
         <dc:Bounds x="729" y="139" width="36" height="36" />
@@ -233,8 +283,8 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1a5wjil_di" bpmnElement="Flow_1a5wjil">
         <di:waypoint x="610" y="142" />
-        <di:waypoint x="610" y="560" />
-        <di:waypoint x="1212" y="560" />
+        <di:waypoint x="610" y="690" />
+        <di:waypoint x="1212" y="690" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jkz7mj_di" bpmnElement="Flow_1jkz7mj">
         <di:waypoint x="610" y="142" />
@@ -262,8 +312,27 @@
         <di:waypoint x="1212" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_044gqut_di" bpmnElement="Flow_044gqut">
-        <di:waypoint x="800" y="460" />
+        <di:waypoint x="1140" y="460" />
         <di:waypoint x="1212" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kpll75_di" bpmnElement="Flow_1kpll75">
+        <di:waypoint x="800" y="460" />
+        <di:waypoint x="865" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00jaqqd_di" bpmnElement="Flow_00jaqqd">
+        <di:waypoint x="915" y="460" />
+        <di:waypoint x="1040" y="460" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="945" y="442" width="45" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12j0vak_di" bpmnElement="Flow_12j0vak">
+        <di:waypoint x="890" y="485" />
+        <di:waypoint x="890" y="570" />
+        <di:waypoint x="1212" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="900" y="511" width="29" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -22,6 +22,6 @@ data class DecideRequest(
 
 enum class DecisionOutputType(name: String) {
     BOOLEAN("Boolean"),
-    NUMERIC("Numeric"),
+    INTEGER("Numeric"),
     STRING("String")
 }

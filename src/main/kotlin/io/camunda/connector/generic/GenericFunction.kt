@@ -30,11 +30,11 @@ class GenericFunction : OutboundConnectorFunction {
         return executeConnector(connectorRequest)
     }
 
-    private fun executeConnector(request: GenericRequest): Map<String, String?> {
+    private fun executeConnector(request: GenericRequest): Map<String, Any?> {
         val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
 
         val jsonOutputParser = JsonOutputParser(
-            jsonSchema = request.outputFormat?.jsonToMap() ?: emptyMap()
+            jsonSchema = request.outputFormat?.jsonToStringMap() ?: emptyMap()
         )
 
         val prompt = GenericTaskPrompt(

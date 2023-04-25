@@ -108,7 +108,7 @@
       "value": "STRING",
       "choices": [
         { "name": "Boolean", "value": "BOOLEAN" },
-        { "name": "Numeric", "value": "NUMERIC" },
+        { "name": "Integer", "value": "INTEGER" },
         { "name": "String", "value": "STRING" }
       ],
       "binding": {

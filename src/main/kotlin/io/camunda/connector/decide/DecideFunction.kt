@@ -9,6 +9,7 @@ import io.camunda.connector.common.*
 import io.camunda.connector.common.json.*
 import io.camunda.connector.common.openai.*
 import io.camunda.connector.common.prompt.*
+import io.camunda.connector.decide.DecisionOutputType.*
 import io.camunda.connector.extract.*
 import io.camunda.connector.generic.*
 import org.slf4j.*
@@ -32,7 +33,7 @@ class DecideFunction : OutboundConnectorFunction {
         return executeConnector(request)
     }
 
-    private fun executeConnector(request: DecideRequest): Map<String, String?> {
+    private fun executeConnector(request: DecideRequest): Map<String, Any?> {
         val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
 
         val jsonOutputParser = JsonOutputParser(
@@ -55,7 +56,13 @@ class DecideFunction : OutboundConnectorFunction {
         LOG.info("DecideFunction prompt: ${prompt.buildPrompt()}")
 
         val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
-        val result = fixingParser.parse(completedChatHistory.completionContent())
+        var result = fixingParser.parse(completedChatHistory.completionContent())
+
+        result = when (request.outputType) {
+            BOOLEAN -> result.transformStringValue("decision") { it.toBoolean() }
+            INTEGER -> result.transformStringValue("decision") { it?.toIntOrNull() }
+            STRING, null -> result
+        }
 
         LOG.info("DecideFunction result: $result")
 

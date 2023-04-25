@@ -31,11 +31,11 @@ class ExtractDataFunction : OutboundConnectorFunction {
         return executeConnector(connectorRequest)
     }
 
-    private fun executeConnector(request: ExtractDataRequest): Map<String, String?> {
+    private fun executeConnector(request: ExtractDataRequest): Map<String, Any?> {
         val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
 
         val jsonOutputParser = JsonOutputParser(
-            jsonSchema = request.extractionJson?.jsonToMap() ?: emptyMap()
+            jsonSchema = request.extractionJson?.jsonToStringMap() ?: emptyMap()
         )
 
         val prompt = ExtractDataPrompt(
@@ -49,7 +49,7 @@ class ExtractDataFunction : OutboundConnectorFunction {
 
         val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
         var result = fixingParser.parse(completedChatHistory.completionContent())
-            .mapValues { if (it.value?.lowercase() == "null") null else it.value }
+            .mapValues { if (it.value is String? && (it.value as String?)?.lowercase() == "null") null else it.value }
 
         result = when (request.missingDataBehavior) {
             MissingDataBehavior.EMPTY -> {
