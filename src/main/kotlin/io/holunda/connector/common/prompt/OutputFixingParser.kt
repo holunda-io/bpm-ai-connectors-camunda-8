@@ -23,21 +23,22 @@ class OutputFixingParser<R>(
 
     private fun tryToFixOutput(completion: String): R {
         val history = prompt.buildPrompt() + ChatMessage(ChatRole.Assistant, completion)
-        val c = openAIClient.chatCompletion(buildFixingPrompt(), history)
-        return outputParser.parse(c.completionContent())
+        val completedHistory = openAIClient.chatCompletion(buildFixingPrompt(), history)
+        return outputParser.parse(completedHistory.completionContent())
     }
 
     private fun buildFixingPrompt() = listOf(
         ChatMessage(
             ChatRole.User,
-            FIXING_PROMPT
+            FIXING_PROMPT.format(getFormatInstructions())
         )
     )
 
     companion object {
         private val FIXING_PROMPT = """
             There was an error parsing your response. 
-            Make sure you provide a valid JSON with the "result" and "reasoning" fields populated as specified above.
+           
+            %s
             
             Try again:
         """.trimIndent()
