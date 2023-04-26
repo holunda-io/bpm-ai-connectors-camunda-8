@@ -20,7 +20,7 @@
     <!-- external libraries -->
     <version.jackson>2.13.5</version.jackson>
     <version.assertj>3.24.2</version.assertj>
-    <version.junit-jupiter>5.9.2</version.junit-jupiter>
+    <version.junit-jupiter>5.9.3</version.junit-jupiter>
     <version.mockito>5.2.0</version.mockito>
     <version.slf4j>2.0.7</version.slf4j>
     <version.openai-client>3.2.1</version.openai-client>
