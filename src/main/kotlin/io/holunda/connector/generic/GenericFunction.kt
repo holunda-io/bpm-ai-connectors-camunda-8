@@ -27,14 +27,14 @@ class GenericFunction : OutboundConnectorFunction {
         return executeConnector(connectorRequest)
     }
 
-    private fun executeConnector(request: GenericRequest): Map<String, Any?> {
+    private fun executeConnector(request: GenericRequest): GenericResult {
         val openAIClient = OpenAIClient(request.apiKey)
 
         val jsonOutputParser = JsonOutputParser(
             jsonSchema = request.outputFormat.toStringMap()
         )
 
-        val prompt = GenericTaskPrompt(
+        val prompt = GenericPrompt(
             request.taskDescription,
             request.inputJson,
             jsonOutputParser.getFormatInstructions()
@@ -44,12 +44,12 @@ class GenericFunction : OutboundConnectorFunction {
 
         LOG.info("GenericFunction prompt: ${prompt.buildPrompt()}")
 
-        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
+        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt(), model = request.model)
         val result = fixingParser.parse(completedChatHistory.completionContent())
 
         LOG.info("GenericFunction result: $result")
 
-        return result
+        return GenericResult(result)
     }
 
     companion object {

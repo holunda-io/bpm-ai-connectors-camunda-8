@@ -28,7 +28,7 @@ class ComposeFunction : OutboundConnectorFunction {
         return executeConnector(connectorRequest)
     }
 
-    private fun executeConnector(request: ComposeRequest): String {
+    private fun executeConnector(request: ComposeRequest): ComposeResult {
         val openAIClient = OpenAIClient(request.apiKey)
 
         val prompt = ComposePrompt(
@@ -42,12 +42,12 @@ class ComposeFunction : OutboundConnectorFunction {
 
         LOG.info("ComposeFunction prompt: ${prompt.buildPrompt()}")
 
-        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
+        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt(), model = request.model)
         val result = completedChatHistory.completionContent().trim()
 
         LOG.info("ComposeFunction result: $result")
 
-        return result
+        return ComposeResult(result)
     }
 
     companion object {

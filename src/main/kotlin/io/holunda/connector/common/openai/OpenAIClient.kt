@@ -23,14 +23,16 @@ class OpenAIClient(apiKey: String) {
     fun chatCompletion(
         promptMessages: List<ChatMessage>,
         chatHistory: List<ChatMessage> = emptyList(),
-        modelId: ModelId? = null
+        model: Model = defaultModel
     ): List<ChatMessage> = runBlocking {
         val messages = chatHistory + promptMessages
 
         val chatCompletionRequest = ChatCompletionRequest(
-            model = modelId ?: ModelId(DEFAULT_MODEL_ID),
+            model = model.modelId,
             messages = messages
         )
+
+        if (model == Model.CUSTOM) throw NotImplementedError("Custom models are not yet supported")
 
         openAI.chatCompletion(chatCompletionRequest)
             .first()
@@ -39,7 +41,7 @@ class OpenAIClient(apiKey: String) {
     }
 
     companion object {
-        const val DEFAULT_MODEL_ID = "gpt-3.5-turbo"
+        val defaultModel = Model.GPT_3
     }
 }
 

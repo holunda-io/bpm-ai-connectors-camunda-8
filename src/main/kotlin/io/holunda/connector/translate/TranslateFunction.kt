@@ -45,12 +45,12 @@ class TranslateFunction : OutboundConnectorFunction {
 
         LOG.info("TranslateFunction prompt: ${prompt.buildPrompt()}")
 
-        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
+        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt(), model = request.model)
         val result = fixingParser.parse(completedChatHistory.completionContent())
 
         LOG.info("TranslateFunction result: $result")
 
-        return TranslateResult(translated = result)
+        return TranslateResult(result)
     }
 
     companion object {

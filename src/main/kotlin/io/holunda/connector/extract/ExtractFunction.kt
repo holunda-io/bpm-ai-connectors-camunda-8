@@ -16,7 +16,7 @@ import java.util.*
     inputVariables = ["inputJson", "extractionJson", "missingDataBehavior", "model", "apiKey"],
     type = "gpt-extract"
 )
-class ExtractDataFunction : OutboundConnectorFunction {
+class ExtractFunction : OutboundConnectorFunction {
 
     @Throws(Exception::class)
     override fun execute(context: OutboundConnectorContext): Any {
@@ -28,14 +28,14 @@ class ExtractDataFunction : OutboundConnectorFunction {
         return executeConnector(connectorRequest)
     }
 
-    private fun executeConnector(request: ExtractDataRequest): Map<String, Any?> {
+    private fun executeConnector(request: ExtractDataRequest): ExtractResult {
         val openAIClient = OpenAIClient(request.apiKey)
 
         val jsonOutputParser = JsonOutputParser(
             jsonSchema = request.extractionJson.toStringMap()
         )
 
-        val prompt = ExtractDataPrompt(
+        val prompt = ExtractPrompt(
             request.inputJson,
             jsonOutputParser.getFormatInstructions()
         )
@@ -44,7 +44,7 @@ class ExtractDataFunction : OutboundConnectorFunction {
 
         LOG.info("ExtractDataFunction prompt: ${prompt.buildPrompt()}")
 
-        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
+        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt(), model = request.model)
         var result = fixingParser.parse(completedChatHistory.completionContent())
             .mapValues { if (it.value is String? && (it.value as String?)?.lowercase() == "null") null else it.value }
 
@@ -62,10 +62,10 @@ class ExtractDataFunction : OutboundConnectorFunction {
 
         LOG.info("ExtractDataFunction result: $result")
 
-        return result
+        return ExtractResult(result)
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(ExtractDataFunction::class.java)
+        private val LOG = LoggerFactory.getLogger(ExtractFunction::class.java)
     }
 }

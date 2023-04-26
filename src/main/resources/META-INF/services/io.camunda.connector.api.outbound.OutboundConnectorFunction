@@ -1,5 +1,5 @@
 io.holunda.connector.generic.GenericFunction
 io.holunda.connector.translate.TranslateFunction
-io.holunda.connector.extract.ExtractDataFunction
+io.holunda.connector.extract.ExtractFunction
 io.holunda.connector.decide.DecideFunction
 io.holunda.connector.compose.ComposeFunction

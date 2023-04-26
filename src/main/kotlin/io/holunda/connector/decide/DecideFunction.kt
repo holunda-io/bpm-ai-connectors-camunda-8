@@ -30,7 +30,7 @@ class DecideFunction : OutboundConnectorFunction {
         return executeConnector(request)
     }
 
-    private fun executeConnector(request: DecideRequest): Map<String, Any?> {
+    private fun executeConnector(request: DecideRequest): DecideResult {
         val openAIClient = OpenAIClient(request.apiKey)
 
         val jsonOutputParser = JsonOutputParser(
@@ -44,7 +44,7 @@ class DecideFunction : OutboundConnectorFunction {
             request.inputJson,
             request.instructions,
             request.outputType.name,
-            request.possibleValues.toString(),
+            request.possibleValues?.toString(),
             jsonOutputParser.getFormatInstructions()
         )
 
@@ -52,7 +52,7 @@ class DecideFunction : OutboundConnectorFunction {
 
         LOG.info("DecideFunction prompt: ${prompt.buildPrompt()}")
 
-        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt())
+        val completedChatHistory = openAIClient.chatCompletion(prompt.buildPrompt(), model = request.model)
         var result = fixingParser.parse(completedChatHistory.completionContent())
 
         result = when (request.outputType) {
@@ -63,7 +63,7 @@ class DecideFunction : OutboundConnectorFunction {
 
         LOG.info("DecideFunction result: $result")
 
-        return result
+        return DecideResult(result)
     }
 
     companion object {

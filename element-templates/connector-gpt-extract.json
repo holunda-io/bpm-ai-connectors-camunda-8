@@ -64,14 +64,30 @@
       "label": "GPT Model",
       "group": "general",
       "type": "Dropdown",
-      "value": "gpt-3.5-turbo",
+      "value": "GPT_3",
       "choices": [
-        { "name": "Standard precision, fast, cheap", "value": "gpt-3.5-turbo" },
-        { "name": "Highest precision, slow, expensive", "value": "gpt-4" }
+        { "name": "Standard precision, fast, cheap", "value": "GPT_3" },
+        { "name": "Highest precision, slow, expensive", "value": "GPT_4" },
+        { "name": "Custom model", "value": "CUSTOM" }
       ],
       "binding": {
         "type": "zeebe:input",
         "name": "model"
+      }
+    },
+    {
+      "label": "Server URL",
+      "description": "llama-cpp-python server url",
+      "group": "general",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "serverUrl"
+      },
+      "condition": {
+        "property": "model",
+        "equals": "CUSTOM"
       }
     },
     {
@@ -121,18 +137,8 @@
       }
     },
     {
-      "label": "Result Variable",
-      "description": "Name of variable to store the result in",
-      "group": "output",
-      "type": "String",
-      "binding": {
-        "type": "zeebe:taskHeader",
-        "key": "resultVariable"
-      }
-    },
-    {
       "label": "Result Expression",
-      "description": "Expression to map the result into process variables",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>, with fields for every extracted field as specified in Extraction Fields.",
       "group": "output",
       "type": "Text",
       "feel": "required",

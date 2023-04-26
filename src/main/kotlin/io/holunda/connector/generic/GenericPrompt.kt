@@ -5,7 +5,7 @@ import com.aallam.openai.api.chat.*
 import io.holunda.connector.common.prompt.*
 
 @OptIn(BetaOpenAI::class)
-class GenericTaskPrompt(
+class GenericPrompt(
     private val taskDescription: String,
     private val inputJson: String,
     private val formatInstructions: String
