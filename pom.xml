@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <name>camunda-8-connector-gpt</name>
-  <description>GPT Connectors</description>
+  <description>Camunda 8 AI Connectors Powered by GPT Models</description>
   <groupId>io.holunda.connector</groupId>
   <artifactId>camunda-8-connector-gpt</artifactId>
   <packaging>jar</packaging>
@@ -360,5 +360,13 @@
       <url>https://artifacts.camunda.com/artifactory/connectors-snapshots/</url>
     </repository>
   </repositories>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
 </project>

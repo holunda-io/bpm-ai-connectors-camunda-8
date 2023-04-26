@@ -1,23 +1,10 @@
-> A template for new C8 connectors.
->
-> To use this template update the following resources to match the name of your connector:
->
-> * [README](./README.md) (title, description)
-> * [Element Template](./element-templates/template-connector.json)
-> * [POM](./pom.xml) (artifact name, id, description)
-> * [Connector Function](src/main/kotlin/io/holunda/connector/MyConnectorFunction.java) (rename, implement, update `OutboundConnector` annotation)
-> * [Service Provider Interface (SPI)](./src/main/resources/META-INF/services/io.camunda.connector.api.ConnectorFunction#L1) (rename)
->
-> ...and delete this hint.
+## Camunda 8 GPT Connectors
 
+Task specific connectors powered by OpenAI GPT large language models.
 
-# Connector Template
+### Build
 
-Camunda Connector Template
-
-## Build
-
-You can package the Connector by running the following command:
+You can package the Connectors by running the following command:
 
 ```bash
 mvn clean package
@@ -26,30 +13,22 @@ mvn clean package
 This will create the following artifacts:
 
 - A thin JAR without dependencies.
-- An uber JAR containing all dependencies, potentially shaded to avoid classpath conflicts. This will not include the SDK artifacts since those are in scope `provided` and will be brought along by the respective Connector Runtime executing the Connector.
+- An uber JAR containing all dependencies, potentially shaded to avoid classpath conflicts. This will not include the SDK artifacts since those are in scope `provided` and will be brought along by the respective Connector Runtime executing the Connectors.
 
-### Shading dependencies
+### API
 
-You can use the `maven-shade-plugin` defined in the [Maven configuration](./pom.xml) to relocate common dependencies
-that are used in other Connectors and the [Connector Runtime](https://github.com/camunda-community-hub/spring-zeebe/tree/master/connector-runtime#building-connector-runtime-bundles).
-This helps avoiding classpath conflicts when the Connector is executed. 
-
-Use the `relocations` configuration in the Maven Shade plugin to define the dependencies that should be shaded.
-The [Maven Shade documentation](https://maven.apache.org/plugins/maven-shade-plugin/examples/class-relocation.html) 
-provides more details on relocations.
-
-## API
-
-### Input
+#### Input
 
 ```json
 {
-  "token": ".....",
-  "message": "....."
+  "apiKey": "OpenAI API key",
+  "model": "GPT_3|GPT_4|CUSTOM"
 }
 ```
 
-### Output
+The OpenAI API key must be available in the runtime environment, e.g. by providing a [connector-secrets.txt](connector-secrets.txt) file to docker-compose via `env_file:`.
+
+#### Output
 
 ```json
 {
@@ -59,27 +38,29 @@ provides more details on relocations.
 }
 ```
 
-### Error codes
+#### Error codes
 
 | Code | Description |
 | - | - |
-| FAIL | Message starts with 'fail' (ignoring case) |
+| NULL | `Missing Data Behavior` in Extract Connector is set to `Throw Error` and GPT could not find all requested information. |
 
-## Test locally
-
-Run unit tests
-
-```bash
-mvn clean verify
-```
-
-### Test with local runtime
+#### Test with local runtime
 
 Use the [Camunda Connector Runtime](https://github.com/camunda-community-hub/spring-zeebe/tree/master/connector-runtime#building-connector-runtime-bundles) to run your function as a local Java application.
 
 In your IDE you can also simply navigate to the `LocalContainerRuntime` class in test scope and run it via your IDE.
 If necessary, you can adjust `application.properties` in test scope.
 
-## Element Template
+### Element Template
 
-The element templates can be found in the [element-templates/template-connector.json](element-templates/template-connector.json) file.
+The element templates can be found under [element-templates](element-templates).
+
+## License
+
+This library is developed under
+
+[![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
+
+## Sponsors and Customers
+
+[![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-red.svg)](https://holisticon.de/)
