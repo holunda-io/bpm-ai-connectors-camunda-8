@@ -18,13 +18,13 @@ services:
       - "26500:26500"
       - "9600:9600"
     environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
-      - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
+      ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME: io.camunda.zeebe.exporter.ElasticsearchExporter
+      ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL: http://elasticsearch:9200
+      ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE: "1"
       # allow running with low disk space
-      - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
-      - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
-      - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+      ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK: "0.998"
+      ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK: "0.999"
+      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx512m"
     restart: always
     volumes:
       - zeebe:/usr/local/zeebe/data
@@ -39,9 +39,9 @@ services:
     ports:
       - "8081:8080"
     environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
-      - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
-      - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
-      - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+      CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS: zeebe:26500
+      CAMUNDA_OPERATE_ELASTICSEARCH_URL: http://elasticsearch:9200
+      CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL: http://elasticsearch:9200
     networks:
       - camunda-platform
     depends_on:
@@ -54,9 +54,9 @@ services:
     ports:
       - "8082:8080"
     environment: # https://docs.camunda.io/docs/self-managed/tasklist-deployment/configuration/
-      - CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS=zeebe:26500
-      - CAMUNDA_TASKLIST_ELASTICSEARCH_URL=http://elasticsearch:9200
-      - CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+      CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS: zeebe:26500
+      CAMUNDA_TASKLIST_ELASTICSEARCH_URL: http://elasticsearch:9200
+      CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL: http://elasticsearch:9200
     networks:
       - camunda-platform
     depends_on:
@@ -70,12 +70,12 @@ services:
       - "9200:9200"
       - "9300:9300"
     environment:
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - xpack.security.enabled=false
+      bootstrap.memory_lock: "true"
+      discovery.type: single-node
+      xpack.security.enabled: "false"
       # allow running with low disk space
-      - cluster.routing.allocation.disk.threshold_enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      cluster.routing.allocation.disk.threshold_enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
     ulimits:
       memlock:
         soft: -1
@@ -92,15 +92,14 @@ services:
       - camunda-platform
 
   connector:
-    image: camunda/connectors:0.7.0
+    profiles:
+      - connector
+    image: camunda/connectors:0.8.1
     networks:
       - camunda-platform
-    environment:
-      - ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
-      - ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
-    env_file: connector-secrets.txt
+    env_file: ./connector-secrets.txt
     volumes:
-      - ./target/camunda-8-connector-gpt-0.1.0-SNAPSHOT-with-dependencies.jar:/opt/app/connector.jar
+      - ./target/camunda-8-connector-gpt-with-dependencies.jar:/opt/app/connector.jar
 
 
 volumes:
