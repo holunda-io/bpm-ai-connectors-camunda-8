@@ -5,25 +5,20 @@ import com.aallam.openai.api.chat.*
 import com.aallam.openai.api.http.*
 import com.aallam.openai.api.model.*
 import com.aallam.openai.client.*
+import io.holunda.connector.common.openai.Model.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.*
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(BetaOpenAI::class)
-class OpenAIClient(apiKey: String) {
-
-    private val openAI = OpenAI(OpenAIConfig(
-        token = apiKey,
-        timeout = Timeout(socket = (60 * 5).seconds)
-    ))
-
-    fun getModels() = runBlocking { openAI.models() }
+class OpenAIClient(val apiKey: String) {
 
     fun chatCompletion(
         promptMessages: List<ChatMessage>,
         chatHistory: List<ChatMessage> = emptyList(),
-        model: Model = defaultModel
+        model: Model = defaultModel,
+        host: OpenAIHost = OpenAIHost.OpenAI
     ): List<ChatMessage> = runBlocking {
         val messages = chatHistory + promptMessages
 
@@ -32,16 +27,21 @@ class OpenAIClient(apiKey: String) {
             messages = messages
         )
 
-        if (model == Model.CUSTOM) throw NotImplementedError("Custom models are not yet supported")
+        val client = OpenAI(OpenAIConfig(
+            token = apiKey,
+            timeout = timeout,
+            host = host
+        ))
 
-        openAI.chatCompletion(chatCompletionRequest)
+        client.chatCompletion(chatCompletionRequest)
             .first()
             ?.let { completionMessage -> messages + completionMessage }
             ?: throw OpenAIException("No result message")
     }
 
     companion object {
-        val defaultModel = Model.GPT_3
+        val defaultModel = GPT_3
+        val timeout = Timeout(socket = (60 * 5).seconds)
     }
 }
 
