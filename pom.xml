@@ -17,7 +17,7 @@
 
     <!-- connector SDK version -->
     <connector-core.version>0.8.1</connector-core.version>
-    <spring-zeebe.version>8.2.0-alpha4</spring-zeebe.version>
+    <spring-zeebe.version>8.2.0</spring-zeebe.version>
 
     <!-- external libraries -->
     <spring-boot.version>2.7.11</spring-boot.version>
