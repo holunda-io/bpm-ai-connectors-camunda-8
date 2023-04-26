@@ -2,8 +2,6 @@ package io.holunda.connector.extract
 
 import com.aallam.openai.api.*
 import com.aallam.openai.api.chat.*
-import com.google.gson.*
-import com.google.gson.reflect.*
 import io.holunda.connector.common.prompt.*
 
 @OptIn(BetaOpenAI::class)

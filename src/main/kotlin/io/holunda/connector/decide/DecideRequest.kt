@@ -6,22 +6,18 @@ import io.holunda.connector.common.json.*
 
 data class DecideRequest(
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    var inputJson: String? = null,
-
-    var instructions: String? = null,
-
-    var outputType: DecisionOutputType? = null,
-
-    var possibleValues: List<Any>? = null,
-
-    var model: String? = null,
+    val inputJson: String,
+    val instructions: String,
+    val outputType: DecisionOutputType,
+    val possibleValues: List<Any>,
+    val model: String,
 
     @Secret
-    var apiKey: String? = null
+    var apiKey: String
 )
 
 enum class DecisionOutputType(name: String) {
     BOOLEAN("Boolean"),
-    INTEGER("Numeric"),
+    INTEGER("Integer"),
     STRING("String")
 }

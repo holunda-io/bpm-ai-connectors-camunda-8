@@ -6,20 +6,14 @@ import io.holunda.connector.common.json.*
 
 data class ComposeRequest(
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    var inputJson: String? = null,
-
-    var description: String? = null,
-
-    var style: String? = null,
-
-    var tone: String? = null,
-
-    var language: String? = null,
-
-    var sender: String? = null,
-
-    var model: String? = null,
+    val inputJson: String,
+    val description: String,
+    val style: String,
+    val tone: String,
+    val language: String,
+    val sender: String,
+    val model: String,
 
     @Secret
-    var apiKey: String? = null
+    var apiKey: String
 )

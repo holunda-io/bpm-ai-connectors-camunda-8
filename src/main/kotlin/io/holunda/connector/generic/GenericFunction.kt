@@ -1,7 +1,6 @@
 package io.holunda.connector.generic
 
 import com.aallam.openai.api.*
-import com.google.gson.reflect.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.json.*
@@ -21,7 +20,7 @@ class GenericFunction : OutboundConnectorFunction {
     @Throws(Exception::class)
     override fun execute(context: OutboundConnectorContext): Any {
         LOG.info("Executing GenericFunction")
-        val connectorRequest = context.getVariablesAsType(GenericRequest::class.java)
+        val connectorRequest = context.variables.readFromJson<GenericRequest>()
         LOG.info("Request: {}", connectorRequest)
         context.validate(connectorRequest)
         context.replaceSecrets(connectorRequest)
@@ -29,15 +28,15 @@ class GenericFunction : OutboundConnectorFunction {
     }
 
     private fun executeConnector(request: GenericRequest): Map<String, Any?> {
-        val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
+        val openAIClient = OpenAIClient(request.apiKey)
 
         val jsonOutputParser = JsonOutputParser(
-            jsonSchema = request.outputFormat?.jsonToStringMap() ?: emptyMap()
+            jsonSchema = request.outputFormat.toStringMap()
         )
 
         val prompt = GenericTaskPrompt(
-            request.taskDescription!!,
-            request.inputJson!!,
+            request.taskDescription,
+            request.inputJson,
             jsonOutputParser.getFormatInstructions()
         )
 

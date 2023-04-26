@@ -1,7 +1,6 @@
 package io.holunda.connector.compose
 
 import com.aallam.openai.api.*
-import com.google.gson.reflect.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
@@ -22,7 +21,7 @@ class ComposeFunction : OutboundConnectorFunction {
     @Throws(Exception::class)
     override fun execute(context: OutboundConnectorContext): Any {
         LOG.info("Executing ComposeFunction")
-        val connectorRequest = context.getVariablesAsType(ComposeRequest::class.java)
+        val connectorRequest = context.variables.readFromJson<ComposeRequest>()
         LOG.info("Request: {}", connectorRequest)
         context.validate(connectorRequest)
         context.replaceSecrets(connectorRequest)
@@ -30,15 +29,15 @@ class ComposeFunction : OutboundConnectorFunction {
     }
 
     private fun executeConnector(request: ComposeRequest): String {
-        val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
+        val openAIClient = OpenAIClient(request.apiKey)
 
         val prompt = ComposePrompt(
-            request.description!!,
-            request.style!!,
-            request.tone!!,
-            request.language!!,
-            request.sender!!,
-            request.inputJson!!,
+            request.description,
+            request.style,
+            request.tone,
+            request.language,
+            request.sender,
+            request.inputJson,
         )
 
         LOG.info("ComposeFunction prompt: ${prompt.buildPrompt()}")

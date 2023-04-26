@@ -1,7 +1,6 @@
 package io.holunda.connector.translate
 
 import com.aallam.openai.api.*
-import com.google.gson.reflect.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.json.*
@@ -13,7 +12,7 @@ import java.util.*
 @OptIn(BetaOpenAI::class)
 @OutboundConnector(
     name = "gpt-translate",
-    inputVariables = ["inputJson", "language", "apiKey"],
+    inputVariables = ["inputJson", "language", "model", "apiKey"],
     type = "gpt-translate"
 )
 class TranslateFunction : OutboundConnectorFunction {
@@ -21,7 +20,7 @@ class TranslateFunction : OutboundConnectorFunction {
     @Throws(Exception::class)
     override fun execute(context: OutboundConnectorContext): Any {
         LOG.info("Executing TranslateFunction")
-        val connectorRequest = context.getVariablesAsType(TranslateRequest::class.java)
+        val connectorRequest = context.variables.readFromJson<TranslateRequest>()
         LOG.info("Request: {}", connectorRequest)
         context.validate(connectorRequest)
         context.replaceSecrets(connectorRequest)
@@ -29,18 +28,16 @@ class TranslateFunction : OutboundConnectorFunction {
     }
 
     private fun executeConnector(request: TranslateRequest): TranslateResult {
-        val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
+        val openAIClient = OpenAIClient(request.apiKey)
 
         val jsonOutputParser = JsonOutputParser(
-            jsonSchema = request.inputJson
-                ?.jsonToStringMap()
-                ?.mapValues { "${it.key} translated into ${request.language}" }
-                ?: emptyMap()
+            jsonSchema = request.inputJson.toStringMap()
+                .mapValues { "${it.key} translated into ${request.language}" }
         )
 
         val prompt = TranslatePrompt(
-            request.inputJson!!,
-            request.language!!,
+            request.inputJson,
+            request.language,
             jsonOutputParser.getFormatInstructions()
         )
 

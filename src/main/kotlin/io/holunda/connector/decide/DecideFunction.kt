@@ -1,7 +1,6 @@
 package io.holunda.connector.decide
 
 import com.aallam.openai.api.*
-import com.google.gson.reflect.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
@@ -24,7 +23,7 @@ class DecideFunction : OutboundConnectorFunction {
     @Throws(Exception::class)
     override fun execute(context: OutboundConnectorContext): Any {
         LOG.info("Executing DecideFunction")
-        val request = context.getVariablesAsType(DecideRequest::class.java)
+        val request = context.variables.readFromJson<DecideRequest>()
         LOG.info("Request: {}", request)
         context.validate(request)
         context.replaceSecrets(request)
@@ -32,7 +31,7 @@ class DecideFunction : OutboundConnectorFunction {
     }
 
     private fun executeConnector(request: DecideRequest): Map<String, Any?> {
-        val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
+        val openAIClient = OpenAIClient(request.apiKey)
 
         val jsonOutputParser = JsonOutputParser(
             jsonSchema = mapOf(
@@ -42,10 +41,10 @@ class DecideFunction : OutboundConnectorFunction {
         )
 
         val prompt = DecidePrompt(
-            request.inputJson!!,
-            request.instructions!!,
-            request.outputType!!.name,
-            request.possibleValues?.toString(),
+            request.inputJson,
+            request.instructions,
+            request.outputType.name,
+            request.possibleValues.toString(),
             jsonOutputParser.getFormatInstructions()
         )
 
@@ -59,7 +58,7 @@ class DecideFunction : OutboundConnectorFunction {
         result = when (request.outputType) {
             BOOLEAN -> result.transformStringValue("decision") { it.toBoolean() }
             INTEGER -> result.transformStringValue("decision") { it?.toIntOrNull() }
-            STRING, null -> result
+            STRING -> result
         }
 
         LOG.info("DecideFunction result: $result")

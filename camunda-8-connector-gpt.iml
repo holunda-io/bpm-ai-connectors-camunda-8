@@ -71,7 +71,8 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.5" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.5" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-parameter-names:2.13.5" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.10.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-kotlin:2.13.5" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.5.32" level="project" />
     <orderEntry type="library" name="Maven: com.aallam.openai:openai-client-jvm:3.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.aallam.openai:openai-core-jvm:3.2.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.4.1" level="project" />
@@ -136,6 +137,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: io.grpc:grpc-stub:1.49.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.errorprone:error_prone_annotations:2.14.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: io.grpc:grpc-core:1.49.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.google.code.gson:gson:2.9.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.android:annotations:4.1.1.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: io.perfmark:perfmark-api:0.25.0" level="project" />

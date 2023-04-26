@@ -6,12 +6,10 @@ import io.holunda.connector.common.json.*
 
 data class TranslateRequest(
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    var inputJson: String? = null,
-
-    var language: String? = null,
-
-    var model: String? = null,
+    val inputJson: String,
+    val language: String,
+    val model: String,
 
     @Secret
-    var apiKey: String? = null
+    var apiKey: String
 )

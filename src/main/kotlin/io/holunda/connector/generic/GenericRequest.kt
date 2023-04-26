@@ -6,15 +6,12 @@ import io.holunda.connector.common.json.*
 
 data class GenericRequest(
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    var inputJson: String? = null,
-
-    var taskDescription: String? = null,
-
+    val inputJson: String,
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    var outputFormat: String? = null,
-
-    var model: String? = null,
+    val outputFormat: String,
+    val taskDescription: String,
+    val model: String,
 
     @Secret
-    var apiKey: String? = null
+    var apiKey: String
 )

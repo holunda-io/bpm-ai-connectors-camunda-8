@@ -2,8 +2,6 @@ package io.holunda.connector.decide
 
 import com.aallam.openai.api.*
 import com.aallam.openai.api.chat.*
-import com.google.gson.*
-import com.google.gson.reflect.*
 import io.holunda.connector.common.prompt.*
 
 @OptIn(BetaOpenAI::class)
@@ -25,7 +23,9 @@ class DecidePrompt(
             USER_PROMPT.format(
                 instructions,
                 outputType,
-                possibleValues?.let { "\nPOSSIBLE VALUES:\n$it\n\n Your decision can only be one of these possible values or null." } ?: "",
+                possibleValues?.let {
+                    POSSIBLE_VALUES_SUB_PROMPT.format(possibleValues)
+                } ?: "",
                 inputJson,
                 possibleValues
             )
@@ -61,6 +61,14 @@ class DecidePrompt(
             ```
             
             DECISION:
+        """.trimIndent()
+
+        private val POSSIBLE_VALUES_SUB_PROMPT = """
+            
+            POSSIBLE VALUES:
+            %s
+             
+            Your decision can only be one of these possible values or null.
         """.trimIndent()
     }
 }

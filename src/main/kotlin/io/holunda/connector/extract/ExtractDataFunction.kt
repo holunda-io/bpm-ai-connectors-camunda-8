@@ -1,7 +1,6 @@
 package io.holunda.connector.extract
 
 import com.aallam.openai.api.*
-import com.google.gson.reflect.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
@@ -22,7 +21,7 @@ class ExtractDataFunction : OutboundConnectorFunction {
     @Throws(Exception::class)
     override fun execute(context: OutboundConnectorContext): Any {
         LOG.info("Executing ExtractDataFunction")
-        val connectorRequest = context.getVariablesAsType(ExtractDataRequest::class.java)
+        val connectorRequest = context.variables.readFromJson<ExtractDataRequest>()
         LOG.info("Request: {}", connectorRequest)
         context.validate(connectorRequest)
         context.replaceSecrets(connectorRequest)
@@ -30,14 +29,14 @@ class ExtractDataFunction : OutboundConnectorFunction {
     }
 
     private fun executeConnector(request: ExtractDataRequest): Map<String, Any?> {
-        val openAIClient = OpenAIClient(request.apiKey ?: throw RuntimeException("No OpenAI apiKey set"))
+        val openAIClient = OpenAIClient(request.apiKey)
 
         val jsonOutputParser = JsonOutputParser(
-            jsonSchema = request.extractionJson?.jsonToStringMap() ?: emptyMap()
+            jsonSchema = request.extractionJson.toStringMap()
         )
 
         val prompt = ExtractDataPrompt(
-            request.inputJson!!,
+            request.inputJson,
             jsonOutputParser.getFormatInstructions()
         )
 

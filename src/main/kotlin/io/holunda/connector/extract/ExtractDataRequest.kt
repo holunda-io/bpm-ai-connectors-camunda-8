@@ -6,17 +6,14 @@ import io.holunda.connector.common.json.*
 
 data class ExtractDataRequest(
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    var inputJson: String? = null,
-
+    val inputJson: String,
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    var extractionJson: String? = null,
-
-    var missingDataBehavior: MissingDataBehavior? = null,
-
-    var model: String? = null,
+    val extractionJson: String,
+    val missingDataBehavior: MissingDataBehavior,
+    val model: String,
 
     @Secret
-    var apiKey: String? = null
+    var apiKey: String
 )
 
 enum class MissingDataBehavior {
