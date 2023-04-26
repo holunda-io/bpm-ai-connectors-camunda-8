@@ -180,6 +180,7 @@
       "group": "output",
       "type": "Text",
       "feel": "required",
+      "value": "={\"text\": result}",
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"

@@ -142,6 +142,7 @@
       "group": "output",
       "type": "Text",
       "feel": "required",
+      "value": "={\"customerInfo\": result}",
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"
