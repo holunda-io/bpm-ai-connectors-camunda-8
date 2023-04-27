@@ -8,12 +8,12 @@ private val writer = mapper.writerWithDefaultPrettyPrinter()
 
 fun String.toMap(): Map<String, Any?> {
     val typeRef = object : TypeReference<Map<String, Any?>>() {}
-    return jacksonObjectMapper().readValue(this, typeRef)
+    return mapper.readValue(this, typeRef)
 }
 
 fun String.toStringMap(): Map<String, String> {
     val typeRef = object : TypeReference<Map<String, String>>() {}
-    return jacksonObjectMapper().readValue(this, typeRef)
+    return mapper.readValue(this, typeRef)
 }
 
 fun Map<String,Any?>.transformStringValue(key: String, f: (String?) -> Any?) =
@@ -21,4 +21,4 @@ fun Map<String,Any?>.transformStringValue(key: String, f: (String?) -> Any?) =
 
 inline fun <reified T> String.readFromJson() = jacksonObjectMapper().readValue<T>(this)
 
-fun Any.toJson() = writer.writeValueAsString(this)
+fun Any.toJson() = writer.writeValueAsString(this)!!
