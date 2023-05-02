@@ -162,7 +162,7 @@
           <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
           <zeebe:input source="formal" target="style" />
           <zeebe:input source="friendly" target="tone" />
-          <zeebe:input source="English" target="language" />
+          <zeebe:input source="=customerInfo.language" target="language" />
           <zeebe:input source="Ask the customer for his subscription number, as we need it to cancel his subscription." target="description" />
           <zeebe:input source="My company" target="sender" />
         </zeebe:ioMapping>

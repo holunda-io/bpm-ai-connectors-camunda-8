@@ -117,7 +117,7 @@
     },
     {
       "label": "Result Expression",
-      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>, with fields for every extracted field as specified in Input Variables.",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>, with fields for every translated field as specified in Input Variables.",
       "group": "output",
       "type": "Text",
       "feel": "required",
