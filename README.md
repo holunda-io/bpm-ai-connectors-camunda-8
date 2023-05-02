@@ -5,7 +5,6 @@
 ![Compatible with: Camunda Platform 8](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%208-26d07c)
 [![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-RED.svg)](https://holisticon.de/)
 
----
 
 These connectors can automatically perform activities that previously required user tasks or specialized AI models, like:
 * 🔍 **Information extraction** from unstructured data (E-Mails, letters, documents, ...)
@@ -27,7 +26,7 @@ Just provide input and output variable mappings and configure what you want to a
 #### Input Variables
 
 All connectors base their work on a map of input variables given as a FEEL map, e.g.:
-```json
+```
 { "myVariable": myVariable }
 ```
 The keys of the map should be the name of the variable or another fitting label for the variable content, as this will give the model context. 
@@ -49,7 +48,7 @@ Can extract or deduce information from multiple input variables, potentially do 
 #### Configuration
 
 Provide a map of new variables to extract from the input, with descriptions of what they should contain:
-```json
+```
 {
   firstname: "first name",
   lastname: "last name",
@@ -74,7 +73,7 @@ Decide what the intention of the customer's mail is.
 ```
 Next, determine an output type (`Boolean`, `Integer` or `String`).
 If not `Boolean`, you may restrict the connector to a classification on a finite set of options, instead of letting it freely choose the values:
-```json
+```
 [
   "CANCEL_SUBSCRIPTION",
   "CHANGE_SUBSCRIPTION",
@@ -128,7 +127,7 @@ Perform task X and store the result in the result field. Also describe the reaso
 
 Specify the output schema:
 
-```json
+```
 {
   result: "the result of the task",
   reasoning: "the reasoning behind the task result"
