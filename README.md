@@ -7,7 +7,7 @@
 
 
 These connectors can automatically perform activities that previously required user tasks or specialized AI models, like:
-* 🔍 **Information extraction** from unstructured data (E-Mails, letters, documents, ...)
+* 🔍 **Information extraction** from unstructured data (e-mails, letters, documents, ...)
 * ⚖  Informed **decision-making** before gateways
 * ✍🏼 Creative **content generation** (e-mails, letters, ...)
 * 🌍 **Translation**
