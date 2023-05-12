@@ -573,4 +573,29 @@
     </repository>
   </distributionManagement>
 
+
+  <developers>
+    <developer>
+      <id>benjoyo</id>
+      <name>Bennet Krause</name>
+      <email>bennet.krause@holisticon.de</email>
+      <organization>Holisticon AG</organization>
+      <organizationUrl>https://www.holisticon.de</organizationUrl>
+    </developer>
+    <developer>
+      <id>jangalinski</id>
+      <name>Jan Galinski</name>
+      <email>jan.galinski@holisticon.de</email>
+      <organization>Holisticon AG</organization>
+      <organizationUrl>https://www.holisticon.de</organizationUrl>
+    </developer>
+    <developer>
+      <id>zambrovski</id>
+      <name>Simon Zambrovski</name>
+      <email>simon.zambrovski@holisticon.de</email>
+      <organization>Holisticon AG</organization>
+      <organizationUrl>https://www.holisticon.de</organizationUrl>
+    </developer>
+  </developers>
+
 </project>
