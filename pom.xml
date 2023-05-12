@@ -4,6 +4,7 @@
 
   <name>camunda-8-connector-gpt</name>
   <description>Camunda 8 AI Connectors Powered by GPT Models</description>
+  <url>https://github.com/holunda-io/camunda-8-connector-gpt/</url>
   <groupId>io.holunda.connector</groupId>
   <artifactId>camunda-8-connector-gpt</artifactId>
   <packaging>jar</packaging>
@@ -553,5 +554,23 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:holunda-io/camunda-8-connector-gpt.git</connection>
+    <url>scm:git:git@github.com:holunda-io/camunda-8-connector-gpt.git</url>
+    <developerConnection>scm:git:git@github.com:holunda-io/camunda-8-connector-gpt.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
 
 </project>
