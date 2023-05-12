@@ -1,0 +1,44 @@
+name: Master and Snapshot release
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Get GPG private key into GPG
+      - name: Import GPG Owner Trust
+        run: echo ${{ secrets.GPG_OWNERTRUST }} | base64 --decode | gpg --import-ownertrust
+
+      - name: Import GPG key
+        run: echo ${{ secrets.GPG_SECRET_KEYS }} | base64 --decode | gpg --import --no-tty --batch --yes
+
+      # Setup JDK and Maven
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11.0.5
+          distribution: 'zulu'
+          cache: maven
+          server-id: ossrh
+          server-username: OSS_CENTRAL_USERNAME # env variable for Maven Central
+          server-password: OSS_CENTRAL_PASSWORD # env variable for Maven Central
+
+      - name: Prepare Maven Wrapper
+        run: chmod +x ./mvnw
+
+      - name: Build with Maven
+        run: ./mvnw clean verify -U -B -T4
+
+      - name: Deploy a new version to central
+        run: ./mvnw deploy -B -DskipTests -Prelease -Dgpg.keyname="${{secrets.GPG_KEYNAME}}" -Dgpg.passphrase="${{secrets.GPG_PASSPHRASE}}"
+        env:
+          OSS_CENTRAL_USERNAME: "${{ secrets.SONATYPE_USERNAME }}"
+          OSS_CENTRAL_PASSWORD: "${{ secrets.SONATYPE_PASSWORD }}"

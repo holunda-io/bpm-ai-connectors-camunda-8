@@ -200,7 +200,7 @@
           <artifactId>maven-shade-plugin</artifactId>
           <version>3.4.1</version>
           <configuration>
-            <outputFile>${pom.build.directory}/${project.artifactId}-with-dependencies.jar</outputFile>
+            <outputFile>${project.build.directory}/${project.artifactId}-with-dependencies.jar</outputFile>
             <shadedArtifactAttached>true</shadedArtifactAttached>
             <shadedClassifierName>with-dependencies</shadedClassifierName>
             <!-- no need for this since we are not consuming this artifact downstream -->
