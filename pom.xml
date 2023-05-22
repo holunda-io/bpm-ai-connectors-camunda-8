@@ -22,7 +22,7 @@
     <spring-zeebe.version>8.2.0</spring-zeebe.version>
 
     <!-- external libraries -->
-    <spring-boot.version>2.7.11</spring-boot.version>
+    <spring-boot.version>3.1.0</spring-boot.version>
     <kotlin.version>1.8.21</kotlin.version>
     <openai-client.version>3.2.3</openai-client.version>
     <ktor.version>2.3.0</ktor.version>
