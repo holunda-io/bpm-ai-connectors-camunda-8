@@ -19,6 +19,10 @@ Just provide input and output variable mappings and configure what you want to a
 4. Handling and automatically fixing common error cases 
 5. Mapping remaining exceptions to BPMN errors so that you can react to them with boundary events 
 
+## Demo Video
+
+[![Demo](https://img.youtube.com/vi/VphP9W9DKGQ/maxresdefault.jpg)](https://youtu.be/VphP9W9DKGQ)
+
 ## Connectors
 
 ### General Configuration
