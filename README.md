@@ -7,10 +7,11 @@
 
 
 These connectors can automatically perform activities that previously required user tasks or specialized AI models, like:
-* 🔍 **Information extraction** from unstructured data (e-mails, letters, documents, ...)
+* 🔍 **Information extraction** from unstructured data (emails, letters, documents, ...)
 * ⚖  Informed **decision-making** before gateways
-* ✍🏼 Creative **content generation** (e-mails, letters, ...)
+* ✍🏼 Creative **content generation** (emails, letters, ...)
 * 🌍 **Translation**
+* 🕓 ...more exiting things to come!
 
 Just provide input and output variable mappings and configure what you want to achieve - the connectors will do the heavy lifting:
 1. Crafting tested, task- and model-specific prompts to get the most out of the LLM
@@ -18,6 +19,10 @@ Just provide input and output variable mappings and configure what you want to a
 3. Parsing the response into local process variables
 4. Handling and automatically fixing common error cases 
 5. Mapping remaining exceptions to BPMN errors so that you can react to them with boundary events 
+
+---
+
+> :warning: **Highly experimental**: As there are unsolved problems of data privacy and model bias when using LLM services, these connectors are not yet meant for production use as of today, but to evaluate the technology and pave the road for the future.
 
 ## Demo Video
 
