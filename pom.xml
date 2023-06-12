@@ -23,7 +23,7 @@
 
     <!-- external libraries -->
     <spring-boot.version>2.7.11</spring-boot.version>
-    <kotlin.version>1.8.21</kotlin.version>
+    <kotlin.version>1.8.22</kotlin.version>
     <openai-client.version>3.2.5</openai-client.version>
     <ktor.version>2.3.1</ktor.version>
 
