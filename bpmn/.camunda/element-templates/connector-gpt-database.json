@@ -1,0 +1,181 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "GPT Database Connector",
+  "id": "io.holunda.connector.database.v1",
+  "description": "Crafts and executes one or more queries against a database",
+  "version": 1,
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0zLjE3MDA0IDcuNDM5OTRMMTIgMTIuNTQ5OUwyMC43NyA3LjQ2OTkxIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xMiAyMS42MDk5VjEyLjUzOTkiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTIxLjYxIDEyLjgzVjkuMTdDMjEuNjEgNy43OSAyMC42MiA2LjExMDAyIDE5LjQxIDUuNDQwMDJMMTQuMDcgMi40OEMxMi45MyAxLjg0IDExLjA3IDEuODQgOS45Mjk5OSAyLjQ4TDQuNTkgNS40NDAwMkMzLjM4IDYuMTEwMDIgMi4zOTAwMSA3Ljc5IDIuMzkwMDEgOS4xN1YxNC44M0MyLjM5MDAxIDE2LjIxIDMuMzggMTcuODkgNC41OSAxOC41Nkw5LjkyOTk5IDIxLjUyQzEwLjUgMjEuODQgMTEuMjUgMjIgMTIgMjJDMTIuNzUgMjIgMTMuNSAyMS44NCAxNC4wNyAyMS41MiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuMiAyMS40QzIwLjk2NzMgMjEuNCAyMi40IDE5Ljk2NzMgMjIuNCAxOC4yQzIyLjQgMTYuNDMyNyAyMC45NjczIDE1IDE5LjIgMTVDMTcuNDMyNyAxNSAxNiAxNi40MzI3IDE2IDE4LjJDMTYgMTkuOTY3MyAxNy40MzI3IDIxLjQgMTkuMiAyMS40WiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMjMgMjJMMjIgMjEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+"
+  },
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": ["bpmn:Task"],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "general",
+      "label": "General"
+    },
+    {
+      "id": "input",
+      "label": "Input"
+    },
+    {
+      "id": "database",
+      "label": "Database"
+    },
+    {
+      "id": "task",
+      "label": "Task"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "gpt-database",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      }
+    },
+    {
+      "label": "OpenAI API Key",
+      "description": "The OpenAI API Key to use",
+      "type": "Hidden",
+      "value": "secrets.OPENAI_API_KEY",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "model",
+      "label": "GPT Model",
+      "group": "general",
+      "type": "Dropdown",
+      "value": "GPT_3",
+      "choices": [
+        { "name": "Standard precision, fast, cheap", "value": "GPT_3" },
+        { "name": "Highest precision, slow, expensive", "value": "GPT_4" },
+        { "name": "Custom model", "value": "CUSTOM" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "model"
+      }
+    },
+    {
+      "label": "Server URL",
+      "description": "llama-cpp-python server url",
+      "group": "general",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "serverUrl"
+      },
+      "condition": {
+        "property": "model",
+        "equals": "CUSTOM"
+      }
+    },
+    {
+      "label": "Input Variables",
+      "group": "input",
+      "description": "Map of input variables to provide context. Key should be the variable name. Value is the variable itself as FEEL expression.",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "inputJson"
+      },
+      "value": "{ \"myVariable\": myVariable }",
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Database URL",
+      "group": "database",
+      "type": "String",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "databaseUrl"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Task Description",
+      "description": "Describe what should be queried.",
+      "group": "task",
+      "type": "Text",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "taskDescription"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Result Schema",
+      "description": "Specify the result schema. Must be a map from result field names to descriptions of what that field should contain.",
+      "group": "task",
+      "type": "Text",
+      "feel": "required",
+      "value": "={\n  name: \"full name\",\n  birthdate: \"birthday in ISO format\"\n}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "outputSchema"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Missing Data Behavior",
+      "description": "What to do if requested data could not be found.",
+      "group": "task",
+      "type": "Dropdown",
+      "value": "NULL",
+      "choices": [
+        { "name": "Return Null", "value": "NULL" },
+        { "name": "Return Empty String", "value": "EMPTY" },
+        { "name": "Throw Error", "value": "ERROR" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "missingDataBehavior"
+      }
+    },
+    {
+      "label": "Result Expression",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>.",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "value": "={\"result\": result}",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    }
+  ]
+}

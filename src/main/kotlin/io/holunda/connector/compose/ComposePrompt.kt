@@ -33,27 +33,27 @@ class ComposePrompt(
             Your job is to compose a text based on instructions, input data and desired text properties.
             Add a salutation and complimentary close that fits the desired style and tone.
             Only use information from the given instructions, properties and input data, do not make something up.
-            Only output the result text and nothing else.
+            Only output the result text body and nothing else. Do not add a subject or similar.
         """.trimIndent()
 
-        private val USER_PROMPT = """           
+        private val USER_PROMPT = """
             INPUT DATA:
             ```
             %s
             ```
-            
+
             INSTRUCTIONS:
             ```
             %s
             ```
-            
+
             TEXT PROPERTIES:
             - style: %s
             - tone: %s
             - language: %s
             - sender: %s
-            
-            RESULT TEXT:
+
+            RESULT TEXT BODY:
         """.trimIndent()
     }
 }

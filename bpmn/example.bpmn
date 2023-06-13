@@ -13,7 +13,7 @@
           <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
           <zeebe:input source="GPT_3" target="model" />
           <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
-          <zeebe:input source="={&#10;  firstname: &#34;first name&#34;,&#10;  lastname: &#34;last name&#34;,&#10;  language: &#34;the language that the email body is written in, as ISO code&#34;&#10;}" target="extractionJson" />
+          <zeebe:input source="={&#10;  firstname: &#34;first name&#34;,&#10;  lastname: &#34;last name&#34;,&#10;  language: &#34;the language that the email body is written in, as two letter ISO code&#34;,&#10;  city: &#34;city the customer lives in&#34;&#10;}" target="extractionJson" />
           <zeebe:input source="NULL" target="missingDataBehavior" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
@@ -66,15 +66,15 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "CANCEL_SUBSCRIPTION"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_1qsv1yn" name="Subscription changed">
-      <bpmn:incoming>Flow_1we5m4t</bpmn:incoming>
+      <bpmn:incoming>Flow_0vsjk8n</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0bgcl2d" name="Change subscription" sourceRef="Gateway_0p0ay6x" targetRef="Gateway_11mpzkm">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "CHANGE_SUBSCRIPTION"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_1hxbwfm" name="Complaint ignored">
-      <bpmn:incoming>Flow_1a5wjil</bpmn:incoming>
+      <bpmn:incoming>Flow_06kwxqb</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1a5wjil" name="Complaint" sourceRef="Gateway_0p0ay6x" targetRef="Event_1hxbwfm">
+    <bpmn:sequenceFlow id="Flow_1a5wjil" name="Complaint" sourceRef="Gateway_0p0ay6x" targetRef="Activity_02pmh6y">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "COMPLAINT"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="Event_10qzvjk" name="Mail processed">
@@ -88,11 +88,6 @@
       <bpmn:outgoing>Flow_011n3y8</bpmn:outgoing>
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_011n3y8" sourceRef="Activity_0g98l86" targetRef="Event_1o5twhg" />
-    <bpmn:sequenceFlow id="Flow_1we5m4t" sourceRef="Activity_0ft7zqe" targetRef="Event_1qsv1yn" />
-    <bpmn:userTask id="Activity_0ft7zqe" name="Change subscription">
-      <bpmn:incoming>Flow_0zlvkhi</bpmn:incoming>
-      <bpmn:outgoing>Flow_1we5m4t</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_07i65vl" sourceRef="Activity_0vidx0a" targetRef="Activity_0g98l86" />
     <bpmn:serviceTask id="Activity_0vidx0a" name="Extract subscription number" zeebe:modelerTemplate="io.holunda.connector.extract.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
       <bpmn:extensionElements>
@@ -186,10 +181,9 @@
     <bpmn:exclusiveGateway id="Gateway_02w073p">
       <bpmn:incoming>Flow_1w8c7vr</bpmn:incoming>
       <bpmn:incoming>Flow_0i2ldvm</bpmn:incoming>
-      <bpmn:outgoing>Flow_0zlvkhi</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0vsjk8n</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1w8c7vr" sourceRef="Activity_1pxmyjv" targetRef="Gateway_02w073p" />
-    <bpmn:sequenceFlow id="Flow_0zlvkhi" sourceRef="Gateway_02w073p" targetRef="Activity_0ft7zqe" />
     <bpmn:serviceTask id="Activity_1pxmyjv" name="Translate to English" zeebe:modelerTemplate="io.holunda.connector.translate.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xOS4wNiAxOC42Njk5TDE2LjkyIDE0LjM5OTlMMTQuNzggMTguNjY5OSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTUuMTY5OSAxNy45MDk5SDE4LjY4OTkiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE2LjkyMDEgMjIuMDAwMUMxNC4xMjAxIDIyLjAwMDEgMTEuODQwMSAxOS43MyAxMS44NDAxIDE2LjkyQzExLjg0MDEgMTQuMTIgMTQuMTEwMSAxMS44NDAxIDE2LjkyMDEgMTEuODQwMUMxOS43MjAxIDExLjg0MDEgMjIuMDAwMSAxNC4xMSAyMi4wMDAxIDE2LjkyQzIyLjAwMDEgMTkuNzMgMTkuNzMwMSAyMi4wMDAxIDE2LjkyMDEgMjIuMDAwMVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTUuMDIgMkg4Ljk0QzExLjAxIDIgMTIuMDEgMy4wMDAwMiAxMS45NiA1LjAyMDAyVjguOTRDMTIuMDEgMTEuMDEgMTEuMDEgMTIuMDEgOC45NCAxMS45Nkg1LjAyQzMgMTIgMiAxMSAyIDguOTI5OTlWNS4wMTAwMUMyIDMuMDAwMDEgMyAyIDUuMDIgMloiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTkuMDA5OTUgNS44NDk4NUg0Ljk0OTk1IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02Ljk2OTk3IDUuMTY5OTJWNS44NDk5MSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNNy45ODk5NCA1LjgzOTg0QzcuOTg5OTQgNy41ODk4NCA2LjYxOTk0IDkuMDA5ODMgNC45Mzk5NCA5LjAwOTgzIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik05LjAwOTkgOS4wMTAwMUM4LjI3OTkgOS4wMTAwMSA3LjYxOTkxIDguNjIgNy4xNTk5MSA4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yIDE1QzIgMTguODcgNS4xMyAyMiA5IDIyTDcuOTUgMjAuMjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTIyIDlDMjIgNS4xMyAxOC44NyAyIDE1IDJMMTYuMDUgMy43NSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8L3N2Zz4=">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="gpt-translate" />
@@ -206,6 +200,45 @@
       <bpmn:incoming>Flow_1lq2i1u</bpmn:incoming>
       <bpmn:outgoing>Flow_1w8c7vr</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_02pmh6y" name="Determine language" zeebe:modelerTemplate="io.holunda.connector.database.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0zLjE3MDA0IDcuNDM5OTRMMTIgMTIuNTQ5OUwyMC43NyA3LjQ2OTkxIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xMiAyMS42MDk5VjEyLjUzOTkiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTIxLjYxIDEyLjgzVjkuMTdDMjEuNjEgNy43OSAyMC42MiA2LjExMDAyIDE5LjQxIDUuNDQwMDJMMTQuMDcgMi40OEMxMi45MyAxLjg0IDExLjA3IDEuODQgOS45Mjk5OSAyLjQ4TDQuNTkgNS40NDAwMkMzLjM4IDYuMTEwMDIgMi4zOTAwMSA3Ljc5IDIuMzkwMDEgOS4xN1YxNC44M0MyLjM5MDAxIDE2LjIxIDMuMzggMTcuODkgNC41OSAxOC41Nkw5LjkyOTk5IDIxLjUyQzEwLjUgMjEuODQgMTEuMjUgMjIgMTIgMjJDMTIuNzUgMjIgMTMuNSAyMS44NCAxNC4wNyAyMS41MiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuMiAyMS40QzIwLjk2NzMgMjEuNCAyMi40IDE5Ljk2NzMgMjIuNCAxOC4yQzIyLjQgMTYuNDMyNyAyMC45NjczIDE1IDE5LjIgMTVDMTcuNDMyNyAxNSAxNiAxNi40MzI3IDE2IDE4LjJDMTYgMTkuOTY3MyAxNy40MzI3IDIxLjQgMTkuMiAyMS40WiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMjMgMjJMMjIgMjEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="gpt-database" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#34;city&#34;: customerInfo.city }" target="inputJson" />
+          <zeebe:input source="postgresql://world:world123@world-db: 5432/world-db" target="databaseUrl" />
+          <zeebe:input source="Determine the official language based on the city." target="taskDescription" />
+          <zeebe:input source="={ language: &#34;the language&#34;}" target="outputSchema" />
+          <zeebe:input source="NULL" target="missingDataBehavior" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#34;language&#34;: result.language}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1a5wjil</bpmn:incoming>
+      <bpmn:outgoing>Flow_06kwxqb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1m5x71l" name="Find email address" zeebe:modelerTemplate="io.holunda.connector.openapi.v1" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMkMxNy41MjI4IDIyIDIyIDE3LjUyMjggMjIgMTJDMjIgNi40NzcxNSAxNy41MjI4IDIgMTIgMkM2LjQ3NzE1IDIgMiA2LjQ3NzE1IDIgMTJDMiAxNy41MjI4IDYuNDc3MTUgMjIgMTIgMjJaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik03Ljk5OTk4IDNIOC45OTk5OEM3LjA0OTk4IDguODQgNy4wNDk5OCAxNS4xNiA4Ljk5OTk4IDIxSDcuOTk5OTgiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE1IDNDMTYuOTUgOC44NCAxNi45NSAxNS4xNiAxNSAyMSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMyAxNlYxNUM4Ljg0IDE2Ljk1IDE1LjE2IDE2Ljk1IDIxIDE1VjE2IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0zIDkuMDAwMUM4Ljg0IDcuMDUwMSAxNS4xNiA3LjA1MDEgMjEgOS4wMDAxIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="gpt-openapi" />
+        <zeebe:ioMapping>
+          <zeebe:input source="http://localhost:8080" target="serviceUrl" />
+          <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#10;  &#34;customerId&#34;: 1&#10;}" target="inputJson" />
+          <zeebe:input source="http://customer-service-app:8080/v3/api-docs" target="specUrl" />
+          <zeebe:input source="Find the email address of the customer." target="taskDescription" />
+          <zeebe:input source="={ mail: &#34;the email address of the customer&#34;}" target="outputSchema" />
+          <zeebe:input source="NULL" target="missingDataBehavior" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#34;email&#34;: result.mail}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0vsjk8n" sourceRef="Gateway_02w073p" targetRef="Event_1qsv1yn" />
+    <bpmn:sequenceFlow id="Flow_06kwxqb" sourceRef="Activity_02pmh6y" targetRef="Event_1hxbwfm" />
   </bpmn:process>
   <bpmn:error id="Error_131f88n" name="Null" errorCode="NULL" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -263,10 +296,6 @@
         <dc:Bounds x="880" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_12b9sty_di" bpmnElement="Activity_0ft7zqe">
-        <dc:Bounds x="1170" y="400" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0jdy3f0_di" bpmnElement="Activity_0vidx0a">
         <dc:Bounds x="710" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -311,6 +340,14 @@
         <dc:Bounds x="880" y="320" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dw3ypb_di" bpmnElement="Activity_02pmh6y">
+        <dc:Bounds x="710" y="770" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mefuax_di" bpmnElement="Activity_1m5x71l">
+        <dc:Bounds x="710" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0u1hndy_di" bpmnElement="Event_01oht24">
         <dc:Bounds x="739" y="139" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -352,9 +389,9 @@
       <bpmndi:BPMNEdge id="Flow_1a5wjil_di" bpmnElement="Flow_1a5wjil">
         <di:waypoint x="620" y="142" />
         <di:waypoint x="620" y="810" />
-        <di:waypoint x="1342" y="810" />
+        <di:waypoint x="710" y="810" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="644" y="818" width="50" height="14" />
+          <dc:Bounds x="629" y="818" width="50" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jkz7mj_di" bpmnElement="Flow_1jkz7mj">
@@ -368,10 +405,6 @@
       <bpmndi:BPMNEdge id="Flow_011n3y8_di" bpmnElement="Flow_011n3y8">
         <di:waypoint x="980" y="117" />
         <di:waypoint x="1342" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1we5m4t_di" bpmnElement="Flow_1we5m4t">
-        <di:waypoint x="1270" y="440" />
-        <di:waypoint x="1342" y="440" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_07i65vl_di" bpmnElement="Flow_07i65vl">
         <di:waypoint x="810" y="117" />
@@ -428,9 +461,13 @@
         <di:waypoint x="1090" y="360" />
         <di:waypoint x="1090" y="415" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0zlvkhi_di" bpmnElement="Flow_0zlvkhi">
+      <bpmndi:BPMNEdge id="Flow_0vsjk8n_di" bpmnElement="Flow_0vsjk8n">
         <di:waypoint x="1115" y="440" />
-        <di:waypoint x="1170" y="440" />
+        <di:waypoint x="1342" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06kwxqb_di" bpmnElement="Flow_06kwxqb">
+        <di:waypoint x="810" y="810" />
+        <di:waypoint x="1342" y="810" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
