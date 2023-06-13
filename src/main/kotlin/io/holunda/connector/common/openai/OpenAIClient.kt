@@ -28,8 +28,9 @@ class OpenAIClient(apiKey: String) {
         val messages = chatHistory + promptMessages
 
         val chatCompletionRequest = ChatCompletionRequest(
-            model = model.modelId,
-            messages = messages
+          model = model.modelId,
+          messages = messages,
+          temperature = 0.0
         )
 
         if (model == Model.CUSTOM) throw NotImplementedError("Custom models are not yet supported")

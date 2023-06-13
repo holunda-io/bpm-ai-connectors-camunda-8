@@ -91,6 +91,8 @@ services:
     networks:
       - camunda-platform
 
+   ###############################################
+
   connector:
     profiles:
       - connector
@@ -101,6 +103,15 @@ services:
     volumes:
       - ./target/camunda-8-connector-gpt-with-dependencies.jar:/opt/app/connector.jar
 
+  langchain:
+    build:
+      context: python
+      dockerfile: Dockerfile
+    ports:
+      - "9999:9999"
+    networks:
+      - camunda-platform
+    env_file: ./connector-secrets.txt
 
 volumes:
   zeebe:
