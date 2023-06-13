@@ -22,10 +22,10 @@ class JsonOutputParser(
         private val FORMAT_INSTRUCTION = """
             You will always output a JSON of the following form:
             %s
-            
+
             You will NEVER output anything other than this JSON.
         """.trimIndent()
 
-        private val RESPONSE_REGEX = "\\{[^}]*}".toRegex()
+        val RESPONSE_REGEX = "\\{[^}]*}".toRegex()
     }
 }

@@ -3,3 +3,5 @@ io.holunda.connector.translate.TranslateFunction
 io.holunda.connector.extract.ExtractFunction
 io.holunda.connector.decide.DecideFunction
 io.holunda.connector.compose.ComposeFunction
+io.holunda.connector.openapi.OpenApiAgentFunction
+io.holunda.connector.database.DatabaseAgentFunction

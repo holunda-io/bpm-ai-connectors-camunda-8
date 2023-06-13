@@ -80,6 +80,18 @@
       <artifactId>ktor-client-apache-jvm</artifactId>
       <version>${ktor.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-serialization-kotlinx-json-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-client-content-negotiation-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+
 
     <dependency>
       <groupId>io.camunda.connector</groupId>
@@ -342,7 +354,17 @@
           <version>${kotlin.version}</version>
           <configuration>
             <jvmTarget>11</jvmTarget>
+            <compilerPlugins>
+              <plugin>kotlinx-serialization</plugin>
+            </compilerPlugins>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.jetbrains.kotlin</groupId>
+              <artifactId>kotlin-maven-serialization</artifactId>
+              <version>${kotlin.version}</version>
+            </dependency>
+          </dependencies>
           <executions>
             <execution>
               <id>compile</id>
