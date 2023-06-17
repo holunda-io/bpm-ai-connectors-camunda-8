@@ -7,7 +7,6 @@ from gpt.openapi_agent.openapi import OpenAPISpec
 
 
 def create_api_planner_chain(
-        api_spec: OpenAPISpec,
         llm: BaseLanguageModel
 ) -> LLMChain:
     return LLMChain(

@@ -1,0 +1,41 @@
+{
+  "components": [
+    {
+      "text": "# Review Plan",
+      "type": "text",
+      "id": "Field_0byz2qe"
+    },
+    {
+      "text": "Please review the automatically generated execution plan for the following task. Make changes, add or remove steps as necessary.",
+      "type": "text",
+      "id": "Field_11meqjk"
+    },
+    {
+      "text": "=\"#### Task: \" + task ",
+      "type": "text",
+      "id": "Field_0pmjym2"
+    },
+    {
+      "label": "Plan",
+      "type": "textarea",
+      "id": "Field_0tldswk",
+      "key": "plan"
+    },
+    {
+      "action": "submit",
+      "label": "Execute Plan",
+      "type": "button",
+      "id": "Field_10vgy5h",
+      "key": "field_1slwryv"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1heggrr",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.9.0"
+  },
+  "schemaVersion": 7
+}

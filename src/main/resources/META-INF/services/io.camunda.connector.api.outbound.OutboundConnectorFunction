@@ -5,3 +5,5 @@ io.holunda.connector.decide.DecideFunction
 io.holunda.connector.compose.ComposeFunction
 io.holunda.connector.openapi.OpenApiAgentFunction
 io.holunda.connector.database.DatabaseAgentFunction
+io.holunda.connector.planner.PlannerFunction
+io.holunda.connector.executor.ExecutorFunction
