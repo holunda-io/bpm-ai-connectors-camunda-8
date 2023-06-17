@@ -1,0 +1,151 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "GPT Planner Connector",
+  "id": "io.holunda.connector.planner.v1",
+  "description": "Plans a series of steps to take in order to fulfill a task",
+  "version": 1,
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMSAxOS41SDIxIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xMSAxMi41SDIxIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xMSA1LjVIMjEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTMgNS41TDQgNi41TDcgMy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0zIDEyLjVMNCAxMy41TDcgMTAuNSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMyAxOS41TDQgMjAuNUw3IDE3LjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+"
+  },
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": ["bpmn:Task"],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "general",
+      "label": "General"
+    },
+    {
+      "id": "input",
+      "label": "Input"
+    },
+    {
+      "id": "task",
+      "label": "Task"
+    },
+    {
+      "id": "tools",
+      "label": "Tools"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "gpt-planner",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      }
+    },
+    {
+      "label": "OpenAI API Key",
+      "description": "The OpenAI API Key to use",
+      "type": "Hidden",
+      "value": "secrets.OPENAI_API_KEY",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "model",
+      "label": "GPT Model",
+      "group": "general",
+      "type": "Dropdown",
+      "value": "GPT_3",
+      "choices": [
+        { "name": "Standard precision, fast, cheap", "value": "GPT_3" },
+        { "name": "Highest precision, slow, expensive", "value": "GPT_4" },
+        { "name": "Custom model", "value": "CUSTOM" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "model"
+      }
+    },
+    {
+      "label": "Server URL",
+      "description": "llama-cpp-python server url",
+      "group": "general",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "serverUrl"
+      },
+      "condition": {
+        "property": "model",
+        "equals": "CUSTOM"
+      }
+    },
+    {
+      "label": "Input variables",
+      "group": "input",
+      "description": "Map of input variables to provide context. Key should be the variable name. Value is the variable itself as FEEL expression.",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "inputJson"
+      },
+      "value": "{ \"myVariable\": myVariable }",
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Task description",
+      "description": "Describe the task to complete.",
+      "group": "task",
+      "type": "Text",
+      "feel": "optional",
+      "value": "Handle the customer's concern.",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "taskDescription"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Tools",
+      "description": "Specify candidate tools/activities available to use in the plan.",
+      "group": "tools",
+      "type": "Text",
+      "feel": "optional",
+      "value": "={ \"userTask\": \"Use if a subtask should be handled by a human because no other tools are helpful.\", \"customerQA\": \"Useful if you need more information about a customer. Input should be a fully formed question.\", \"companyQA\": \"Useful if you need information about our company or product. Input should be a fully formed question.\" }",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "tools"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Result expression",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>.",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "value": "={\"plan\": result}",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    }
+  ]
+}

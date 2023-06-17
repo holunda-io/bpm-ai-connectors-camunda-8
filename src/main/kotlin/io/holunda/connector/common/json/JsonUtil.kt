@@ -16,6 +16,11 @@ fun String.toStringMap(): Map<String, String> {
     return mapper.readValue(this, typeRef)
 }
 
+fun String.toStringList(): List<String> {
+  val typeRef = object : TypeReference<List<String>>() {}
+  return mapper.readValue(this, typeRef)
+}
+
 fun Map<String,Any?>.transformStringValue(key: String, f: (String?) -> Any?) =
     this.mapValues { (k, v) -> if (k == key && v is String?) f(v) else v }
 

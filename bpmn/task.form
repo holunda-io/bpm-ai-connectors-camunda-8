@@ -1,0 +1,41 @@
+{
+  "components": [
+    {
+      "text": "# Task",
+      "type": "text",
+      "id": "Field_1iuiyym"
+    },
+    {
+      "label": "Task description",
+      "type": "textarea",
+      "id": "Field_0ksufxp",
+      "key": "task",
+      "disabled": true
+    },
+    {
+      "label": "Result",
+      "type": "textarea",
+      "id": "Field_02um984",
+      "key": "result"
+    },
+    {
+      "action": "submit",
+      "label": "Submit",
+      "type": "button",
+      "id": "Field_0mk7v9s",
+      "key": "field_1g36id3",
+      "conditional": {
+        "hide": "=result = \"\""
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_1rw7thd",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.9.0"
+  },
+  "schemaVersion": 7
+}

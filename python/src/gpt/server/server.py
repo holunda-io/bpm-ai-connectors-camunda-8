@@ -1,10 +1,14 @@
 import json
+from typing import Dict, List, Any
 
 from dotenv import load_dotenv
 
-from gpt.config import get_chat_llm
+from gpt.output_parsers.json_output_parser import JsonOutputParser
+from gpt.plan_and_execute.executor.executor import create_executor_chain
 
 load_dotenv(dotenv_path='../../../../connector-secrets.txt')
+from gpt.config import get_chat_llm
+from gpt.plan_and_execute.planner.planner import create_planner
 
 from gpt.database_agent.agent import create_database_agent
 from gpt.openapi_agent.agent import create_openapi_agent
@@ -59,24 +63,46 @@ async def post(task: DatabaseTask):
     return json.loads(res)
 
 
-# agent = create_openapi_agent(
-#     api_spec_url="http://localhost:8090/v3/api-docs"
-# )
-# print(
-#     agent.run(
-#         query="Return the details of the customer.",
-#         context='{"customerId": 1}',
-#         output_schema='{"email": "the email", "name": "firstname and lastname"}'
-#     )
-# )
+class PlannerTask(BaseModel):
+    model: str
+    task: str
+    tools: Dict[str, str]
+    context: str
 
-# agent = create_database_agent(
-#     database_url="postgresql://postgres:password@localhost:5432/mydb"
-# )
-# print(
-#     agent.run(
-#         input="Return the details of the customer.",
-#         context='{"customerId": 1}',
-#         output_schema='{"birthday": "the birthday in format yyyy-mm-dd", "name": "lastname, firstname"}'
-#     )
-# )
+
+@app.post("/planner")
+async def post(task: PlannerTask):
+    planner = create_planner(
+        tools=task.tools,
+        llm=get_chat_llm(task.model)
+    )
+    res = planner.plan({
+        "context": task.context,
+        "task": task.task
+    })
+    steps = [s.value for s in res.steps]
+    return steps
+
+
+class ExecutorTask(BaseModel):
+    model: str
+    task: str
+    tools: Dict[str, str]
+    context: str
+    previous_steps: Any
+    current_step: str
+
+
+@app.post("/executor")
+async def post(task: ExecutorTask):
+    executor = create_executor_chain(
+        tools=task.tools,
+        llm=get_chat_llm(task.model)
+    )
+    res = executor.run(
+        context=task.context,
+        task=task.task,
+        previous_steps=task.previous_steps,
+        current_step=task.current_step
+    )
+    return JsonOutputParser().parse(res)

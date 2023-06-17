@@ -36,7 +36,7 @@ def create_openapi_agent(
                 transform=operations_to_docs
             ),
             # make a plan
-            create_api_planner_chain(api_spec, llm),
+            create_api_planner_chain(llm),
             # execute plan
             create_api_controller_agent(api_spec, headers, llm, output_key="data"),
             # format result into output schema
