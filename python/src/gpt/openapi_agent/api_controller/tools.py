@@ -54,15 +54,18 @@ class BaseRequestsToolWithParsing(BaseTool):
         return values
 
     def _run(self, *args: Any, **kwargs: Any) -> Any:
-        response = perform_request(
-            self.api_spec,
-            kwargs["operation_id"],
-            kwargs.get("data", {}),
-            kwargs.get("path_params", {}),
-            kwargs.get("query_params", {}),
-            self.headers,
-            self.response_length
-        )
+        try:
+            response = perform_request(
+                self.api_spec,
+                kwargs["operation_id"],
+                kwargs.get("data", {}),
+                kwargs.get("path_params", {}),
+                kwargs.get("query_params", {}),
+                self.headers,
+                self.response_length
+            )
+        except Exception as e:
+            return repr(e)
         llm_chain = LLMChain(prompt=PARSING_PROMPT, llm=self.llm)
         return llm_chain.predict(
             response=response,

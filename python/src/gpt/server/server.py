@@ -4,7 +4,7 @@ from typing import Dict, List, Any
 from dotenv import load_dotenv
 
 from gpt.output_parsers.json_output_parser import JsonOutputParser
-from gpt.plan_and_execute.executor.executor import create_executor_chain
+from gpt.plan_and_execute.executor.executor import create_executor
 
 load_dotenv(dotenv_path='../../../../connector-secrets.txt')
 from gpt.config import get_chat_llm
@@ -95,11 +95,11 @@ class ExecutorTask(BaseModel):
 
 @app.post("/executor")
 async def post(task: ExecutorTask):
-    executor = create_executor_chain(
+    executor = create_executor(
         tools=task.tools,
         llm=get_chat_llm(task.model)
     )
-    res = executor.run(
+    res = executor(
         context=task.context,
         task=task.task,
         previous_steps=task.previous_steps,

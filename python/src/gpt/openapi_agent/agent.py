@@ -23,7 +23,22 @@ def create_openapi_agent(
     api_spec = load_api_spec(api_spec_url)
 
     def operations_to_docs(inputs: dict) -> dict:
-        return {"endpoints": escape_format_placeholders(create_docs(api_spec, inputs["operations"]))}
+        operations = inputs["operations"]
+        if "NOT_APPLICABLE" in operations:
+            raise Exception("No operations found for query.")
+        return {"endpoints": escape_format_placeholders(create_docs(api_spec, operations))}
+
+    def check_plan(inputs: dict) -> dict:
+        plan = inputs["plan"]
+        if "NOT_APPLICABLE" in plan:
+            raise Exception("No plan possible for query.")
+        return {}
+
+    def check_result(inputs: dict) -> dict:
+        plan = inputs["output"]
+        if "PLAN_FAILED" in plan:
+            raise Exception("Plan execution failed.")
+        return {}
 
     return SequentialChain(
         chains=[
@@ -37,8 +52,18 @@ def create_openapi_agent(
             ),
             # make a plan
             create_api_planner_chain(llm),
+            TransformChain(
+                input_variables=["plan"],
+                output_variables=[],
+                transform=check_plan
+            ),
             # execute plan
             create_api_controller_agent(api_spec, headers, llm, output_key="data"),
+            TransformChain(
+                input_variables=["output"],
+                output_variables=[],
+                transform=check_result
+            ),
             # format result into output schema
             create_data_extract_chain(llm)
         ],

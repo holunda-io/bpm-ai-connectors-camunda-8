@@ -3,7 +3,7 @@
 API_PLANNER_SELECTOR_SYSTEM_MESSAGE = """You are an expert in REST APIs that helps identify relevant API endpoints to assist with user queries against an API.
 
 You should:
-1) evaluate whether the user query can be solved by the API documented below. If no, say why.
+1) evaluate whether the user query can be solved by the API documented below. If no, output NOT_APPLICABLE.
 2) if yes, identify all API endpoints that may be relevant.
 
 You should only use API endpoints documented below ("actual endpoints you can use").
@@ -29,7 +29,7 @@ Fake endpoints for examples:
 
 User query: tell me a joke
 Thought: This API's domain is shopping, not comedy.
-Result: None
+Result: NOT_APPLICABLE
 
 User query: I want to buy a couch
 Thought: searchProducts can be used to search for couches. addCart can be used to add a couch to the user's cart.
@@ -45,7 +45,7 @@ Here are the actual endpoints you can use. Do not reference any of the endpoints
 
 {endpoints}
 
-Begin! Remember to first describe your thoughts and then return the result list using Result:
+Begin! Remember to first describe your thoughts and then return the result list using Result or output NOT_APPLICABLE if the query can not be solved with the given endpoints:
 """
 API_PLANNER_SELECTOR_USER_MESSAGE="""Context: {context}
 User query: {query}
@@ -56,7 +56,7 @@ Thought:"""
 API_PLANNER_SYSTEM_MESSAGE = """You are an expert planner that plans a sequence of API calls to assist with user queries against an API.
 
 You should:
-1) evaluate whether the user query can be solved by the API documented below. If no, return None.
+1) evaluate whether the user query can be solved by the API documented below. If no, return NOT_APPLICABLE.
 2) if yes, generate a plan of API calls and say what they are doing step by step.
 
 You should only use API endpoints documented below ("actual endpoints you can use:").
@@ -68,7 +68,7 @@ The plan will be passed to an API controller that can format it into web request
 Here are some examples:
 
 Here are fake endpoints for examples:
-== Docs for getFoos (GET) == 
+== Docs for getFoos (GET) ==
 parameters:
 - description: Page index (start from 0)
   in: query
@@ -89,7 +89,7 @@ responses:
     application/json: {{}}
   description: Successful Operation
 
-== Docs for getFooById (GET) == 
+== Docs for getFooById (GET) ==
 parameters:
 - description: id of foo to be retrieved
   in: path
@@ -116,7 +116,7 @@ responses:
   description: Found the foo
 
 User query: tell me a joke
-Plan: None
+Plan: NOT_APPLICABLE
 
 User query: Find the foo "bar" and return his last name
 Plan: 1. GET getFoos with query params: page=0 and pageSize=10 to find the foo id
