@@ -6,6 +6,8 @@ import typing
 import requests
 import yaml
 from langchain.agents.agent_toolkits.openapi.spec import dereference_refs
+from langchain.chains.openai_functions import _resolve_schema_references
+from langchain.tools.convert_to_openai import FunctionDescription
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,83 @@ class OpenAPISpec:
     spec: dict
 
 
+def dereference_schema(schema: typing.Any, definitions: typing.Dict[str, typing.Any]) -> typing.Any:
+    """
+    Resolves the $ref keys in a JSON schema object using the provided definitions.
+    """
+    if isinstance(schema, list):
+        return [_resolve_schema_references(item, definitions) for item in schema]
+    elif isinstance(schema, dict):
+        if "$ref" in schema:
+            ref_key = schema.pop("$ref").split("/")[-1]
+            schema = definitions.get(ref_key, {})
+        return {k: _resolve_schema_references(v, definitions) for k, v in schema.items()}
+    else:
+        return schema
+
+
+def endpoint_to_function(endpoint: Endpoint) -> FunctionDescription:
+    """Format OpenAPI operation into an OpenAI function description."""
+
+    operation = endpoint.docs
+
+    properties = {}
+    required = []
+
+    # Extract properties and required parameters from 'parameters'
+    for param in operation.get("parameters", []):
+        if "name" in param:
+            param_info = {}
+            # Fallback to direct type if not in schema
+            if "schema" in param:
+                param_info["type"] = param["schema"].get("type", param.get("type"))
+            else:
+                param_info["type"] = param.get("type")
+
+            # Only add description or enum if present
+            if param.get("description"):
+                param_info["description"] = param.get("description")
+            if param.get("enum"):
+                param_info["enum"] = param.get("enum")
+            if param.get("items"):
+                param_info["items"] = param.get("items")
+
+            properties[param["name"]] = param_info
+
+            if param.get("required", False):
+                required.append(param["name"])
+
+    # Extract properties from 'requestBody', if present (OpenAPI 3)
+    requestBody = operation.get("requestBody", {}).get("content", {}).get("application/json", {}).get("schema", {})
+    if requestBody:
+        for prop_name, prop_value in requestBody.get("properties", {}).items():
+            prop_info = {"type": prop_value.get("type", None)}
+
+            # Only add description or enum if present
+            if prop_value.get("description"):
+                prop_info["description"] = prop_value.get("description")
+            if prop_value.get("enum"):
+                prop_info["enum"] = prop_value.get("enum")
+            if prop_value.get("items"):
+                prop_info["items"] = prop_value.get("items")
+
+            properties[prop_name] = prop_info
+
+            # If requestBody is required, all its properties are required
+            if operation.get("requestBody", {}).get("required", False):
+                required.append(prop_name)
+
+    return {
+        "name": endpoint.operationId,
+        "description": endpoint.description,
+        "parameters": {
+            "type": "object",
+            "properties": properties,
+            "required": required,
+        },
+    }
+
+
 def reduce_openapi_spec(spec: dict, dereference: bool = True) -> OpenAPISpec:
     """Simplify/distill/minify a spec somehow.
 
@@ -42,25 +121,30 @@ def reduce_openapi_spec(spec: dict, dereference: bool = True) -> OpenAPISpec:
         if method in ["get", "post", "patch", "delete"]
     ]
 
+    schemas = dereference_schema(spec['components']['schemas'], spec['components']['schemas'])
+
     # 2. Replace any refs so that complete docs are retrieved.
     # Note: probably want to do this post-retrieval, it blows up the size of the spec.
     if dereference:
         endpoints = [
-            (method, route, operationId, description, dereference_refs(docs, spec))
+            #(method, route, operationId, description, dereference_refs(docs, spec))
+            (method, route, operationId, description, dereference_schema(docs, schemas))
             for method, route, operationId, description, docs in endpoints
         ]
 
     # 3. Strip docs down to required request args + happy path response.
     def reduce_endpoint_docs(docs: dict) -> dict:
         out = {}
-        if docs.get("description"):
-            out["description"] = docs.get("description")
+        if docs.get("description") or docs.get("summary"):
+            out["description"] = docs.get("description") or docs.get("summary")
         if docs.get("parameters"):
             out["parameters"] = [
                 parameter
                 for parameter in docs.get("parameters", [])
                 if parameter.get("required")
             ]
+        if docs.get("requestBody"):
+            out["requestBody"] = docs.get("requestBody")
         if "200" in docs["responses"]:
             out["responses"] = docs["responses"]["200"]
         return out
