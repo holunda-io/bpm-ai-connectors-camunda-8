@@ -7,7 +7,6 @@ from langchain.base_language import BaseLanguageModel
 from langchain.chains import SequentialChain, TransformChain
 from langchain.chains.base import Chain
 
-from gpt.config import get_default_llm
 from gpt.openapi_agent.api_controller.controller import create_api_controller_agent
 from gpt.openapi_agent.api_planner.planner import create_api_planner_chain
 from gpt.openapi_agent.api_planner.selector import create_api_selector_chain
@@ -17,7 +16,7 @@ from gpt.util.data_extract import create_data_extract_chain
 
 def create_openapi_agent(
         api_spec_url: str,
-        llm: BaseLanguageModel = get_default_llm(),
+        llm: BaseLanguageModel,
         headers: Optional[dict] = None,
 ) -> Chain:
     api_spec = load_api_spec(api_spec_url)

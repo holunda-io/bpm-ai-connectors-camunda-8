@@ -10,7 +10,7 @@ from langchain.chains import SequentialChain, TransformChain
 from langchain.chains.base import Chain
 
 from gpt.common.functions_agent.base import FunctionsAgent
-from gpt.config import get_default_llm, supports_openai_functions
+from gpt.config import supports_openai_functions
 from gpt.util.data_extract import create_data_extract_chain
 from typing import Any, Dict, List, Optional
 
@@ -117,7 +117,7 @@ Question: {input}"""
 
 def create_database_agent(
         database_url: str,
-        llm: BaseLanguageModel = get_default_llm(),
+        llm: BaseLanguageModel,
 ) -> Chain:
     if not supports_openai_functions(llm):
         raise Exception("Database agent is currently only supported for OpenAI models with function calling")

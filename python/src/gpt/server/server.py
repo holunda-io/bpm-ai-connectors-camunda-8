@@ -3,11 +3,11 @@ from typing import Dict, List, Any
 
 from dotenv import load_dotenv
 
+from gpt.config import model_id_to_llm
 from gpt.output_parsers.json_output_parser import JsonOutputParser
 from gpt.plan_and_execute.executor.executor import create_executor
 
 load_dotenv(dotenv_path='../../../../connector-secrets.txt')
-from gpt.config import get_chat_llm
 from gpt.plan_and_execute.planner.planner import create_planner
 
 from gpt.database_agent.agent import create_database_agent
@@ -31,7 +31,7 @@ class OpenApiTask(BaseModel):
 async def post(task: OpenApiTask):
     agent = create_openapi_agent(
         task.specUrl,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = agent.run(
         query=task.task,
@@ -53,7 +53,7 @@ class DatabaseTask(BaseModel):
 async def post(task: DatabaseTask):
     agent = create_database_agent(
         task.databaseUrl,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = agent.run(
         input=task.task,
@@ -74,7 +74,7 @@ class PlannerTask(BaseModel):
 async def post(task: PlannerTask):
     planner = create_planner(
         tools=task.tools,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = planner.plan({
         "context": task.context,
@@ -97,7 +97,7 @@ class ExecutorTask(BaseModel):
 async def post(task: ExecutorTask):
     executor = create_executor(
         tools=task.tools,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = executor(
         context=task.context,
