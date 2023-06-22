@@ -22,4 +22,5 @@ class ChatLogHandler(BaseCallbackHandler):
 
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         self.logger.info("----------------------\nCompletion\n----------------------")
-        self.logger.info(response.generations[0][0].text)
+        self.logger.info(response.generations[0][0].json())
+

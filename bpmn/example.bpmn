@@ -18,7 +18,7 @@
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="resultExpression" value="={customerInfo: result}" />
-          <zeebe:header key="errorExpression" value="=if error.code = &#34;NULL&#34; then&#10;  bpmnError(&#34;NULL&#34;, &#34;One or more values are null.&#34;)&#10;else null" />
+          <zeebe:header key="errorExpression" value="=if error.code = &#34;MISSING_DATA&#34; then&#10;  bpmnError(&#34;MISSING_DATA&#34;, &#34;One or more values are null.&#34;)&#10;else null" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1lhn5rr</bpmn:incoming>
@@ -26,7 +26,7 @@
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_01oht24" name="No subscription number" attachedToRef="Activity_0vidx0a">
       <bpmn:outgoing>Flow_0g9pdk3</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_0mopd1n" errorRef="Error_131f88n" />
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0mopd1n" errorRef="Error_09qr27c" />
     </bpmn:boundaryEvent>
     <bpmn:endEvent id="Event_0db6xeo" name="Subscription No. requested">
       <bpmn:incoming>Flow_0fhfdz4</bpmn:incoming>
@@ -101,7 +101,7 @@
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="resultExpression" value="={subscriptionNo: result.subscriptionNo}" />
-          <zeebe:header key="errorExpression" value="=if error.code = &#34;NULL&#34; then&#10;  bpmnError(&#34;NULL&#34;, &#34;One or more values are null.&#34;)&#10;else null" />
+          <zeebe:header key="errorExpression" value="=if error.code = &#34;MISSING_DATA&#34; then&#10;  bpmnError(&#34;MISSING_DATA&#34;, &#34;One or more values are null.&#34;)&#10;else null" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0rwnrqs</bpmn:incoming>
@@ -241,6 +241,7 @@
     <bpmn:sequenceFlow id="Flow_06kwxqb" sourceRef="Activity_02pmh6y" targetRef="Event_1hxbwfm" />
   </bpmn:process>
   <bpmn:error id="Error_131f88n" name="Null" errorCode="NULL" />
+  <bpmn:error id="Error_09qr27c" name="MISSING_DATA" errorCode="MISSING_DATA" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1fzbo11">
       <bpmndi:BPMNShape id="Event_0ub9z0k_di" bpmnElement="StartEvent_1">

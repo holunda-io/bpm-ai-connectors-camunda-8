@@ -2,12 +2,14 @@ import json
 from typing import Dict, List, Any
 
 from dotenv import load_dotenv
+from torsimany.torsimany import parseJSON
 
+from gpt.config import model_id_to_llm
+from gpt.extract_chain.chain import create_extract_chain
 from gpt.output_parsers.json_output_parser import JsonOutputParser
-from gpt.plan_and_execute.executor.executor import create_executor_chain
+from gpt.plan_and_execute.executor.executor import create_executor
 
 load_dotenv(dotenv_path='../../../../connector-secrets.txt')
-from gpt.config import get_chat_llm
 from gpt.plan_and_execute.planner.planner import create_planner
 
 from gpt.database_agent.agent import create_database_agent
@@ -31,7 +33,7 @@ class OpenApiTask(BaseModel):
 async def post(task: OpenApiTask):
     agent = create_openapi_agent(
         task.specUrl,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = agent.run(
         query=task.task,
@@ -53,7 +55,7 @@ class DatabaseTask(BaseModel):
 async def post(task: DatabaseTask):
     agent = create_database_agent(
         task.databaseUrl,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = agent.run(
         input=task.task,
@@ -74,7 +76,7 @@ class PlannerTask(BaseModel):
 async def post(task: PlannerTask):
     planner = create_planner(
         tools=task.tools,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = planner.plan({
         "context": task.context,
@@ -95,9 +97,9 @@ class ExecutorTask(BaseModel):
 
 @app.post("/executor")
 async def post(task: ExecutorTask):
-    executor = create_executor_chain(
+    executor = create_executor(
         tools=task.tools,
-        llm=get_chat_llm(task.model)
+        llm=model_id_to_llm(task.model)
     )
     res = executor.run(
         context=task.context,
@@ -106,3 +108,21 @@ async def post(task: ExecutorTask):
         current_step=task.current_step
     )
     return JsonOutputParser().parse(res)
+
+
+class ExtractTask(BaseModel):
+    model: str
+    extraction_schema: dict
+    context: str
+    repeated: bool
+
+
+@app.post("/extract")
+async def post(task: ExtractTask):
+    schema = task.extraction_schema
+    chain = create_extract_chain(
+        properties=schema,
+        repeated=task.repeated,
+        llm=model_id_to_llm(task.model)
+    )
+    return chain.run(task.context)

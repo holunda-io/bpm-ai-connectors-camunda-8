@@ -1,5 +1,5 @@
 import json
-from typing import List, Any
+from typing import List, Any, Optional
 import re
 
 from langchain.schema import OutputParserException, BaseOutputParser
@@ -7,6 +7,8 @@ from langchain.schema import OutputParserException, BaseOutputParser
 
 class JsonOutputParser(BaseOutputParser):
     """Class to parse the output of an LLM call to a json."""
+
+    key_name: Optional[str] = None
 
     @property
     def _type(self) -> str:
@@ -20,7 +22,10 @@ class JsonOutputParser(BaseOutputParser):
             if match:
                 json_str = match.group()
             json_dict = json.loads(json_str, strict=False)
-            return json_dict
+            if self.key_name:
+                return json_dict[self.key_name]
+            else:
+                return json_dict
 
         except json.JSONDecodeError as e:
 
