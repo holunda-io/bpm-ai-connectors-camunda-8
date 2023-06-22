@@ -61,33 +61,17 @@
     },
     {
       "id": "model",
-      "label": "GPT Model",
+      "label": "LLM Model",
       "group": "general",
       "type": "Dropdown",
       "value": "GPT_3",
       "choices": [
-        { "name": "Standard precision, fast, cheap", "value": "GPT_3" },
-        { "name": "Highest precision, slow, expensive", "value": "GPT_4" },
-        { "name": "Custom model", "value": "CUSTOM" }
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
+        { "name": "OpenAI GPT-4", "value": "GPT_4" }
       ],
       "binding": {
         "type": "zeebe:input",
         "name": "model"
-      }
-    },
-    {
-      "label": "Server URL",
-      "description": "llama-cpp-python server url",
-      "group": "general",
-      "type": "String",
-      "feel": "optional",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "serverUrl"
-      },
-      "condition": {
-        "property": "model",
-        "equals": "CUSTOM"
       }
     },
     {
@@ -121,14 +105,28 @@
       }
     },
     {
+      "label": "Mode",
+      "description": "Extract general information or a list of entities (e.g. persons, products, etc.)",
+      "group": "extract",
+      "type": "Dropdown",
+      "value": "SINGLE",
+      "choices": [
+        { "name": "Single", "value": "SINGLE" },
+        { "name": "Repeated", "value": "REPEATED" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "mode"
+      }
+    },
+    {
       "label": "Missing Data Behavior",
       "description": "What to do if requested data is not present in the input",
       "group": "extract",
       "type": "Dropdown",
       "value": "NULL",
       "choices": [
-        { "name": "Return Null", "value": "NULL" },
-        { "name": "Return Empty String", "value": "EMPTY" },
+        { "name": "Null", "value": "NULL" },
         { "name": "Throw Error", "value": "ERROR" }
       ],
       "binding": {
@@ -153,7 +151,7 @@
       "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
       "group": "errors",
       "type": "Text",
-      "value": "=if error.code = \"NULL\" then\n  bpmnError(\"NULL\", \"One or more values are null.\")\nelse null",
+      "value": "=if error.code = \"MISSING_DATA\" then\n  bpmnError(\"MISSING_DATA\", \"One or more values are null.\")\nelse null",
       "feel": "required",
       "binding": {
         "type": "zeebe:taskHeader",

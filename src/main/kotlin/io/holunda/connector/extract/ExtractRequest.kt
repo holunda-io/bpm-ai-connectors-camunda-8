@@ -10,6 +10,7 @@ data class ExtractDataRequest(
     val inputJson: String,
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
     val extractionJson: String,
+    val mode: Mode,
     val missingDataBehavior: MissingDataBehavior,
     val model: Model,
 
@@ -17,6 +18,10 @@ data class ExtractDataRequest(
     var apiKey: String
 )
 
+enum class Mode {
+  SINGLE, REPEATED
+}
+
 enum class MissingDataBehavior {
-    NULL, EMPTY, ERROR
+    NULL, ERROR
 }

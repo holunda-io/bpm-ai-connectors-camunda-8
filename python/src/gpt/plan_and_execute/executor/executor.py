@@ -3,7 +3,11 @@ from typing import Dict, Callable, Any, Tuple
 
 from langchain import PromptTemplate, LLMChain
 from langchain.base_language import BaseLanguageModel
+from langchain.chains import SimpleSequentialChain, TransformChain, SequentialChain
+from langchain.chains.base import Chain
+from langchain.chains.openai_functions.utils import get_llm_kwargs
 from langchain.chat_models import ChatOpenAI
+from langchain.output_parsers.openai_functions import JsonOutputFunctionsParser
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain.schema import BaseMessage
 from langchain.tools import format_tool_to_openai_function, StructuredTool
@@ -12,8 +16,11 @@ from pydantic import Field, BaseModel
 from gpt.config import supports_openai_functions
 from gpt.openapi_agent.api_planner.prompt import API_PLANNER_SYSTEM_MESSAGE, API_PLANNER_USER_MESSAGE
 from gpt.openapi_agent.openapi import OpenAPISpec
+from gpt.output_parsers.function_output_parser import FunctionsOutputParser
+from gpt.output_parsers.json_output_parser import JsonOutputParser
 from gpt.plan_and_execute.executor.prompt import EXECUTOR_SYSTEM_MESSAGE, EXECUTOR_USER_MESSAGE, EXECUTOR_USER_MESSAGE_FUNCTIONS, \
     EXECUTOR_SYSTEM_MESSAGE_FUNCTIONS, EXECUTOR_FUNCTION_INPUT_DESCRIPTION, EXECUTOR_NOOP_FUNCTION_DESCRIPTION
+from gpt.util.functions import functions_chain
 
 
 class InputSchema(BaseModel):
@@ -34,25 +41,44 @@ def tool_dict_to_function(t: Tuple[str, str]):
     return format_tool_to_openai_function(tool)
 
 
+def transform_output(input_key: str, output_key: str) -> TransformChain:
+    def transform(inputs):
+        f = inputs[input_key]
+        return {output_key: {'action': f['name'], **f['arguments']}}
+
+    return TransformChain(
+        input_variables=[input_key],
+        output_variables=[output_key],
+        transform=transform
+    )
+
+
 def create_executor(
         tools: Dict[str, str],
         llm: BaseLanguageModel
-) -> Callable:
+) -> Chain:
     if supports_openai_functions(llm):
-        messages = ChatPromptTemplate.from_messages([
+        prompt = ChatPromptTemplate.from_messages([
             SystemMessagePromptTemplate.from_template(EXECUTOR_SYSTEM_MESSAGE_FUNCTIONS),
             HumanMessagePromptTemplate.from_template(EXECUTOR_USER_MESSAGE_FUNCTIONS)
         ])
         noop_function = tool_dict_to_function(("noop", EXECUTOR_NOOP_FUNCTION_DESCRIPTION))
         functions = [tool_dict_to_function(t) for t in tools.items()] + [noop_function]
-        return partial(predict, llm, messages, functions=functions)
+        return SequentialChain(
+            input_variables=["task", "context", "previous_steps", "current_step"],
+            output_variables=["output"],
+            chains=[
+                functions_chain(prompt, functions, llm),
+                transform_output(input_key="text", output_key="output")
+            ])
     else:
         return LLMChain(
             llm=llm,
             prompt=_create_prompt(tools),
             verbose=True,
-            output_key="step"
-        ).run
+            output_key="step",
+            output_parser=JsonOutputParser()
+        )
 
 
 def predict(llm: ChatOpenAI, prompt: ChatPromptTemplate, functions, **kwargs: Any):

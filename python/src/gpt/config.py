@@ -1,6 +1,5 @@
 from langchain.base_language import BaseLanguageModel
 from langchain.chat_models import ChatOpenAI
-from gpt.util.log_handler import ChatLogHandler
 
 
 OPENAI_3_5_WITH_FUNCTIONS = "gpt-3.5-turbo-0613"

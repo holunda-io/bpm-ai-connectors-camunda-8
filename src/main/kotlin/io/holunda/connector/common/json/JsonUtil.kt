@@ -1,6 +1,7 @@
 package io.holunda.connector.common.json
 
 import com.fasterxml.jackson.core.type.*
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.*
 
 private val mapper = jacksonObjectMapper()
@@ -9,6 +10,13 @@ private val writer = mapper.writerWithDefaultPrettyPrinter()
 fun String.toMap(): Map<String, Any?> {
     val typeRef = object : TypeReference<Map<String, Any?>>() {}
     return mapper.readValue(this, typeRef)
+}
+
+fun String.toJsonNode(): JsonNode = mapper.readTree(this)
+
+fun JsonNode.toMap(): Map<String, Any?> {
+  val typeRef = object : TypeReference<Map<String, Any?>>() {}
+  return mapper.convertValue(this, typeRef)
 }
 
 fun String.toStringMap(): Map<String, String> {

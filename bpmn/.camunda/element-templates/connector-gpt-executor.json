@@ -61,33 +61,17 @@
     },
     {
       "id": "model",
-      "label": "GPT Model",
+      "label": "LLM Model",
       "group": "general",
       "type": "Dropdown",
       "value": "GPT_3",
       "choices": [
-        { "name": "Standard precision, fast, cheap", "value": "GPT_3" },
-        { "name": "Highest precision, slow, expensive", "value": "GPT_4" },
-        { "name": "Custom model", "value": "CUSTOM" }
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
+        { "name": "OpenAI GPT-4", "value": "GPT_4" }
       ],
       "binding": {
         "type": "zeebe:input",
         "name": "model"
-      }
-    },
-    {
-      "label": "Server URL",
-      "description": "llama-cpp-python server url",
-      "group": "general",
-      "type": "String",
-      "feel": "optional",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "serverUrl"
-      },
-      "condition": {
-        "property": "model",
-        "equals": "CUSTOM"
       }
     },
     {

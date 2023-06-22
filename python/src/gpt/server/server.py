@@ -2,8 +2,10 @@ import json
 from typing import Dict, List, Any
 
 from dotenv import load_dotenv
+from torsimany.torsimany import parseJSON
 
 from gpt.config import model_id_to_llm
+from gpt.extract_chain.chain import create_extract_chain
 from gpt.output_parsers.json_output_parser import JsonOutputParser
 from gpt.plan_and_execute.executor.executor import create_executor
 
@@ -99,10 +101,28 @@ async def post(task: ExecutorTask):
         tools=task.tools,
         llm=model_id_to_llm(task.model)
     )
-    res = executor(
+    res = executor.run(
         context=task.context,
         task=task.task,
         previous_steps=task.previous_steps,
         current_step=task.current_step
     )
     return JsonOutputParser().parse(res)
+
+
+class ExtractTask(BaseModel):
+    model: str
+    extraction_schema: dict
+    context: str
+    repeated: bool
+
+
+@app.post("/extract")
+async def post(task: ExtractTask):
+    schema = task.extraction_schema
+    chain = create_extract_chain(
+        properties=schema,
+        repeated=task.repeated,
+        llm=model_id_to_llm(task.model)
+    )
+    return chain.run(task.context)
