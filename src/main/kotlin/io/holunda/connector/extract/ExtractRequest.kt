@@ -11,6 +11,7 @@ data class ExtractDataRequest(
     @field:JsonDeserialize(using = RawJsonDeserializer::class)
     val extractionJson: String,
     val mode: Mode,
+    val entitiesDescription: String?,
     val missingDataBehavior: MissingDataBehavior,
     val model: Model,
 

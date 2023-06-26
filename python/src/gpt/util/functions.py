@@ -27,7 +27,7 @@ def functions_chain(
     )
 
 
-def _create_schema(properties: Dict[str, Union[str, dict]]):
+def schema_from_properties(properties: Dict[str, Union[str, dict]]):
     def type_or_default(x):
         if isinstance(x, str):
             return {"type": "string", "description": x}
@@ -40,15 +40,19 @@ def _create_schema(properties: Dict[str, Union[str, dict]]):
     }
 
 
-def get_openai_function(name, desc, schema: dict, array_name = None) -> dict:
-    schema = _convert_schema(_create_schema(schema))
+def schema_object_from_properties(properties: Dict[str, Union[str, dict]]):
+    return _convert_schema(schema_from_properties(properties))
+
+
+def get_openai_function(name, desc, schema: dict, array_name=None, array_description="") -> dict:
+    schema = schema_object_from_properties(schema)
     if array_name is None:
         parameters = schema
     else:
         parameters = {
             "type": "object",
             "properties": {
-                array_name: {"type": "array", "items": schema}
+                array_name: {"type": "array", "description": array_description, "items": schema}
             },
             "required": [array_name],
         }

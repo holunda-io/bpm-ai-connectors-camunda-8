@@ -33,8 +33,6 @@ class OpenAIClient(apiKey: String) {
           temperature = 0.0
         )
 
-        if (model == Model.CUSTOM) throw NotImplementedError("Custom models are not yet supported")
-
         openAI.chatCompletion(chatCompletionRequest)
             .first()
             ?.let { completionMessage -> messages + completionMessage }

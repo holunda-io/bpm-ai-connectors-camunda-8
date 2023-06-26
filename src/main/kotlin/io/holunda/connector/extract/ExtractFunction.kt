@@ -16,7 +16,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-extract",
-  inputVariables = ["inputJson", "extractionJson", "missingDataBehavior", "mode", "model", "apiKey"],
+  inputVariables = ["inputJson", "extractionJson", "missingDataBehavior", "mode", "entitiesDescription", "model", "apiKey"],
   type = "gpt-extract"
 )
 class ExtractFunction : OutboundConnectorFunction {
@@ -38,7 +38,8 @@ class ExtractFunction : OutboundConnectorFunction {
           request.model.modelId.id,
           request.inputJson,
           Json.decodeFromString(request.extractionJson),
-          request.mode == Mode.REPEATED
+          request.mode == Mode.REPEATED,
+          request.entitiesDescription
         )
       )
     )
@@ -68,6 +69,7 @@ class ExtractFunction : OutboundConnectorFunction {
     val context: String,
     val extraction_schema: JsonObject,
     val repeated: Boolean,
+    val repeated_description: String?,
   )
 
   companion object {
