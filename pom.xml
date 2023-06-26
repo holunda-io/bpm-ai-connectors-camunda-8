@@ -24,7 +24,7 @@
     <!-- external libraries -->
     <spring-boot.version>2.7.11</spring-boot.version>
     <kotlin.version>1.8.21</kotlin.version>
-    <openai-client.version>3.2.5</openai-client.version>
+    <openai-client.version>3.3.1</openai-client.version>
     <ktor.version>2.3.1</ktor.version>
 
     <kotlinx-coroutines-core-jvm.version>1.6.4</kotlinx-coroutines-core-jvm.version>
