@@ -1,8 +1,13 @@
 import os
+
 from dotenv import load_dotenv
 from langchain.chat_models import ChatOpenAI
 
 load_dotenv(dotenv_path='../../../connector-secrets.txt')
+
+import langchain
+from langchain.cache import SQLiteCache
+langchain.llm_cache = SQLiteCache(database_path=".langchain.db")
 
 import uvicorn
 from gpt.server.server import app

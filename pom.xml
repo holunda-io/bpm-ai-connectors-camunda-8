@@ -24,7 +24,6 @@
     <!-- external libraries -->
     <spring-boot.version>2.7.11</spring-boot.version>
     <kotlin.version>1.8.21</kotlin.version>
-    <openai-client.version>3.2.5</openai-client.version>
     <ktor.version>2.3.1</ktor.version>
 
     <kotlinx-coroutines-core-jvm.version>1.6.4</kotlinx-coroutines-core-jvm.version>
@@ -64,12 +63,7 @@
       <artifactId>kotlin-logging-jvm</artifactId>
       <version>${kotlin-logging-jvm.version}</version>
     </dependency>
-
-    <dependency>
-      <groupId>com.aallam.openai</groupId>
-      <artifactId>openai-client-jvm</artifactId>
-      <version>${openai-client.version}</version>
-    </dependency>
+    
     <dependency>
       <groupId>io.ktor</groupId>
       <artifactId>ktor-client-core-jvm</artifactId>
@@ -82,7 +76,7 @@
     </dependency>
     <dependency>
       <groupId>io.ktor</groupId>
-      <artifactId>ktor-serialization-kotlinx-json-jvm</artifactId>
+      <artifactId>ktor-serialization-jackson-jvm</artifactId>
       <version>${ktor.version}</version>
     </dependency>
 

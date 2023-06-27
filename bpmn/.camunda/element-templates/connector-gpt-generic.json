@@ -63,7 +63,8 @@
       "value": "GPT_3",
       "choices": [
         { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
-        { "name": "OpenAI GPT-4", "value": "GPT_4" }
+        { "name": "OpenAI GPT-4", "value": "GPT_4" },
+        { "name": "Aleph Alpha Luminous Supreme", "value": "LUMINOUS_SUPREME" }
       ],
       "binding": {
         "type": "zeebe:input",

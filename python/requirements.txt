@@ -12,3 +12,4 @@ openai~=0.27.8
 mysqlclient~=2.1.1
 psycopg2-binary~=2.9.6
 pytest-manual-marker~=2.0.0.0
+cohere~=4.11.2

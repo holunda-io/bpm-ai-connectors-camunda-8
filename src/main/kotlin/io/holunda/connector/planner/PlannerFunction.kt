@@ -1,19 +1,15 @@
 package io.holunda.connector.planner
 
 import com.aallam.openai.api.*
+import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
-import io.holunda.connector.common.json.*
-import io.holunda.connector.common.openai.*
-import io.holunda.connector.common.prompt.*
+import io.holunda.connector.common.*
 import io.holunda.connector.openapi.*
 import io.holunda.connector.planner.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import mu.*
 import org.slf4j.*
 import java.util.*
-
 
 @OutboundConnector(
   name = "gpt-planner",
@@ -33,14 +29,13 @@ class PlannerFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: PlannerRequest): PlannerResult {
-    val result = LangchainClient().run("planner", Json.encodeToString(
-      PlannerTask(
+    val result = LangchainClient.run("planner", PlannerTask(
         request.model.modelId.id,
         request.taskDescription,
         request.inputJson,
         request.tools.toStringMap(),
       )
-    ))
+    )
 
     val plan = result.toStringList()
 
@@ -55,11 +50,10 @@ class PlannerFunction : OutboundConnectorFunction {
     )
   }
 
-  @Serializable
   data class PlannerTask(
     val model: String,
     val task: String,
-    val context: String,
+    val context: JsonNode,
     val tools: Map<String,String>
   )
 

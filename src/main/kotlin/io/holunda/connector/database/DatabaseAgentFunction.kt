@@ -1,14 +1,11 @@
 package io.holunda.connector.database
 
 import com.aallam.openai.api.*
+import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
-import io.holunda.connector.common.json.*
-import io.holunda.connector.common.openai.*
-import io.holunda.connector.common.prompt.*
+import io.holunda.connector.common.*
 import io.holunda.connector.openapi.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import mu.*
 import org.slf4j.*
 import java.util.*
@@ -32,31 +29,27 @@ class DatabaseAgentFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: DatabaseAgentRequest): DatabaseAgentResult {
-
-    val result = LangchainClient().run("database", Json.encodeToString(
+    val result = LangchainClient.run("database",
       DatabaseAgentTask(
         request.model.modelId.id,
         request.taskDescription,
         request.inputJson,
         request.databaseUrl,
         request.outputSchema
-      ))
+      )
     )
 
-    val json = result.toMap()
+    logger.info("DatabaseAgentFunction result: $result")
 
-    logger.info("DatabaseAgentFunction result: $json")
-
-    return DatabaseAgentResult(json)
+    return DatabaseAgentResult(result)
   }
 
-  @Serializable
   data class DatabaseAgentTask(
     val model: String,
     val task: String,
-    val context: String,
+    val context: JsonNode,
     val databaseUrl: String,
-    val outputSchema: String
+    val outputSchema: JsonNode
   )
 
   companion object : KLogging()

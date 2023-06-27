@@ -3,7 +3,6 @@ from typing import Union, List, Dict
 from langchain import LLMChain, BasePromptTemplate
 from langchain.base_language import BaseLanguageModel
 from langchain.chains.openai_functions.utils import get_llm_kwargs, _convert_schema
-from langchain.output_parsers.openai_functions import JsonOutputFunctionsParser
 from langchain.tools.convert_to_openai import FunctionDescription
 
 from gpt.output_parsers.function_output_parser import FunctionsOutputParser
@@ -27,7 +26,7 @@ def functions_chain(
     )
 
 
-def _create_schema(properties: Dict[str, Union[str, dict]]):
+def schema_from_properties(properties: Dict[str, Union[str, dict]]):
     def type_or_default(x):
         if isinstance(x, str):
             return {"type": "string", "description": x}
@@ -40,8 +39,12 @@ def _create_schema(properties: Dict[str, Union[str, dict]]):
     }
 
 
-def get_openai_function(name, desc, schema: dict, array_name = None) -> dict:
-    schema = _convert_schema(_create_schema(schema))
+def schema_object_from_properties(properties: Dict[str, Union[str, dict]]):
+    return _convert_schema(schema_from_properties(properties))
+
+
+def get_openai_function(name, desc, schema: dict, array_name=None, array_description="") -> dict:
+    schema = schema_object_from_properties(schema)
     if array_name is None:
         parameters = schema
     else:

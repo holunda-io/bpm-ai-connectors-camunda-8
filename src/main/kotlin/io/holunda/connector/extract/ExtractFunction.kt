@@ -1,22 +1,18 @@
 package io.holunda.connector.extract
 
-import com.aallam.openai.api.*
 import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.module.kotlin.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
-import io.holunda.connector.common.json.*
-import io.holunda.connector.common.openai.*
-import io.holunda.connector.common.prompt.*
+import io.holunda.connector.common.*
 import io.holunda.connector.database.*
-import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 import org.slf4j.*
 import java.util.*
 
 @OutboundConnector(
   name = "gpt-extract",
-  inputVariables = ["inputJson", "extractionJson", "missingDataBehavior", "mode", "model", "apiKey"],
+  inputVariables = ["inputJson", "extractionJson", "missingDataBehavior", "mode", "entitiesDescription", "model", "apiKey"],
   type = "gpt-extract"
 )
 class ExtractFunction : OutboundConnectorFunction {
@@ -32,18 +28,16 @@ class ExtractFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: ExtractDataRequest): ExtractResult {
-    val result = LangchainClient().run(
-      "extract", Json.encodeToString(
+    val result = LangchainClient.run(
+      "extract",
         ExtractTask(
           request.model.modelId.id,
           request.inputJson,
-          Json.decodeFromString(request.extractionJson),
-          request.mode == Mode.REPEATED
+          request.extractionJson,
+          request.mode == Mode.REPEATED,
+          request.entitiesDescription
         )
-      )
     )
-
-    val rootNode = result.toJsonNode()
 
     fun checkNode(node: JsonNode) {
       if (request.missingDataBehavior == MissingDataBehavior.ERROR && node.toMap().values.any { it == null }) {
@@ -52,22 +46,22 @@ class ExtractFunction : OutboundConnectorFunction {
     }
 
     when {
-      rootNode.isArray -> rootNode.forEach(::checkNode)
-      rootNode.isObject -> checkNode(rootNode)
+      result.isArray -> result.forEach(::checkNode)
+      result.isObject -> checkNode(result)
       else -> throw IllegalArgumentException("The result must be a JSON object or a JSON array")
     }
 
     LOG.info("ExtractDataFunction result: $result")
 
-    return ExtractResult(rootNode)
+    return ExtractResult(result)
   }
 
-  @Serializable
   data class ExtractTask(
     val model: String,
-    val context: String,
-    val extraction_schema: JsonObject,
+    val context: JsonNode,
+    val extraction_schema: JsonNode,
     val repeated: Boolean,
+    val repeated_description: String?,
   )
 
   companion object {
