@@ -9,6 +9,7 @@ DEFAULT_OPENAI_MODEL = OPENAI_3_5_WITH_FUNCTIONS
 
 LUMINOUS_SUPREME_CONTROL = "luminous-supreme-control"
 
+
 def get_openai_chat_llm(model_name: str = DEFAULT_OPENAI_MODEL) -> ChatOpenAI:
     return ChatOpenAI(
         model_name=model_name,
