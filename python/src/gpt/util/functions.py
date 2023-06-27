@@ -51,7 +51,7 @@ def get_openai_function(name, desc, schema: dict, array_name=None, array_descrip
         parameters = {
             "type": "object",
             "properties": {
-                array_name: {"type": "array", "description": array_description, "items": schema}
+                array_name: {"type": "array", "items": schema}
             },
             "required": [array_name],
         }
