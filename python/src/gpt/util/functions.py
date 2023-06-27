@@ -3,7 +3,6 @@ from typing import Union, List, Dict
 from langchain import LLMChain, BasePromptTemplate
 from langchain.base_language import BaseLanguageModel
 from langchain.chains.openai_functions.utils import get_llm_kwargs, _convert_schema
-from langchain.output_parsers.openai_functions import JsonOutputFunctionsParser
 from langchain.tools.convert_to_openai import FunctionDescription
 
 from gpt.output_parsers.function_output_parser import FunctionsOutputParser

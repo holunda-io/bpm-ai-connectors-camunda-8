@@ -3,9 +3,9 @@ from typing import List
 from langchain.base_language import BaseLanguageModel
 from langchain.chains.base import Chain
 
-from gpt.config import supports_openai_functions
 from gpt.chains.translate_chain.openai_functions.chain import create_openai_functions_translate_chain
 from gpt.chains.translate_chain.standard.chain import create_standard_translate_chain
+from gpt.config import supports_openai_functions
 
 
 def create_translate_chain(

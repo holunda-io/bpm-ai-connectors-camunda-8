@@ -1,3 +1,4 @@
+from langchain import Cohere
 from langchain.base_language import BaseLanguageModel
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import AlephAlpha
@@ -28,3 +29,13 @@ def model_id_to_llm(model_id: str) -> BaseLanguageModel:
             return get_openai_chat_llm(model_name=OPENAI_4_WITH_FUNCTIONS)
         case "luminous-supreme":
             return AlephAlpha(model=LUMINOUS_SUPREME_CONTROL)
+
+
+def llm_to_model_tag(llm: BaseLanguageModel) -> str:
+    match llm:
+        case ChatOpenAI():
+            return "openai-chat"
+        case AlephAlpha():
+            return "aleph-alpha"
+        case Cohere():
+            return "cohere"

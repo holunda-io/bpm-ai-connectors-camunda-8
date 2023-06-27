@@ -11,6 +11,7 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 from gpt.chains.extract_chain.common import transform_empty_chain
 from gpt.chains.extract_chain.openai_functions.prompt import SYSTEM_MESSAGE_TEMPLATE, TASK_EXTRACT_REPEATED, \
     TASK_EXTRACT_SINGLE
+from gpt.config import llm_to_model_tag
 from gpt.util.functions import get_openai_function
 from gpt.util.transform import transform_to_md_chain
 
@@ -57,6 +58,11 @@ def create_openai_functions_extract_chain(
     )
 
     return SequentialChain(
+        tags=[
+            "extract-chain",
+            "openai-functions-extract-chain",
+            llm_to_model_tag(llm)
+        ],
         input_variables=["input"],
         output_variables=["output"],
         chains=[

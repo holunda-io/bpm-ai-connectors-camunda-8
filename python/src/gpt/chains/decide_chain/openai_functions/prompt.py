@@ -5,6 +5,7 @@ Your job is to help users execute their business processes in a smart and effici
 
 You will receive a decision task description and context information to base your decision on.
 Make a decision based on the decision task description and context data and store it by calling the function.
+Respect the enum of possible values for the decision, if any is given.
 Provide a concise description of the reasoning behind your decision.
 If the context data does not contain sufficient information, your decision will be null."""
 
@@ -13,4 +14,6 @@ USER_MESSAGE_TEMPLATE = """\
 {{context_md}}
 
 # DECISION TASK DESCRIPTION
-{task}"""
+{task}
+
+Remember to respect the enum of possible decision values, if given!"""

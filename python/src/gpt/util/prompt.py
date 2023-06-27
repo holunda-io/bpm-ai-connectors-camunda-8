@@ -1,10 +1,8 @@
+from typing import List
+
 from langchain import PromptTemplate
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
-
-from typing import List, Union
-
-from langchain.prompts.chat import BaseMessagePromptTemplate, BaseStringMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.schema import BaseMessage
+from langchain.prompts.chat import BaseStringMessagePromptTemplate, HumanMessagePromptTemplate
 
 
 def filter_messages_by_type(messages: List[BaseStringMessagePromptTemplate], type) -> List[str]:

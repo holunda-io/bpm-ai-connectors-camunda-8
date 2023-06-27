@@ -1,18 +1,15 @@
 package io.holunda.connector.openapi
 
-import com.fasterxml.jackson.databind.annotation.*
+import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
-import io.holunda.connector.common.json.*
-import io.holunda.connector.common.openai.*
+import io.holunda.connector.common.*
 import io.holunda.connector.extract.*
 
 data class OpenApiAgentRequest(
-  @field:JsonDeserialize(using = RawJsonDeserializer::class)
-  val inputJson: String,
+  val inputJson: JsonNode,
   val taskDescription: String,
   val specUrl: String,
-  @field:JsonDeserialize(using = RawJsonDeserializer::class)
-  val outputSchema: String,
+  val outputSchema: JsonNode,
   val missingDataBehavior: MissingDataBehavior,
   val model: Model,
 

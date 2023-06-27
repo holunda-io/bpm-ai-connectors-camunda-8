@@ -1,20 +1,18 @@
 package io.holunda.connector.compose
 
-import com.fasterxml.jackson.databind.annotation.*
+import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
-import io.holunda.connector.common.json.*
-import io.holunda.connector.common.openai.*
+import io.holunda.connector.common.*
 
 data class ComposeRequest(
-    @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    val inputJson: String,
-    val description: String,
-    val style: String,
-    val tone: String,
-    val language: String,
-    val sender: String,
-    val model: Model,
+  val inputJson: JsonNode,
+  val description: String,
+  val style: String,
+  val tone: String,
+  val language: String,
+  val sender: String,
+  val model: Model,
 
-    @Secret
+  @Secret
     var apiKey: String
 )

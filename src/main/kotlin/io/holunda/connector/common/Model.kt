@@ -1,4 +1,4 @@
-package io.holunda.connector.common.openai
+package io.holunda.connector.common
 
 import com.aallam.openai.api.model.*
 

@@ -1,8 +1,9 @@
 """Module implements an agent that uses OpenAI's APIs function enabled API."""
 from typing import Any, List, Optional, Sequence, Tuple, Union
 
-from langchain.agents import BaseSingleActionAgent, AgentExecutor
-from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent, _format_intermediate_steps, _parse_ai_message
+from langchain.agents import BaseSingleActionAgent
+from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent, _format_intermediate_steps, \
+    _parse_ai_message
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackManager
 from langchain.callbacks.manager import Callbacks

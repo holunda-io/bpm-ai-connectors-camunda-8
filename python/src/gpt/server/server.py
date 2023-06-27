@@ -4,14 +4,15 @@ from typing import Dict, List, Any, Optional
 from dotenv import load_dotenv
 
 from gpt.agents.database_agent.agent import create_database_agent
+from gpt.agents.plan_and_execute.executor.executor import create_executor
 from gpt.agents.plan_and_execute.planner.planner import create_planner
+from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
+from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
 from gpt.chains.translate_chain.chain import create_translate_chain
 from gpt.config import model_id_to_llm
-from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.output_parsers.json_output_parser import JsonOutputParser
-from gpt.agents.plan_and_execute.executor.executor import create_executor
 
 load_dotenv(dotenv_path='../../../../connector-secrets.txt')
 from gpt.agents.openapi_agent.agent import create_openapi_agent
@@ -25,8 +26,8 @@ app = FastAPI()
 class OpenApiTask(BaseModel):
     model: str
     task: str
-    context: str
-    outputSchema: str
+    context: dict
+    outputSchema: dict
     specUrl: str
 
 
@@ -38,8 +39,8 @@ async def post(task: OpenApiTask):
     )
     res = agent.run(
         query=task.task,
-        context=task.context,
-        output_schema=task.outputSchema
+        context=json.dumps(task.context, indent=2),
+        output_schema=json.dumps(task.outputSchema, indent=2)
     )
     return json.loads(res)
 
@@ -47,8 +48,8 @@ async def post(task: OpenApiTask):
 class DatabaseTask(BaseModel):
     model: str
     task: str
-    context: str
-    outputSchema: str
+    context: dict
+    outputSchema: dict
     databaseUrl: str
 
 
@@ -60,8 +61,8 @@ async def post(task: DatabaseTask):
     )
     res = agent.run(
         input=task.task,
-        context=task.context,
-        output_schema=task.outputSchema
+        context=json.dumps(task.context, indent=2),
+        output_schema=json.dumps(task.outputSchema, indent=2)
     )
     return json.loads(res)
 
@@ -70,7 +71,7 @@ class PlannerTask(BaseModel):
     model: str
     task: str
     tools: Dict[str, str]
-    context: str
+    context: dict
 
 
 @app.post("/planner")
@@ -80,7 +81,7 @@ async def post(task: PlannerTask):
         llm=model_id_to_llm(task.model)
     )
     res = planner.plan({
-        "context": task.context,
+        "context": json.dumps(task.context, indent=2),
         "task": task.task
     })
     steps = [s.value for s in res.steps]
@@ -91,7 +92,7 @@ class ExecutorTask(BaseModel):
     model: str
     task: str
     tools: Dict[str, str]
-    context: str
+    context: dict
     previous_steps: Any
     current_step: str
 
@@ -103,7 +104,7 @@ async def post(task: ExecutorTask):
         llm=model_id_to_llm(task.model)
     )
     res = executor.run(
-        context=task.context,
+        context=json.dumps(task.context, indent=2),
         task=task.task,
         previous_steps=task.previous_steps,
         current_step=task.current_step
@@ -114,7 +115,7 @@ async def post(task: ExecutorTask):
 class ExtractTask(BaseModel):
     model: str
     extraction_schema: dict
-    context: str
+    context: dict
     repeated: bool
     repeated_description: Optional[str]
 
@@ -128,15 +129,15 @@ async def post(task: ExtractTask):
         repeated_description=task.repeated_description,
         llm=model_id_to_llm(task.model)
     )
-    return chain.run(task.context)
+    return chain.run(input=task.context)
 
 
 class DecideTask(BaseModel):
     model: str
-    context: str
+    context: dict
     instructions: str
     output_type: str
-    possible_values: List[str]
+    possible_values: Optional[List[Any]] = None
 
 
 @app.post("/decide")
@@ -147,7 +148,7 @@ async def post(task: DecideTask):
         possible_values=task.possible_values,
         llm=model_id_to_llm(task.model)
     )
-    return chain.run(task.context)
+    return chain.run(input=task.context)
 
 
 class TranslateTask(BaseModel):
@@ -168,7 +169,7 @@ async def post(task: TranslateTask):
 
 class GenericTask(BaseModel):
     model: str
-    context: str
+    context: dict
     instructions: str
     output_schema: dict
 
@@ -180,4 +181,27 @@ async def post(task: GenericTask):
         output_format=task.output_schema,
         llm=model_id_to_llm(task.model)
     )
-    return chain.run(task.context)
+    return chain.run(input=task.context)
+
+
+class ComposeTask(BaseModel):
+    model: str
+    context: dict
+    instructions: str
+    style: str
+    tone: str
+    language: str
+    sender: str
+
+
+@app.post("/compose")
+async def post(task: ComposeTask):
+    chain = create_compose_chain(
+        instructions=task.instructions,
+        style=task.style,
+        tone=task.tone,
+        language=task.language,
+        sender=task.sender,
+        llm=model_id_to_llm(task.model)
+    )
+    return chain.run(input=task.context)

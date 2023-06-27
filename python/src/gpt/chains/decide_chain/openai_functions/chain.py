@@ -10,6 +10,7 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 
 from gpt.chains.decide_chain.common import get_output_schema
 from gpt.chains.decide_chain.openai_functions.prompt import SYSTEM_MESSAGE_TEMPLATE, USER_MESSAGE_TEMPLATE
+from gpt.config import llm_to_model_tag
 from gpt.util.functions import get_openai_function
 from gpt.util.transform import transform_to_md_chain
 
@@ -45,6 +46,11 @@ def create_openai_functions_decide_chain(
     )
 
     return SequentialChain(
+        tags=[
+            "decide-chain",
+            "openai-functions-decide-chain",
+            llm_to_model_tag(llm)
+        ],
         input_variables=["input"],
         output_variables=["text"],
         chains=[

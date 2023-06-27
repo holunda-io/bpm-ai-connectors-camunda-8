@@ -9,10 +9,11 @@ from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, Sy
 from langchain.tools import format_tool_to_openai_function, StructuredTool
 from pydantic import Field, BaseModel
 
+from gpt.agents.plan_and_execute.executor.prompt import EXECUTOR_SYSTEM_MESSAGE, EXECUTOR_USER_MESSAGE, \
+    EXECUTOR_USER_MESSAGE_FUNCTIONS, \
+    EXECUTOR_SYSTEM_MESSAGE_FUNCTIONS, EXECUTOR_FUNCTION_INPUT_DESCRIPTION, EXECUTOR_NOOP_FUNCTION_DESCRIPTION
 from gpt.config import supports_openai_functions
 from gpt.output_parsers.json_output_parser import JsonOutputParser
-from gpt.agents.plan_and_execute.executor.prompt import EXECUTOR_SYSTEM_MESSAGE, EXECUTOR_USER_MESSAGE, EXECUTOR_USER_MESSAGE_FUNCTIONS, \
-    EXECUTOR_SYSTEM_MESSAGE_FUNCTIONS, EXECUTOR_FUNCTION_INPUT_DESCRIPTION, EXECUTOR_NOOP_FUNCTION_DESCRIPTION
 from gpt.util.functions import functions_chain
 
 

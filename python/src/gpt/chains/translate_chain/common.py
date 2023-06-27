@@ -1,5 +1,5 @@
 import json
-from typing import Optional, List, Dict
+from typing import List
 
 from langchain.chains import TransformChain
 

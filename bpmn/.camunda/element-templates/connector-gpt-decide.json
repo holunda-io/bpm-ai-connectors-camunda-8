@@ -132,7 +132,7 @@
       },
       "condition": {
         "property": "outputType",
-        "oneOf": ["NUMERIC", "STRING"]
+        "oneOf": ["INTEGER", "STRING"]
       }
     },
     {

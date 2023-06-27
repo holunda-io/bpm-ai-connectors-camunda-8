@@ -10,6 +10,7 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 
 from gpt.chains.translate_chain.common import get_output_schema, transform_to_pretty_json_chain
 from gpt.chains.translate_chain.openai_functions.prompt import SYSTEM_MESSAGE_TEMPLATE, USER_MESSAGE_TEMPLATE
+from gpt.config import llm_to_model_tag
 from gpt.util.functions import get_openai_function
 
 
@@ -43,6 +44,11 @@ def create_openai_functions_translate_chain(
     )
 
     return SequentialChain(
+        tags=[
+            "translate-chain",
+            "openai-functions-translate-chain",
+            llm_to_model_tag(llm)
+        ],
         input_variables=["input"],
         output_variables=["text"],
         chains=[

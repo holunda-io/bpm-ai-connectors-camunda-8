@@ -1,7 +1,6 @@
+import typing
 from dataclasses import dataclass
 from typing import List
-
-import typing
 
 import requests
 import yaml

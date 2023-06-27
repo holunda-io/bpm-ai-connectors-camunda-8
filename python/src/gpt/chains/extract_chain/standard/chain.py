@@ -9,6 +9,7 @@ from langchain.chains.base import Chain
 from gpt.chains.extract_chain.common import transform_empty_chain
 from gpt.chains.extract_chain.openai_functions.prompt import TASK_EXTRACT_REPEATED, TASK_EXTRACT_SINGLE
 from gpt.chains.extract_chain.standard.prompt import PROMPT_TEMPLATE
+from gpt.config import llm_to_model_tag
 from gpt.output_parsers.json_output_parser import JsonOutputParser
 from gpt.util.functions import schema_from_properties
 from gpt.util.transform import transform_to_md_chain
@@ -44,6 +45,11 @@ def create_standard_extract_chain(
     )
 
     return SequentialChain(
+        tags=[
+            "extract-chain",
+            "standard-extract-chain",
+            llm_to_model_tag(llm)
+        ],
         input_variables=["input"],
         output_variables=["output"],
         chains=[

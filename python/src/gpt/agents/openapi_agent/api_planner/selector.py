@@ -2,7 +2,8 @@ from langchain import PromptTemplate, LLMChain
 from langchain.base_language import BaseLanguageModel
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 
-from gpt.agents.openapi_agent.api_planner.prompt import API_PLANNER_SELECTOR_SYSTEM_MESSAGE, API_PLANNER_SELECTOR_USER_MESSAGE
+from gpt.agents.openapi_agent.api_planner.prompt import API_PLANNER_SELECTOR_SYSTEM_MESSAGE, \
+    API_PLANNER_SELECTOR_USER_MESSAGE
 from gpt.agents.openapi_agent.openapi import OpenAPISpec
 
 

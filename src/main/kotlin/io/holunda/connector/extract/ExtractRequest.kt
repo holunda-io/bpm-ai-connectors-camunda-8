@@ -1,21 +1,18 @@
 package io.holunda.connector.extract
 
-import com.fasterxml.jackson.databind.annotation.*
+import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
-import io.holunda.connector.common.json.*
-import io.holunda.connector.common.openai.*
+import io.holunda.connector.common.*
 
 data class ExtractDataRequest(
-    @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    val inputJson: String,
-    @field:JsonDeserialize(using = RawJsonDeserializer::class)
-    val extractionJson: String,
-    val mode: Mode,
-    val entitiesDescription: String?,
-    val missingDataBehavior: MissingDataBehavior,
-    val model: Model,
+  val inputJson: JsonNode,
+  val extractionJson: JsonNode,
+  val mode: Mode,
+  val entitiesDescription: String?,
+  val missingDataBehavior: MissingDataBehavior,
+  val model: Model,
 
-    @Secret
+  @Secret
     var apiKey: String
 )
 

@@ -6,9 +6,10 @@ from langchain.base_language import BaseLanguageModel
 from langchain.chains import SequentialChain
 from langchain.chains.base import Chain
 
-from gpt.output_parsers.json_output_parser import JsonOutputParser
 from gpt.chains.translate_chain.common import get_output_schema, transform_to_pretty_json_chain
 from gpt.chains.translate_chain.standard.prompt import PROMPT_TEMPLATE
+from gpt.config import llm_to_model_tag
+from gpt.output_parsers.json_output_parser import JsonOutputParser
 
 
 def create_standard_translate_chain(
@@ -32,6 +33,11 @@ def create_standard_translate_chain(
     )
 
     return SequentialChain(
+        tags=[
+            "translate-chain",
+            "standard-translate-chain",
+            llm_to_model_tag(llm)
+        ],
         input_variables=["input"],
         output_variables=["text"],
         chains=[

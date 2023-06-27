@@ -18,7 +18,7 @@ USER_MESSAGE_TEMPLATE = """\
 # CONTEXT
 {{context_md}}
 
-# INSTRUCTIONS
+# TEXT INSTRUCTIONS
 {instructions}
 
 Remember to use the text properties specified above and write in {lang}!"""

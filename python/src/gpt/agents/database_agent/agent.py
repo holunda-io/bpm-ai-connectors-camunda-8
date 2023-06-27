@@ -2,18 +2,9 @@
 Agent that interacts with databases via a multistep planning approach.
 """
 
-from langchain import SQLDatabase
-from langchain.agents import  AgentType
-from langchain.agents.agent_toolkits import SQLDatabaseToolkit
-from langchain.base_language import BaseLanguageModel
-from langchain.chains import SequentialChain, TransformChain
-from langchain.chains.base import Chain
-
-from gpt.common.functions_agent.base import FunctionsAgent
-from gpt.config import supports_openai_functions
-from gpt.util.data_extract import create_data_extract_chain
 from typing import Any, Dict, List, Optional
 
+from langchain import SQLDatabase
 from langchain.agents.agent import AgentExecutor, BaseSingleActionAgent
 from langchain.agents.agent_toolkits.sql.prompt import (
     SQL_FUNCTIONS_SUFFIX,
@@ -23,9 +14,10 @@ from langchain.agents.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
 from langchain.agents.mrkl.base import ZeroShotAgent
 from langchain.agents.mrkl.prompt import FORMAT_INSTRUCTIONS
-from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackManager
+from langchain.chains import SequentialChain, TransformChain
+from langchain.chains.base import Chain
 from langchain.chains.llm import LLMChain
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -33,6 +25,10 @@ from langchain.prompts.chat import (
     MessagesPlaceholder,
 )
 from langchain.schema import AIMessage, SystemMessage
+
+from gpt.common.functions_agent.base import FunctionsAgent
+from gpt.config import supports_openai_functions
+from gpt.util.data_extract import create_data_extract_chain
 
 
 def create_sql_agent(
