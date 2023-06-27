@@ -170,7 +170,7 @@ def test_translate_standard():
     print(chain.run(json.dumps(input)))
 
 
-#@pytest.mark.skip(reason="only on demand, uses real LLM")
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_generic_standard():
     input = {
         "name": "OpenAI",
@@ -193,7 +193,7 @@ def test_generic_standard():
     print(chain.run(json.dumps(input)))
 
 
-#@pytest.mark.skip(reason="only on demand, uses real LLM")
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_compose():
     input = {
         "firstname": "Jim",

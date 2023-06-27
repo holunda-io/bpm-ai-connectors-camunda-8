@@ -6,7 +6,7 @@ from langchain.base_language import BaseLanguageModel
 from langchain.chains import SequentialChain
 from langchain.chains.base import Chain
 
-from gpt.chains.decide_chain.common import get_output_schema
+from gpt.chains.decide_chain.common import get_decision_output_schema
 from gpt.chains.decide_chain.standard.prompt import PROMPT_TEMPLATE
 from gpt.config import llm_to_model_tag
 from gpt.output_parsers.json_output_parser import JsonOutputParser
@@ -20,7 +20,7 @@ def create_standard_decide_chain(
     output_type: str,
     possible_values: Optional[List] = None,
 ) -> Chain:
-    schema = schema_from_properties(get_output_schema(output_type, possible_values))["properties"]
+    schema = schema_from_properties(get_decision_output_schema(output_type, possible_values))["properties"]
     schema = json.dumps(schema, indent=2).replace('{', '{{').replace('}', '}}')
 
     output_parser = JsonOutputParser()
