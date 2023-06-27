@@ -31,7 +31,7 @@ class ExecutorFunction : OutboundConnectorFunction {
     val currentPlanStep = request.task.plan.getOrElse(request.task.results.size) { _ -> "" }
 
     val req = ExecutorTask(
-        request.model.modelId.id,
+        request.model.modelId,
         request.task.task,
         request.inputJson,
         request.task.tools,

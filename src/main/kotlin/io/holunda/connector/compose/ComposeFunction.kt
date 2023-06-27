@@ -1,6 +1,5 @@
 package io.holunda.connector.compose
 
-import com.aallam.openai.api.*
 import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
@@ -29,7 +28,7 @@ class ComposeFunction : OutboundConnectorFunction {
   private fun executeConnector(request: ComposeRequest): ComposeResult {
     val result = LangchainClient.run("compose",
       ComposeTask(
-        request.model.modelId.id,
+        request.model.modelId,
         request.inputJson,
         request.description,
         request.style,

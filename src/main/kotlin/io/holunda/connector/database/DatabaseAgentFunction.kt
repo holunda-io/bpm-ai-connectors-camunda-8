@@ -1,6 +1,5 @@
 package io.holunda.connector.database
 
-import com.aallam.openai.api.*
 import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
@@ -31,7 +30,7 @@ class DatabaseAgentFunction : OutboundConnectorFunction {
   private fun executeConnector(request: DatabaseAgentRequest): DatabaseAgentResult {
     val result = LangchainClient.run("database",
       DatabaseAgentTask(
-        request.model.modelId.id,
+        request.model.modelId,
         request.taskDescription,
         request.inputJson,
         request.databaseUrl,

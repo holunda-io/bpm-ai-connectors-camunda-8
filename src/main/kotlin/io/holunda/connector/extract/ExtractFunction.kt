@@ -31,7 +31,7 @@ class ExtractFunction : OutboundConnectorFunction {
     val result = LangchainClient.run(
       "extract",
         ExtractTask(
-          request.model.modelId.id,
+          request.model.modelId,
           request.inputJson,
           request.extractionJson,
           request.mode == Mode.REPEATED,

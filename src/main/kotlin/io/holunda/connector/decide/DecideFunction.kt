@@ -30,7 +30,7 @@ class DecideFunction : OutboundConnectorFunction {
   private fun executeConnector(request: DecideRequest): DecideResult {
     val result = LangchainClient.run("decide",
       DecideTask(
-        request.model.modelId.id,
+        request.model.modelId,
         request.inputJson,
         request.instructions,
         request.outputType.name.lowercase(),

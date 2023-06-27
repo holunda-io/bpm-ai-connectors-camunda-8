@@ -1,6 +1,5 @@
 package io.holunda.connector.planner
 
-import com.aallam.openai.api.*
 import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
@@ -30,7 +29,7 @@ class PlannerFunction : OutboundConnectorFunction {
 
   private fun executeConnector(request: PlannerRequest): PlannerResult {
     val result = LangchainClient.run("planner", PlannerTask(
-        request.model.modelId.id,
+        request.model.modelId,
         request.taskDescription,
         request.inputJson,
         request.tools.toStringMap(),

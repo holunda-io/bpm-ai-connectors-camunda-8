@@ -29,7 +29,7 @@ class GenericFunction : OutboundConnectorFunction {
   private fun executeConnector(request: GenericRequest): GenericResult {
     val result = LangchainClient.run("generic",
       GenericTask(
-        request.model.modelId.id,
+        request.model.modelId,
         request.inputJson,
         request.taskDescription,
         request.outputFormat

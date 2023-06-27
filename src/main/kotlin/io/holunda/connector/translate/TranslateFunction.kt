@@ -30,7 +30,7 @@ class TranslateFunction : OutboundConnectorFunction {
   private fun executeConnector(request: TranslateRequest): TranslateResult {
     val result = LangchainClient.run("translate",
         TranslateTask(
-          request.model.modelId.id,
+          request.model.modelId,
           request.inputJson,
           request.language
         )
