@@ -7,7 +7,7 @@ from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, H
 
 from gpt.chains.compose_chain.prompt import SYSTEM_MESSAGE_TEMPLATE, USER_MESSAGE_TEMPLATE
 from gpt.config import llm_to_model_tag
-from gpt.util.prompt import chat_to_stanford_prompt
+from gpt.util.prompt import chat_to_standard_prompt
 from gpt.util.transform import transform_to_md_chain
 
 
@@ -36,7 +36,7 @@ def create_compose_chain(
         )
     ])
     if not isinstance(llm, BaseChatModel):
-        prompt = chat_to_stanford_prompt(prompt)
+        prompt = chat_to_standard_prompt(prompt)
 
     llm_chain = LLMChain(
         llm=llm,
