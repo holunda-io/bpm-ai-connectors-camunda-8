@@ -169,11 +169,12 @@
           <zeebe:input source="formal" target="style" />
           <zeebe:input source="friendly" target="tone" />
           <zeebe:input source="=customerInfo.language" target="language" />
+          <zeebe:input source="adequate" target="length" />
           <zeebe:input source="Ask the customer for his or her order number, as we need it to answer any questions about his or her order." target="description" />
           <zeebe:input source="My company" target="sender" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultExpression" value="={text: result}" />
+          <zeebe:header key="resultExpression" value="={text: result.text}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0g9pdk3</bpmn:incoming>
@@ -191,11 +192,12 @@
           <zeebe:input source="formal" target="style" />
           <zeebe:input source="friendly" target="tone" />
           <zeebe:input source="=customerInfo.language" target="language" />
+          <zeebe:input source="adequate" target="length" />
           <zeebe:input source="Answer the question of the customer based on the answer given by customer service." target="description" />
           <zeebe:input source="My company" target="sender" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultExpression" value="={text: result}" />
+          <zeebe:header key="resultExpression" value="={text: result.text}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_011n3y8</bpmn:incoming>
@@ -257,11 +259,12 @@
           <zeebe:input source="formal" target="style" />
           <zeebe:input source="overly friendly" target="tone" />
           <zeebe:input source="English" target="language" />
+          <zeebe:input source="brief" target="length" />
           <zeebe:input source="Politely excuse yourself for any inconvenience that may have been caused and assure that the complaint is being forwarded." target="description" />
           <zeebe:input source="My company" target="sender" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultExpression" value="={text: result}" />
+          <zeebe:header key="resultExpression" value="={text: result.text}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1a5wjil</bpmn:incoming>

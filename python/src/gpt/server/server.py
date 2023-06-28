@@ -190,8 +190,10 @@ class ComposeTask(BaseModel):
     instructions: str
     style: str
     tone: str
+    length: str
     language: str
     sender: str
+    constitutional_principle: Optional[str] = None
 
 
 @app.post("/compose")
@@ -200,8 +202,13 @@ async def post(task: ComposeTask):
         instructions=task.instructions,
         style=task.style,
         tone=task.tone,
+        length=task.length,
         language=task.language,
         sender=task.sender,
+        constitutional_principle=task.constitutional_principle,
         llm=model_id_to_llm(task.model)
     )
-    return chain.run(input=task.context)
+    return chain(
+        inputs={"input": task.context},
+        return_only_outputs=True
+    )

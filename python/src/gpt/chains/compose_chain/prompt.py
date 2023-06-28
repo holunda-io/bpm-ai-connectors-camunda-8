@@ -12,6 +12,7 @@ When you close the text, use a placeholder [SENDER] instead of an actual sender 
 TEXT PROPERTIES:
 - style: {style}
 - tone: {tone}
+- length: {length}
 - language: {lang}"""
 
 USER_MESSAGE_TEMPLATE = """\

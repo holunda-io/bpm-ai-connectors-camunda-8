@@ -132,6 +132,22 @@
       }
     },
     {
+      "label": "Length",
+      "group": "write",
+      "type": "Dropdown",
+      "value": "adequate",
+      "choices": [
+        { "name": "Very Brief", "value": "very brief" },
+        { "name": "Brief", "value": "brief" },
+        { "name": "Adequate", "value": "adequate" },
+        { "name": "Lengthy", "value": "lengthy" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "length"
+      }
+    },
+    {
       "label": "Text Description",
       "description": "Description of the text to compose.",
       "group": "write",
@@ -158,6 +174,47 @@
       },
       "constraints": {
         "notEmpty": true
+      }
+    },
+    {
+      "id": "alignment",
+      "label": "Alignment Principle",
+      "description": "Checks and if necessary rewrites the generated text following the selected principle.",
+      "group": "write",
+      "type": "Dropdown",
+      "value": "none",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "Sensitive", "value": "insensitive" },
+        { "name": "Unoffensive", "value": "offensive" },
+        { "name": "Non Harmful or Illegal", "value": "harmful1" },
+        { "name": "Uncontroversial", "value": "controversial" },
+        { "name": "Thoughtful", "value": "thoughtful" },
+        { "name": "Young Age Appropriate", "value": "age-innappropriate" },
+        { "name": "Custom", "value": "custom" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "constitutionalPrinciple"
+      },
+      "condition": {
+        "property": "model",
+        "oneOf": ["GPT_3", "GPT_4"]
+      }
+    },
+    {
+      "label": "Custom Principle",
+      "group": "write",
+      "type": "Text",
+      "feel": "optional",
+      "value": "The text must not contain any offensive or rude language. It should always be polite and professional.",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "customPrinciple"
+      },
+      "condition": {
+        "property": "alignment",
+        "equals": "custom"
       }
     },
     {

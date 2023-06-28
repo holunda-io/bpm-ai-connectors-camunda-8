@@ -9,8 +9,11 @@ data class ComposeRequest(
   val description: String,
   val style: String,
   val tone: String,
+  val length: String,
   val language: String,
   val sender: String,
+  val constitutionalPrinciple: String?,
+  val customPrinciple: String?,
   val model: Model,
 
   @Secret

@@ -10,7 +10,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-compose",
-  inputVariables = ["inputJson", "description", "style", "tone", "language", "sender", "model", "apiKey"],
+  inputVariables = ["inputJson", "description", "style", "tone", "length", "language", "sender", "customPrinciple", "constitutionalPrinciple", "model", "apiKey"],
   type = "gpt-compose"
 )
 class ComposeFunction : OutboundConnectorFunction {
@@ -26,6 +26,12 @@ class ComposeFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: ComposeRequest): ComposeResult {
+    val constitutionalPrinciple = when (request.constitutionalPrinciple) {
+      null, "none" -> null
+      "custom" -> request.customPrinciple
+      else -> request.constitutionalPrinciple
+    }
+
     val result = LangchainClient.run("compose",
       ComposeTask(
         request.model.modelId,
@@ -33,8 +39,10 @@ class ComposeFunction : OutboundConnectorFunction {
         request.description,
         request.style,
         request.tone,
+        request.length,
         request.language,
-        request.sender
+        request.sender,
+        constitutionalPrinciple
       )
     )
 
@@ -49,8 +57,10 @@ class ComposeFunction : OutboundConnectorFunction {
     val instructions: String,
     val style: String,
     val tone: String,
+    val length: String,
     val language: String,
     val sender: String,
+    val constitutional_principle: String?,
   )
 
   companion object {
