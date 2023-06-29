@@ -7,7 +7,7 @@
   <url>https://github.com/holunda-io/camunda-8-connector-gpt/</url>
   <groupId>io.holunda.connector</groupId>
   <artifactId>camunda-8-connector-gpt</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <version>0.1.1-SNAPSHOT</version>
 
   <properties>
@@ -17,18 +17,15 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <!-- connector SDK version -->
-    <connector-core.version>0.9.0</connector-core.version>
-    <spring-zeebe.version>8.2.0</spring-zeebe.version>
-
-    <!-- external libraries -->
-    <spring-boot.version>2.7.11</spring-boot.version>
-    <kotlin.version>1.8.21</kotlin.version>
-    <ktor.version>2.3.1</ktor.version>
-
-    <kotlinx-coroutines-core-jvm.version>1.6.4</kotlinx-coroutines-core-jvm.version>
-    <kotlin-logging-jvm.version>3.0.5</kotlin-logging-jvm.version>
+    <!-- eco system -->
+    <spring-boot.version>3.1.1</spring-boot.version>
+    <kotlin.version>1.8.22</kotlin.version>
   </properties>
+
+  <modules>
+    <module>core</module>
+    <module>runtime</module>
+  </modules>
 
   <dependencyManagement>
     <dependencies>
@@ -49,122 +46,16 @@
     </dependencies>
   </dependencyManagement>
 
+  <!-- Everything is kotlin here -->
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jetbrains.kotlinx</groupId>
-      <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-    </dependency>
-    <dependency>
       <groupId>io.github.microutils</groupId>
       <artifactId>kotlin-logging-jvm</artifactId>
-      <version>${kotlin-logging-jvm.version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-core-jvm</artifactId>
-      <version>${ktor.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-apache-jvm</artifactId>
-      <version>${ktor.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-serialization-jackson-jvm</artifactId>
-      <version>${ktor.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>io.ktor</groupId>
-      <artifactId>ktor-client-content-negotiation-jvm</artifactId>
-      <version>${ktor.version}</version>
-    </dependency>
-
-
-    <dependency>
-      <groupId>io.camunda.connector</groupId>
-      <artifactId>connector-core</artifactId>
-      <version>${connector-core.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.camunda.connector</groupId>
-      <artifactId>connector-validation</artifactId>
-      <version>${connector-core.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jdk8</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-parameter-names</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-kotlin</artifactId>
-    </dependency>
-
-    <!-- test dependencies -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-test</artifactId>
-      <version>${kotlin.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- for testing connectors locally in bundle with runtime -->
-    <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-zeebe-connector-runtime</artifactId>
-      <version>${spring-zeebe.version}</version>
-      <scope>test</scope>
+      <version>3.0.5</version>
     </dependency>
 
   </dependencies>
@@ -292,7 +183,7 @@
           <artifactId>maven-shade-plugin</artifactId>
           <version>3.4.1</version>
           <configuration>
-            <outputFile>${project.build.directory}/${project.artifactId}-with-dependencies.jar</outputFile>
+            <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-with-dependencies.jar</outputFile>
             <shadedArtifactAttached>true</shadedArtifactAttached>
             <shadedClassifierName>with-dependencies</shadedClassifierName>
             <!-- no need for this since we are not consuming this artifact downstream -->
@@ -349,7 +240,9 @@
           <configuration>
             <jvmTarget>11</jvmTarget>
             <compilerPlugins>
+              <!--
               <plugin>kotlinx-serialization</plugin>
+              -->
             </compilerPlugins>
           </configuration>
           <dependencies>
@@ -478,6 +371,20 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot.version}</version>
+          <executions>
+            <execution>
+              <configuration>
+              </configuration>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
 
       </plugins>
     </pluginManagement>
@@ -490,10 +397,6 @@
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

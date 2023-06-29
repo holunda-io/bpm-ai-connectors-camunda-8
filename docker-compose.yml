@@ -1,3 +1,4 @@
+version: "3.9"
 # While the Docker images themselves are supported for production usage,
 # this docker-compose.yaml is designed to be used by developers to run
 # an environment locally. It is not designed to be used in production.
@@ -96,12 +97,18 @@ services:
   connector:
     profiles:
       - connector
-    image: camunda/connectors:0.8.1
+    image: camunda/connectors:0.10.0
     networks:
       - camunda-platform
     env_file: ./connector-secrets.txt
+    environment:
+      ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS: zeebe:26500
+      CAMUNDA_OPERATE_CLIENT_URL: http://operate:8080
+      CAMUNDA_OPERATE_CLIENT_USERNAME: demo
+      CAMUNDA_OPERATE_CLIENT_PASSWORD: demo
+      ZEEBE_CLIENT_SECURITY_PLAINTEXT: true
     volumes:
-      - ./target/camunda-8-connector-gpt-with-dependencies.jar:/opt/app/connector.jar
+      - ./core/target/camunda-8-connector-gpt-core-0.1.1-SNAPSHOT-with-dependencies.jar:/opt/app/connector.jar
 
   langchain:
     build:
