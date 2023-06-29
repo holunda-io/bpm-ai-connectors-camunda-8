@@ -21,10 +21,10 @@ jobs:
         run: echo ${{ secrets.GPG_SECRET_KEYS }} | base64 --decode | gpg --import --no-tty --batch --yes
 
       # Setup JDK and Maven
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: 11.0.5
+          java-version: 17
           distribution: 'zulu'
           cache: maven
           server-id: ossrh
@@ -35,10 +35,10 @@ jobs:
         run: chmod +x ./mvnw
 
       - name: Build with Maven
-        run: ./mvnw clean verify -U -B -T4
+        run: ./mvnw clean verify -U -B -ntp -T4
 
       - name: Deploy a new version to central
-        run: ./mvnw deploy -B -DskipTests -Prelease -Dgpg.keyname="${{secrets.GPG_KEYNAME}}" -Dgpg.passphrase="${{secrets.GPG_PASSPHRASE}}"
+        run: ./mvnw deploy -B -ntp -DskipTests -Prelease -Dgpg.keyname="${{secrets.GPG_KEYNAME}}" -Dgpg.passphrase="${{secrets.GPG_PASSPHRASE}}"
         env:
           OSS_CENTRAL_USERNAME: "${{ secrets.SONATYPE_USERNAME }}"
           OSS_CENTRAL_PASSWORD: "${{ secrets.SONATYPE_PASSWORD }}"
