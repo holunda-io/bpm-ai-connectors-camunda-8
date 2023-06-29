@@ -22,6 +22,12 @@
       <groupId>io.holunda.connector</groupId>
       <artifactId>camunda-8-connector-gpt-core</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

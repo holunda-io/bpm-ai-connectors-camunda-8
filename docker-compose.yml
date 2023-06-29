@@ -97,12 +97,12 @@ services:
   connector:
     profiles:
       - connector
-    image: camunda/connectors:0.8.1
+    image: camunda/connectors:0.10.0
     networks:
       - camunda-platform
     env_file: ./connector-secrets.txt
     volumes:
-      - ./core/target/camunda-8-connector-gpt-with-dependencies.jar:/opt/app/connector.jar
+      - ./core/target/camunda-8-connector-gpt-core-0.1.1-SNAPSHOT-with-dependencies.jar:/opt/app/connector.jar
 
   langchain:
     build:

@@ -240,7 +240,9 @@
           <configuration>
             <jvmTarget>11</jvmTarget>
             <compilerPlugins>
+              <!--
               <plugin>kotlinx-serialization</plugin>
+              -->
             </compilerPlugins>
           </configuration>
           <dependencies>
