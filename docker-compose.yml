@@ -101,6 +101,12 @@ services:
     networks:
       - camunda-platform
     env_file: ./connector-secrets.txt
+    environment:
+      ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS: zeebe:26500
+      CAMUNDA_OPERATE_CLIENT_URL: http://operate:8080
+      CAMUNDA_OPERATE_CLIENT_USERNAME: demo
+      CAMUNDA_OPERATE_CLIENT_PASSWORD: demo
+      ZEEBE_CLIENT_SECURITY_PLAINTEXT: true
     volumes:
       - ./core/target/camunda-8-connector-gpt-core-0.1.1-SNAPSHOT-with-dependencies.jar:/opt/app/connector.jar
 

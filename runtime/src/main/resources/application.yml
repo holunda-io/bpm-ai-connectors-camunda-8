@@ -2,7 +2,20 @@
 server:
   port: 9898
 
+# comment out to enable inbound connectors
 camunda:
-  operate:
-    client:
+  connector:
+    polling:
       enabled: false
+
+# uncomment to enable inbound connectors
+#operate:
+#  client:
+#    enabled: true
+#
+#camunda:
+#  operate:
+#    client:
+#      url: http://localhost:8081
+#      username: demo
+#      password: demo
