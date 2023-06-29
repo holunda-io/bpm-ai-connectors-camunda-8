@@ -1,3 +1,7 @@
 # Configuration for running connectors locally in bundle with connector-runtime
-server.port=9898
+server:
+  port: 9898
 
+operate:
+  client:
+    enabled: false

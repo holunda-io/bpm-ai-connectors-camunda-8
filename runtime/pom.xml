@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>io.holunda.connector</groupId>
+    <artifactId>camunda-8-connector-gpt</artifactId>
+    <version>0.1.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camunda-8-connector-gpt-runtime</artifactId>
+  <packaging>jar</packaging>
+
+  <properties>
+    <spring-boot-starter-camunda-connectors.version>0.20.2</spring-boot-starter-camunda-connectors.version>
+    <camunda-operate-client-java.version>8.1.8.1</camunda-operate-client-java.version>
+  </properties>
+
+  <dependencies>
+    <!-- Include the connector core -->
+    <dependency>
+      <groupId>io.holunda.connector</groupId>
+      <artifactId>camunda-8-connector-gpt-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda.connector</groupId>
+      <artifactId>spring-boot-starter-camunda-connectors</artifactId>
+      <version>${spring-boot-starter-camunda-connectors.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

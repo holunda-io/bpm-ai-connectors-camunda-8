@@ -201,9 +201,9 @@ ZEEBE_CLIENT_CLOUD_REGION=bru-2
 ### Test with local runtime
 
 The [Camunda Connector Runtime](https://github.com/camunda-community-hub/spring-zeebe/tree/master/connector-runtime#building-connector-runtime-bundles) 
-is included on the test scope to run your function as a local Java application.
+is included in `camunda-7-connector-gpt-runtime` artifact on run your function as a local Java application.
 
-In your IDE you can also simply navigate to the `LocalContainerRuntime` class in test scope and run it via your IDE.
+In your IDE you can also simply navigate to the `LocalContainerRuntime` class in run it via your IDE.
 Please include the values from the configuration block as environment variables of your runtime either by copying the
 values manually or using the [EnvFile Plugin for IntelliJ](https://plugins.jetbrains.com/plugin/7861-envfile).
 

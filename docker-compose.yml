@@ -1,3 +1,4 @@
+version: "3.9"
 # While the Docker images themselves are supported for production usage,
 # this docker-compose.yaml is designed to be used by developers to run
 # an environment locally. It is not designed to be used in production.
@@ -101,7 +102,7 @@ services:
       - camunda-platform
     env_file: ./connector-secrets.txt
     volumes:
-      - ./target/camunda-8-connector-gpt-with-dependencies.jar:/opt/app/connector.jar
+      - ./core/target/camunda-8-connector-gpt-with-dependencies.jar:/opt/app/connector.jar
 
   langchain:
     build:
