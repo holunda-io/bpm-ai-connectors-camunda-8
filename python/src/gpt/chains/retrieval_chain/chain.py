@@ -9,6 +9,7 @@ from langchain.vectorstores import Weaviate, VectorStore
 from langchain.vectorstores.weaviate import _create_weaviate_client
 from langchain.retrievers.multi_query import MultiQueryRetriever
 
+from gpt.chains.retrieval_chain.flare_instruct.base import FLAREInstructChain
 from gpt.chains.retrieval_chain.prompt import MULTI_QUERY_PROMPT
 from gpt.chains.retrieval_chain.sub_query_retriever.chain import SubQueryRetriever
 
@@ -41,7 +42,8 @@ def create_retrieval_chain(
     llm: BaseLanguageModel,
     database_url: str,
     embedding_provider: str,
-    embedding_model: str
+    embedding_model: str,
+    mode: str = 'standard'
 ) -> Chain:
 
     embeddings = get_embeddings(embedding_provider, embedding_model)
@@ -60,8 +62,20 @@ def create_retrieval_chain(
         llm=llm
     )
 
-    return RetrievalQA.from_chain_type(
+    # answer synthesizer
+    retrieval_qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
         retriever=sub_query_retriever,
     )
+
+    if mode == 'standard':
+        return retrieval_qa
+    elif mode == 'flare_instruct':
+        return FLAREInstructChain.from_llm(
+            llm=llm,
+            retrieval_qa=retrieval_qa,
+            retriever=multi_retriever
+        )
+    else:
+        raise Exception(f"Unknown retrieval mode {mode}")

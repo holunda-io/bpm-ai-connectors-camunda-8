@@ -10,6 +10,7 @@ data class RetrievalRequest(
   val databaseUrl: String,
   val embeddingProvider: String,
   val embeddingModel: String,
+  val mode: String,
   val model: Model,
 
   @Secret

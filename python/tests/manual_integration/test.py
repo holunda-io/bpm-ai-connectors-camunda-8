@@ -14,7 +14,8 @@ from gpt.agents.database_agent.agent import create_database_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
-from gpt.chains.retrieval_chain.chain import create_retrieval_chain
+from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
+from gpt.chains.retrieval_chain.flare_instruct.base import FLAREInstructChain
 from gpt.chains.retrieval_chain.sub_query_retriever.chain import create_sub_query_chain
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
@@ -320,3 +321,20 @@ def test_sub_query():
     #print(chain.run('What happens when I throw a ball while on a moving truck?'))
     #print(chain.run('What is the cancel policy? Specifically for the pro plan?'))
 
+
+def test_flare_instruct():
+    llm = get_openai_chat_llm(model_name='gpt-4')
+
+    retriever = get_vector_store(
+        'weaviate://http://localhost:8080/Test_index',
+        OpenAIEmbeddings()
+    ).as_retriever()
+
+    retrieval_qa = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever,
+    )
+
+    chain = FLAREInstructChain.from_llm(llm=llm, retriever=retrieval_qa)
+    print(chain.run('What is the cancel policy? Specifically for the pro plan?'))

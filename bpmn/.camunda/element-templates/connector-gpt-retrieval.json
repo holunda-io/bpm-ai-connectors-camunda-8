@@ -130,6 +130,20 @@
       }
     },
     {
+      "label": "Answer Synthesis Strategy",
+      "group": "query",
+      "type": "Dropdown",
+      "value": "standard",
+      "choices": [
+        { "name": "Standard", "value": "standard" },
+        { "name": "FLARE Instruct", "value": "flare_instruct" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "mode"
+      }
+    },
+    {
       "label": "Result Expression",
       "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>.",
       "group": "output",

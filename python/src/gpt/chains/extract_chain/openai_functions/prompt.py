@@ -6,4 +6,4 @@ Do NOT make anything up or assume information.
 If any property or information is not contained in the passage, set the property to null."""
 
 TASK_EXTRACT_SINGLE = "Extract and save the desired information from the following passage by the user."
-TASK_EXTRACT_REPEATED = "Extract and save the relevant entities mentioned in the following passage by the user."
+TASK_EXTRACT_REPEATED = "Extract and save a list of objects (as specified in the function schema) contained in the following passage by the user. There may be one or multiple objects."

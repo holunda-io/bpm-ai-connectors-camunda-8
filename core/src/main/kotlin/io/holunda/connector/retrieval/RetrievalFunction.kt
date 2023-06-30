@@ -35,7 +35,8 @@ class RetrievalFunction : OutboundConnectorFunction {
         request.query,
         request.databaseUrl,
         request.embeddingProvider,
-        request.embeddingModel
+        request.embeddingModel,
+        request.mode
       )
     )
 
@@ -50,6 +51,7 @@ class RetrievalFunction : OutboundConnectorFunction {
     val database_url: String,
     val embedding_provider: String,
     val embedding_model: String,
+    val mode: String,
   )
 
   companion object : KLogging()

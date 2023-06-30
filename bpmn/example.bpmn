@@ -58,7 +58,8 @@
           <zeebe:input source="GPT_3" target="model" />
           <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
           <zeebe:input source="={&#10;  firstname: &#34;first name&#34;,&#10;  lastname: &#34;last name&#34;,&#10;  language: &#34;what is the language that the email body is written in, as two letter ISO code?&#34;,&#10;  question: &#34;what question does the customer have?&#34;&#10;}" target="extractionJson" />
-          <zeebe:input source="SINGLE" target="mode" />
+          <zeebe:input source="REPEATED" target="mode" />
+          <zeebe:input source="Mentioned persons" target="entitiesDescription" />
           <zeebe:input source="NULL" target="missingDataBehavior" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
@@ -195,6 +196,8 @@
           <zeebe:input source="adequate" target="length" />
           <zeebe:input source="Answer the question of the customer based on the answer given by customer service." target="description" />
           <zeebe:input source="My company" target="sender" />
+          <zeebe:input source="custom" target="constitutionalPrinciple" />
+          <zeebe:input source="The text must not contain any offensive or rude language. It should always be polite and professional." target="customPrinciple" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="resultExpression" value="={text: result.text}" />

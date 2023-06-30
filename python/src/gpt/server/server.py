@@ -221,6 +221,7 @@ class RetrievalTask(BaseModel):
     database_url: str
     embedding_provider: str
     embedding_model: str
+    mode: str
     query: str
 
 
@@ -230,6 +231,7 @@ async def post(task: RetrievalTask):
         llm=model_id_to_llm(task.model),
         database_url=task.database_url,
         embedding_provider=task.embedding_provider,
-        embedding_model=task.embedding_model
+        embedding_model=task.embedding_model,
+        mode=task.mode
     )
     return chain.run(query=task.query)
