@@ -8,12 +8,14 @@ from langchain.llms import AlephAlpha
 
 import langchain
 from langchain.cache import SQLiteCache
-from langchain.vectorstores import Chroma
+from langchain.vectorstores import Chroma, Weaviate
 
 from gpt.agents.database_agent.agent import create_database_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
+from gpt.chains.retrieval_chain.chain import create_retrieval_chain
+from gpt.chains.retrieval_chain.sub_query_retriever.chain import create_sub_query_chain
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 
@@ -280,12 +282,41 @@ def test_flare():
     print(flare.run("what happens if an account is canceled that still has gift card balance?"))
 
 
+def test_index_test_docs():
+    loader = WebBaseLoader([
+        "https://help.netflix.com/en/node/24926?ui_action=kb-article-popular-categories",
+        "https://help.netflix.com/en/node/41049?ui_action=kb-article-popular-categories",
+        "https://help.netflix.com/en/node/407"
+    ])
+    documents = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
+    docs = text_splitter.split_documents(documents)
+
+    embeddings = OpenAIEmbeddings()
+
+    Weaviate.from_documents(
+        docs,
+        embeddings,
+        weaviate_url='http://localhost:8080/',
+        index_name='Test_index',
+        by_text=False
+    )
 
 
+def test_retrieve():
+    qa = create_retrieval_chain(
+        llm=get_openai_chat_llm(),
+        database_url='weaviate://http://localhost:8080/Test_index'
+    )
+    #print(qa.run('what happens if an account is canceled that still has gift card balance?'))
+    print(qa.run('what happens if an account is canceled and how do I restart it?'))
 
 
-
-
-
-
+def test_sub_query():
+    chain = create_sub_query_chain(llm=get_openai_chat_llm(model_name='gpt-4'))
+    print(chain.run('what happens if an account is canceled and how do I restart it?'))
+    #print(chain.run('compare hp of tesla model y and vw golf'))
+    #print(chain.run('what is the price of the cheapest plan if I dont want to watch ads?'))
+    #print(chain.run('What happens when I throw a ball while on a moving truck?'))
+    #print(chain.run('What is the cancel policy? Specifically for the pro plan?'))
 

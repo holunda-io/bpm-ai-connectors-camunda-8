@@ -1,7 +1,7 @@
 uvicorn~=0.22.0
 fastapi==0.98.0
 python-dotenv~=1.0.0
-langchain==0.0.216
+langchain==0.0.219
 pydantic~=1.10.7
 requests==2.31.0
 PyYAML~=6.0
@@ -17,3 +17,4 @@ beautifulsoup4~=4.12.2
 chromadb~=0.3.26
 tiktoken~=0.4.0
 llama-index~=0.6.35
+weaviate-client~=3.21.0

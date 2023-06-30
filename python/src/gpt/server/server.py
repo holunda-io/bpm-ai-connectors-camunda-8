@@ -10,6 +10,7 @@ from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
+from gpt.chains.retrieval_chain.chain import create_retrieval_chain
 from gpt.chains.translate_chain.chain import create_translate_chain
 from gpt.config import model_id_to_llm
 from gpt.output_parsers.json_output_parser import JsonOutputParser
@@ -212,3 +213,23 @@ async def post(task: ComposeTask):
         inputs={"input": task.context},
         return_only_outputs=True
     )
+
+
+class RetrievalTask(BaseModel):
+    model: str
+    context: dict
+    database_url: str
+    embedding_provider: str
+    embedding_model: str
+    query: str
+
+
+@app.post("/retrieval")
+async def post(task: RetrievalTask):
+    chain = create_retrieval_chain(
+        llm=model_id_to_llm(task.model),
+        database_url=task.database_url,
+        embedding_provider=task.embedding_provider,
+        embedding_model=task.embedding_model
+    )
+    return chain.run(query=task.query)

@@ -14,33 +14,6 @@ from gpt.util.prompt import chat_to_standard_prompt
 from gpt.util.transform import transform_to_md_chain
 
 
-PROMPT = """\
-Your task is to write a critique and a revision request for the output of an AI assistant based on a given description or instructions that the user gave about how he wants the output to be.
-
-The critique request should always start with "Identify specific ways in which the assistant’s last response".
-
-Here is an example of a good critique and revision request in the expected json output format:
-
-# Example:
-```
-{
-  "critique_request": "Identify specific ways in which the assistant’s last response is harmful, unethical, racist, sexist, toxic, dangerous, or illegal.",
-  "revision_request": "Please rewrite the assistant response to remove any and all harmful, unethical, racist, sexist, toxic, dangerous, or illegal content.'"
-}
-```
-
----
-
-# User description:
-'''
-The text should be fun, smart and very polite. It should not contain any age inappropriate content.
-'''
-
-Remember to start with "Identify specific ways in which the assistant’s last response"
-
-# Critique and revision request json:"""
-
-
 def create_compose_chain(
     llm: BaseLanguageModel,
     instructions: str,

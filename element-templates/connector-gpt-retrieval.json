@@ -1,0 +1,145 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "GPT Q&A Retrieval Connector",
+  "id": "io.holunda.connector.retrieval.v1",
+  "description": "Answers questions by retrieving information from a vector database.",
+  "version": 1,
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNyAxOC40MzAxSDEzTDguNTQ5OTkgMjEuMzlDNy44ODk5OSAyMS44MyA3IDIxLjM2MDEgNyAyMC41NjAxVjE4LjQzMDFDNCAxOC40MzAxIDIgMTYuNDMwMSAyIDEzLjQzMDFWNy40Mjk5OUMyIDQuNDI5OTkgNCAyLjQyOTk5IDcgMi40Mjk5OUgxN0MyMCAyLjQyOTk5IDIyIDQuNDI5OTkgMjIgNy40Mjk5OVYxMy40MzAxQzIyIDE2LjQzMDEgMjAgMTguNDMwMSAxNyAxOC40MzAxWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xMi4wMDAxIDExLjM2VjExLjE1QzEyLjAwMDEgMTAuNDcgMTIuNDIwMSAxMC4xMSAxMi44NDAxIDkuODIwMDFDMTMuMjUwMSA5LjU0MDAxIDEzLjY2IDkuMTgwMDIgMTMuNjYgOC41MjAwMkMxMy42NiA3LjYwMDAyIDEyLjkyMDEgNi44NTk5OSAxMi4wMDAxIDYuODU5OTlDMTEuMDgwMSA2Ljg1OTk5IDEwLjM0MDEgNy42MDAwMiAxMC4zNDAxIDguNTIwMDIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTExLjk5NTUgMTMuNzVIMTIuMDA0NSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8L3N2Zz4="
+  },
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": ["bpmn:Task"],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "general",
+      "label": "General"
+    },
+    {
+      "id": "input",
+      "label": "Input"
+    },
+    {
+      "id": "database",
+      "label": "Vector Database"
+    },
+    {
+      "id": "query",
+      "label": "Query"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "gpt-retrieval",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      }
+    },
+    {
+      "label": "OpenAI API Key",
+      "description": "The OpenAI API Key to use",
+      "type": "Hidden",
+      "value": "secrets.OPENAI_API_KEY",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "apiKey"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "model",
+      "label": "LLM Model",
+      "group": "general",
+      "type": "Dropdown",
+      "value": "GPT_3",
+      "choices": [
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
+        { "name": "OpenAI GPT-4", "value": "GPT_4" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "model"
+      }
+    },
+    {
+      "label": "Vector Database URL",
+      "group": "database",
+      "type": "String",
+      "feel": "optional",
+      "value": "weaviate://http://localhost:8080/Test_index",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "databaseUrl"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Embedding Provider",
+      "group": "database",
+      "type": "Dropdown",
+      "value": "openai",
+      "choices": [
+        { "name": "OpenAI", "value": "openai" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "embeddingProvider"
+      }
+    },
+    {
+      "label": "Embedding Model",
+      "group": "database",
+      "type": "String",
+      "value": "text-embedding-ada-002",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "embeddingModel"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Natural Language Query",
+      "description": "The query or question to be answered.",
+      "group": "query",
+      "type": "Text",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "query"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Result Expression",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>.",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "value": "={\"result\": result}",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    }
+  ]
+}
