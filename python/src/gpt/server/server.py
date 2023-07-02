@@ -104,13 +104,12 @@ async def post(task: ExecutorTask):
         tools=task.tools,
         llm=model_id_to_llm(task.model)
     )
-    res = executor.run(
+    return executor.run(
         context=json.dumps(task.context, indent=2),
         task=task.task,
         previous_steps=task.previous_steps,
         current_step=task.current_step
     )
-    return JsonOutputParser().parse(res)
 
 
 class ExtractTask(BaseModel):
@@ -217,7 +216,6 @@ async def post(task: ComposeTask):
 
 class RetrievalTask(BaseModel):
     model: str
-    context: dict
     database_url: str
     embedding_provider: str
     embedding_model: str

@@ -6,11 +6,14 @@
       "id": "Field_1iuiyym"
     },
     {
-      "label": "Task description",
-      "type": "textarea",
-      "id": "Field_0ksufxp",
-      "key": "task",
-      "disabled": true
+      "text": "#### Task Description:",
+      "type": "text",
+      "id": "Field_0qfeqmj"
+    },
+    {
+      "text": "=task",
+      "type": "text",
+      "id": "Field_0k2yely"
     },
     {
       "label": "Result",

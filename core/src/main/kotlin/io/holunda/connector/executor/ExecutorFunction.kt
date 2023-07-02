@@ -11,7 +11,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-executor",
-  inputVariables = ["inputJson", "task", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskObject", "result", "model", "apiKey"],
   type = "gpt-executor"
 )
 class ExecutorFunction : OutboundConnectorFunction {
@@ -27,26 +27,31 @@ class ExecutorFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: ExecutorRequest): ExecutorResult {
-    val previousStepsAndResults = request.task.pastSteps.zip(request.task.results).toString()
-    val currentPlanStep = request.task.plan.getOrElse(request.task.results.size) { _ -> "" }
+    val task = if (request.result != null) {
+      request.taskObject.copy(
+        results = request.taskObject.results + listOf(request.result)
+      )
+    } else request.taskObject
 
-    val req = ExecutorTask(
+    val previousStepsAndResults = task.pastSteps.zip(task.results).toString()
+    val currentPlanStep = task.plan.getOrElse(task.results.size) { _ -> "" }
+
+    val currentStep = LangchainClient.run("executor",
+      ExecutorTask(
         request.model.modelId,
-        request.task.task,
+        task.task,
         request.inputJson,
-        request.task.tools,
+        task.tools,
         previousStepsAndResults,
         currentPlanStep
-    )
-    logger.info("ExecutorFunction request: $req")
-    val result = LangchainClient.run("executor", req)
+      )
+    ).toStringMap()
 
-    val currentStep = result.toStringMap()
-    val currentStepSummary = currentStep["action"] + ": " + currentStep["input"]
+    val currentStepSummary = "${currentStep["action"]}: ${currentStep["input"]}"
 
-    val updatedTask = request.task.copy(
+    val updatedTask = task.copy(
       currentStep = currentStep,
-      pastSteps = request.task.pastSteps + listOf(currentStepSummary)
+      pastSteps = task.pastSteps + listOf(currentStepSummary)
     )
 
     logger.info("ExecutorFunction result: $updatedTask")

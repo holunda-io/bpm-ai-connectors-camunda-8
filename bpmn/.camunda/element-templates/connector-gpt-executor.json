@@ -94,11 +94,26 @@
       "description": "Task object from planner.",
       "group": "task",
       "type": "Text",
-      "feel": "optional",
+      "feel": "required",
       "value": "=task",
       "binding": {
         "type": "zeebe:input",
-        "name": "task"
+        "name": "taskObject"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Result",
+      "description": "Previous result from a tool.",
+      "group": "task",
+      "type": "Text",
+      "feel": "required",
+      "value": "=currentResult",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "result"
       },
       "constraints": {
         "notEmpty": true

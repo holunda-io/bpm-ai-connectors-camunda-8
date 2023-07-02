@@ -13,7 +13,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-retrieval",
-  inputVariables = ["query", "databaseUrl", "embeddingProvider", "embeddingModel", "model", "apiKey"],
+  inputVariables = ["query", "databaseUrl", "embeddingProvider", "embeddingModel", "mode", "model", "apiKey"],
   type = "gpt-retrieval"
 )
 class RetrievalFunction : OutboundConnectorFunction {

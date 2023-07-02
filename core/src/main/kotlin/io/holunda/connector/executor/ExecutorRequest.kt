@@ -7,7 +7,8 @@ import io.holunda.connector.planner.*
 
 data class ExecutorRequest(
   val inputJson: JsonNode,
-  val task: Task,
+  val taskObject: Task,
+  val result: String?,
   val model: Model,
 
   @Secret

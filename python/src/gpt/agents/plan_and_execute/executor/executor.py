@@ -11,7 +11,7 @@ from pydantic import Field, BaseModel
 
 from gpt.agents.plan_and_execute.executor.prompt import EXECUTOR_SYSTEM_MESSAGE, EXECUTOR_USER_MESSAGE, \
     EXECUTOR_USER_MESSAGE_FUNCTIONS, \
-    EXECUTOR_SYSTEM_MESSAGE_FUNCTIONS, EXECUTOR_FUNCTION_INPUT_DESCRIPTION, EXECUTOR_NOOP_FUNCTION_DESCRIPTION
+    EXECUTOR_SYSTEM_MESSAGE_FUNCTIONS, EXECUTOR_FUNCTION_INPUT_DESCRIPTION, EXECUTOR_NOOP_FUNCTION_DESCRIPTION, EXECUTOR_FINAL_RESULT_FUNCTION_DESCRIPTION
 from gpt.config import supports_openai_functions
 from gpt.output_parsers.json_output_parser import JsonOutputParser
 from gpt.util.functions import functions_chain
@@ -25,7 +25,7 @@ def noop(_):
     pass
 
 
-def tool_dict_to_function(t: Tuple[str, str]):
+def tool_tuple_to_function(t: Tuple[str, str]):
     tool = StructuredTool(
         name=t[0],
         description=t[1],
@@ -56,8 +56,9 @@ def create_executor(
             SystemMessagePromptTemplate.from_template(EXECUTOR_SYSTEM_MESSAGE_FUNCTIONS),
             HumanMessagePromptTemplate.from_template(EXECUTOR_USER_MESSAGE_FUNCTIONS)
         ])
-        noop_function = tool_dict_to_function(("noop", EXECUTOR_NOOP_FUNCTION_DESCRIPTION))
-        functions = [tool_dict_to_function(t) for t in tools.items()] + [noop_function]
+        noop_function = tool_tuple_to_function(("noop", EXECUTOR_NOOP_FUNCTION_DESCRIPTION))
+        final_result_function = tool_tuple_to_function(("final_result", EXECUTOR_FINAL_RESULT_FUNCTION_DESCRIPTION))
+        functions = [tool_tuple_to_function(t) for t in tools.items()] + [noop_function, final_result_function]
         return SequentialChain(
             input_variables=["task", "context", "previous_steps", "current_step"],
             output_variables=["output"],
