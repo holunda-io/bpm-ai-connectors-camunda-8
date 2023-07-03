@@ -8,7 +8,7 @@ from langchain.chat_models.base import BaseChatModel
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
 from gpt.chains.compose_chain.prompt import SYSTEM_MESSAGE_TEMPLATE, USER_MESSAGE_TEMPLATE
-from gpt.chains.constitutional_chain.chain import ConstitutionalChain
+from gpt.chains.support.constitutional_chain.chain import ConstitutionalChain
 from gpt.config import llm_to_model_tag
 from gpt.util.prompt import chat_to_standard_prompt
 from gpt.util.transform import transform_to_md_chain

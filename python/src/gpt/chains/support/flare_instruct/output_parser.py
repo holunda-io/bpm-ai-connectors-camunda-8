@@ -1,10 +1,10 @@
 """FLARE output parsers."""
 
-from typing import Optional, Callable, Any
+from typing import Any
 
 from langchain.schema import BaseOutputParser
 
-from gpt.chains.retrieval_chain.flare_instruct.schema import QueryTask
+from gpt.chains.support.flare_instruct.schema import QueryTask
 
 
 def default_parse_is_done_fn(response: str) -> bool:

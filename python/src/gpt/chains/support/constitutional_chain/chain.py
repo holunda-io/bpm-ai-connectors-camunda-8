@@ -1,7 +1,7 @@
 from typing import Union
 
-from gpt.chains.constitutional_chain.principle_chain import create_generate_principle_chain
-from gpt.chains.constitutional_chain.prompt import CRITIQUE_PROMPT, REVISION_PROMPT
+from gpt.chains.support.constitutional_chain.principle_chain import create_generate_principle_chain
+from gpt.chains.support.constitutional_chain.prompt import CRITIQUE_PROMPT, REVISION_PROMPT
 
 from typing import Any, Dict, List, Optional
 

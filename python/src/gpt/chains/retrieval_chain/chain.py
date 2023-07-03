@@ -1,17 +1,15 @@
-from uuid import uuid4
-
 from langchain.base_language import BaseLanguageModel
 from langchain.chains import RetrievalQA
 from langchain.chains.base import Chain
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.embeddings.base import Embeddings
-from langchain.vectorstores import Weaviate, VectorStore
+from langchain.vectorstores import Weaviate
 from langchain.vectorstores.weaviate import _create_weaviate_client
 from langchain.retrievers.multi_query import MultiQueryRetriever
 
-from gpt.chains.retrieval_chain.flare_instruct.base import FLAREInstructChain
 from gpt.chains.retrieval_chain.prompt import MULTI_QUERY_PROMPT
-from gpt.chains.retrieval_chain.sub_query_retriever.chain import SubQueryRetriever
+from gpt.chains.support.flare_instruct.base import FLAREInstructChain
+from gpt.chains.support.sub_query_retriever.chain import SubQueryRetriever
 
 
 def get_vector_store(database_url: str, embeddings: Embeddings):

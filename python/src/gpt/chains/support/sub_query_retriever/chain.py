@@ -3,14 +3,13 @@ from typing import List
 
 from langchain import LLMChain
 from langchain.base_language import BaseLanguageModel
-from langchain.chains.base import Chain
 from langchain.chains.openai_functions.utils import get_llm_kwargs
 from langchain.output_parsers.openai_functions import JsonKeyOutputFunctionsParser
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.retrievers import MultiQueryRetriever
 from langchain.schema import BaseRetriever
 
-from gpt.chains.retrieval_chain.sub_query_retriever.prompt import SYSTEM_MESSAGE_TEMPLATE
+from gpt.chains.support.sub_query_retriever.prompt import SYSTEM_MESSAGE_TEMPLATE
 from gpt.util.functions import get_openai_function
 
 logger = logging.getLogger(__name__)

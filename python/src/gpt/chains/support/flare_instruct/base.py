@@ -8,9 +8,9 @@ from langchain.chains.retrieval_qa.base import BaseRetrievalQA
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import BaseRetriever
 
-from gpt.chains.retrieval_chain.flare_instruct.answer_inserter.answer_inserter import LLMLookaheadAnswerInserter, BaseLookaheadAnswerInserter
-from gpt.chains.retrieval_chain.flare_instruct.output_parser import IsDoneOutputParser, QueryTaskOutputParser
-from gpt.chains.retrieval_chain.flare_instruct.prompt import DEFAULT_INSTRUCT_PROMPT, HUMAN_MESSAGE_TEMPLATE
+from gpt.chains.support.flare_instruct.answer_inserter.answer_inserter import LLMLookaheadAnswerInserter, BaseLookaheadAnswerInserter
+from gpt.chains.support.flare_instruct.output_parser import IsDoneOutputParser, QueryTaskOutputParser
+from gpt.chains.support.flare_instruct.prompt import DEFAULT_INSTRUCT_PROMPT, HUMAN_MESSAGE_TEMPLATE
 
 
 class FLAREInstructChain(Chain):

@@ -5,3 +5,5 @@ target/
 .DS_Store
 
 connector-secrets.txt
+
+postgres-data
