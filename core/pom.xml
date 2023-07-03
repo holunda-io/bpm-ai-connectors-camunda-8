@@ -14,7 +14,7 @@
   <properties>
     <!-- connector SDK version -->
     <connector-core.version>0.10.0</connector-core.version>
-    <ktor.version>2.3.1</ktor.version>
+    <ktor.version>2.3.2</ktor.version>
     <jackson.version>2.13.5</jackson.version>
     <kotlinx-coroutines-core-jvm.version>1.6.4</kotlinx-coroutines-core-jvm.version>
   </properties>
