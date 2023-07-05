@@ -1,7 +1,15 @@
-from dotenv import load_dotenv
-from langchain.retrievers import MultiQueryRetriever
+from typing import List, Tuple
 
+from dotenv import load_dotenv
+from langchain.agents import initialize_agent
+from langchain.retrievers import MultiQueryRetriever
+from langchain.tools import PythonAstREPLTool
+from langchain.utilities import PythonREPL
+
+from gpt.agents.common.code_execution.agent import PythonREPLTool
+from gpt.agents.common.code_execution.chain import PythonCodeExecutionChain
 from gpt.chains.retrieval_chain.prompt import MULTI_QUERY_PROMPT
+from gpt.config import get_openai_chat_llm
 
 load_dotenv(dotenv_path='../../../connector-secrets.txt')
 
@@ -11,31 +19,45 @@ from langchain.embeddings import OpenAIEmbeddings
 import langchain
 from langchain.cache import SQLiteCache
 
-from gpt.chains.retrieval_chain.chain import get_vector_store
-from gpt.chains.support.flare_instruct import FLAREInstructChain
-
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
-
-from gpt.config import get_openai_chat_llm
 
 llm = get_openai_chat_llm(model_name='gpt-4')
 
-retriever = get_vector_store(
-    'weaviate://http://localhost:8080/Test_index',
-    OpenAIEmbeddings()
-).as_retriever()
 
-multi_retriever = MultiQueryRetriever.from_llm(
-    retriever=retriever,
+def find_user_name(id: int) -> str:
+    """Returns the full name of the user with given id"""
+    return "Max Mustermann"
+
+def get_users() -> List[Tuple[int, str]]:
+    """Returns all users as a tuple (id, full name)"""
+    return [
+        (1, "Max Power"),
+        (2, "Jeff Jefferson"),
+        (3, "Heinz Wolff"),
+        (4, "Job Jeb"),
+        (5, "Max Mustermann"),
+    ]
+
+def log_to_file(txt: str):
+    """Logs the given string to a file"""
+    pass
+
+def get_accounts() -> List[Tuple[int, str, float]]:
+    """Returns all accounts as a tuple (id, full name, balance)"""
+    return [
+        (1, "Max Power", 213.1),
+        (2, "Jeff Jefferson", 2343.3),
+        (3, "Heinz Wolff", 100.0),
+        (4, "Job Jeb", 98.11),
+        (5, "Max Mustermann", 990.5),
+    ]
+
+chain = PythonCodeExecutionChain.from_llm_and_functions(
     llm=llm,
-    prompt=MULTI_QUERY_PROMPT
+    functions=[get_accounts],
+    output_schema={"sum": "the sum of all accounts"}
 )
-
-retrieval_qa = RetrievalQA.from_chain_type(
-    llm=llm,
-    chain_type="stuff",
-    retriever=retriever,
-)
-
-chain = FLAREInstructChain.from_llm(llm=llm, retrieval_qa=retrieval_qa, retriever=multi_retriever)
-print(chain.run('compare hp of tesla model y and vw golf'))
+print(chain.run(
+    context="",
+    input="Return the first account"
+))

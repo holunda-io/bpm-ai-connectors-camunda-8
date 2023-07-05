@@ -25,7 +25,7 @@ def _create_prompt():
         ),
         HumanMessagePromptTemplate(
             prompt=PromptTemplate(
-                template="Data: {data}\n\nOutput Schema: {output_schema}\n\nResult:",
+                template="# Data:\n{data}\n\n# Output Schema:\n{output_schema}\n\nResult:",
                 input_variables=["data", "output_schema"],
             )
         )

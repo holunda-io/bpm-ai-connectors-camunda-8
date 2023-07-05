@@ -26,7 +26,7 @@ from langchain.prompts.chat import (
 )
 from langchain.schema import AIMessage, SystemMessage
 
-from gpt.common.functions_agent.base import FunctionsAgent
+from gpt.agents.common.functions_agent.base import FunctionsAgent
 from gpt.config import supports_openai_functions
 from gpt.util.data_extract import create_data_extract_chain
 

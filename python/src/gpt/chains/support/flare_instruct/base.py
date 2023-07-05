@@ -103,7 +103,7 @@ class FLAREInstructChain(Chain):
         query = inputs[self.input_key]
         print(f"Query: {query}\n")
 
-        init_docs = self.retriever.get_relevant_documents(query)
+        init_docs = self.retriever.get_relevant_documents(query)  # todo use vector store similarity_search_with_relevance_scores to filter out irrelevant docs?
         init_doc_str = "\n\n".join([d.page_content for d in init_docs])
 
         cur_response = ""

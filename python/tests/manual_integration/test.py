@@ -1,4 +1,6 @@
 import json
+from inspect import signature
+from typing import List, Tuple
 
 import pytest
 from langchain import Cohere
@@ -10,13 +12,18 @@ import langchain
 from langchain.cache import SQLiteCache
 from langchain.vectorstores import Chroma, Weaviate
 
+from gpt.agents.common.code_execution.chain import PythonCodeExecutionChain
+from gpt.agents.common.code_execution.comment_chain import create_code_comment_chain
+from gpt.agents.common.code_execution.eval_chain import create_code_eval_chain
+from gpt.agents.common.code_execution.util import extract_function_calls
 from gpt.agents.database_agent.agent import create_database_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
 from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
-from gpt.chains.support.flare_instruct import FLAREInstructChain
-from gpt.chains.support.sub_query_retriever import create_sub_query_chain
+from gpt.chains.support.flare_instruct.base import FLAREInstructChain
+from gpt.chains.support.sub_query_retriever.chain import create_sub_query_chain
+from gpt.util.functions import get_python_functions_descriptions
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 
@@ -338,3 +345,71 @@ def test_flare_instruct():
 
     chain = FLAREInstructChain.from_llm(llm=llm, retriever=retrieval_qa)
     print(chain.run('What is the cancel policy? Specifically for the pro plan?'))
+
+
+def test_code_execution():
+    llm = get_openai_chat_llm(model_name='gpt-4')
+
+    def get_accounts() -> List[Tuple[int, str, float]]:
+        """Returns all accounts as a tuple (id, full name, balance)"""
+        return [
+            (1, "Max Power", 213.1),
+            (2, "Jeff Jefferson", 2343.3),
+            (3, "Heinz Wolff", 100.0),
+            (4, "Job Jeb", 98.11),
+            (5, "Max Mustermann", 990.5),
+        ]
+
+    chain = PythonCodeExecutionChain.from_llm_and_functions(
+        llm=llm,
+        functions=[get_accounts],
+        output_schema={"sum": "the sum of all accounts"}
+    )
+    print(chain.run(
+        context="",
+        input="Return the first account"
+    ))
+
+def test_code_eval():
+    def get_accounts() -> List[Tuple[int, str, float]]:
+        """Returns all accounts as a tuple (id, full name, balance)"""
+        pass
+    functions = [get_accounts]
+    function_descriptions = get_python_functions_descriptions(functions)
+    chain = create_code_eval_chain(
+        llm=get_openai_chat_llm(model_name='gpt-4')
+    )
+    print(chain.run(
+        task="Calculate the sum of all account balances",
+        context="",
+        function="""
+def sum_account_balances():
+    accounts = get_accounts()
+    total_balance = sum(account[2] for account in accounts)
+    return total_balance/2
+
+sum_account_balances()
+        """,
+        functions=function_descriptions,
+        result="3745.01"
+    ))
+
+
+def test_code_comment():
+    chain = create_code_comment_chain(
+        llm=get_openai_chat_llm(model_name='gpt-3.5-turbo')
+    )
+    print(chain.run(
+        task="Calculate the sum of all account balances",
+        function="""
+def sum_account_balances():
+    accounts = get_accounts()
+    total_balance = sum(account[2] for account in accounts)
+    return total_balance
+
+sum_account_balances()
+        """,
+        result="3745.01"
+    ))
+
+

@@ -18,3 +18,4 @@ chromadb~=0.3.26
 tiktoken~=0.4.0
 llama-index~=0.6.35
 weaviate-client~=3.21.0
+astunparse~=1.6.3

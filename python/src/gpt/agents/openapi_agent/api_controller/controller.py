@@ -7,7 +7,7 @@ from gpt.agents.openapi_agent.api_controller.prompt import API_CONTROLLER_HUMAN_
     API_CONTROLLER_SYSTEM_MESSAGE_FUNCTIONS
 from gpt.agents.openapi_agent.api_controller.tools import RequestsToolkit
 from gpt.agents.openapi_agent.openapi import OpenAPISpec
-from gpt.common.functions_agent.base import FunctionsAgent
+from gpt.agents.common.functions_agent.base import FunctionsAgent
 from gpt.config import supports_openai_functions
 
 

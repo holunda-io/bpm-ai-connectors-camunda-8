@@ -1,4 +1,5 @@
-from typing import Union, List, Dict
+from inspect import signature
+from typing import Union, List, Dict, Sequence, Callable
 
 from langchain import LLMChain, BasePromptTemplate
 from langchain.base_language import BaseLanguageModel
@@ -60,3 +61,9 @@ def get_openai_function(name, desc, schema: dict, array_name=None, array_descrip
         "description": desc,
         "parameters": parameters,
     }
+
+
+def get_python_functions_descriptions(functions: Sequence[Callable]):
+    return "\n".join(
+        [f"- {f.__name__}{signature(f)}:\n{f.__doc__}" for f in functions]
+    )

@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 from langchain.base_language import BaseLanguageModel
 from langchain.chains import RetrievalQA
 from langchain.chains.base import Chain
@@ -12,7 +14,7 @@ from gpt.chains.support.flare_instruct.base import FLAREInstructChain
 from gpt.chains.support.sub_query_retriever.chain import SubQueryRetriever
 
 
-def get_vector_store(database_url: str, embeddings: Embeddings):
+def get_vector_store(database_url: str, embeddings: Embeddings, meta_attributes: Optional[List[str]] = None):
     db, url = database_url.split('://', 1)
     match db:
         case 'weaviate':
@@ -22,6 +24,7 @@ def get_vector_store(database_url: str, embeddings: Embeddings):
                 index_name=index,
                 text_key="text",
                 embedding=embeddings,
+                attributes=meta_attributes,
                 by_text=False
             )
         case _:
@@ -46,6 +49,8 @@ def create_retrieval_chain(
 
     embeddings = get_embeddings(embedding_provider, embedding_model)
     vector_store = get_vector_store(database_url, embeddings)
+
+    vector_store.aadd_texts()
 
     # rephrase query multiple times and get union of docs
     multi_retriever = MultiQueryRetriever.from_llm(
