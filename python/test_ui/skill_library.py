@@ -17,8 +17,6 @@ vector_store = get_vector_store(
     meta_attributes=['task', 'comment', 'function', 'example_call']
 )
 
-
-@st.cache_data
 def get_skills():
     with st.spinner('Loading skills...'):
         return vector_store.similarity_search("function definition", k=1000)

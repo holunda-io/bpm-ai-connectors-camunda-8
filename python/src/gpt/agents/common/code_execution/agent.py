@@ -1,11 +1,12 @@
 from inspect import signature
-from typing import Any, Optional
+from typing import Any, Optional, Union, Dict
 from typing import List, Sequence, Tuple, Callable
 
-from langchain import LLMChain
+from langchain import LLMChain, PromptTemplate
 from langchain.agents import Agent, AgentOutputParser
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackManager
+from langchain.callbacks.manager import Callbacks
 from langchain.prompts.base import BasePromptTemplate
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -14,18 +15,29 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
 )
 from langchain.schema import (
-    AgentAction, BaseMessage, AIMessage, HumanMessage, )
+    AgentAction, BaseMessage, AIMessage, HumanMessage, AgentFinish, )
+from pydantic import root_validator
 
 from gpt.agents.common.code_execution.output_parser import PythonCodeAgentOutputParser
 from gpt.agents.common.code_execution.prompt import CODE_RESPONSE_TEMPLATE, SYSTEM_MESSAGE, HUMAN_MESSAGE
+from gpt.agents.common.code_execution.util import get_python_functions_descriptions
 
 
 class PythonReplAgent(Agent):
 
     functions: Sequence[Callable]
+    skill_functions: Sequence[Callable] = []
+
+    llm: BaseLanguageModel
+    llm_chain: LLMChain
+    system_message: str
+    human_message: str
 
     template_function_response: str = CODE_RESPONSE_TEMPLATE
     output_key: str = "output"
+
+    def get_all_functions(self):
+        return [*self.functions, *self.skill_functions]
 
     @property
     def return_values(self) -> List[str]:
@@ -61,54 +73,65 @@ class PythonReplAgent(Agent):
             ))
         return thoughts
 
-    @classmethod
+    def get_function_descriptions(self):
+        return get_python_functions_descriptions(self.get_all_functions())
+
+    @root_validator()
+    def validate_prompt(cls, values: Dict) -> Dict:
+        return values
+
     def create_prompt(
-            cls,
+            self,
             functions: Sequence[Callable],
             system_message: str = SYSTEM_MESSAGE,
             human_message: str = HUMAN_MESSAGE,
-            input_variables: Optional[List[str]] = None,
     ) -> BasePromptTemplate:
-        function_descriptions = "\n".join(
-            [f"- {f.__name__}{signature(f)}:\n{f.__doc__}" for f in functions]
-        )
-        system_prompt = system_message.format(
-            functions=function_descriptions
+        system_prompt = PromptTemplate(
+            template=system_message,
+            input_variables=[],
+            partial_variables={"functions": self.get_function_descriptions}
         )
         messages = [
-            SystemMessagePromptTemplate.from_template(system_prompt),
+            SystemMessagePromptTemplate(prompt=system_prompt),
             HumanMessagePromptTemplate.from_template(human_message),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ]
         return ChatPromptTemplate.from_messages(messages)
+
+    def plan(
+        self,
+        intermediate_steps: List[Tuple[AgentAction, str]],
+        callbacks: Callbacks = None,
+        **kwargs: Any,
+    ) -> Union[AgentAction, AgentFinish]:
+        prompt = self.create_prompt(
+            self.functions,
+            system_message=self.system_message,
+            human_message=self.human_message,
+        )
+        self.llm_chain = LLMChain(
+            llm=self.llm,
+            prompt=prompt
+        )
+        return super().plan(intermediate_steps, callbacks, **kwargs)
 
     @classmethod
     def from_llm_and_functions(
         cls,
         llm: BaseLanguageModel,
         functions: Sequence[Callable],
-        callback_manager: Optional[BaseCallbackManager] = None,
         system_message: str = SYSTEM_MESSAGE,
         human_message: str = HUMAN_MESSAGE,
-        input_variables: Optional[List[str]] = None,
         output_key: str = "output",
         **kwargs: Any,
     ) -> "PythonReplAgent":
         """Construct agent from an LLM and functions."""
-        prompt = cls.create_prompt(
-            functions,
+        return cls(
+            llm=llm,
+            llm_chain=LLMChain(llm=llm, prompt=PromptTemplate.from_template("")),
             system_message=system_message,
             human_message=human_message,
-            input_variables=input_variables,
-        )
-        llm_chain = LLMChain(
-            llm=llm,
-            prompt=prompt,
-            callback_manager=callback_manager,
-        )
-        return cls(
             functions=functions,
-            llm_chain=llm_chain,
             output_parser=PythonCodeAgentOutputParser(functions=functions),
             output_key=output_key,
             stop=[],

@@ -38,7 +38,8 @@ def create_python_code_execution_agent(
         agent=agent,
         skill_store=get_vector_store(
             'weaviate://http://localhost:8080/SkillLibrary',
-            OpenAIEmbeddings()
+            OpenAIEmbeddings(),
+            meta_attributes=['task', 'comment', 'function', 'example_call']
         ),
         callback_manager=callback_manager,
         verbose=verbose,
