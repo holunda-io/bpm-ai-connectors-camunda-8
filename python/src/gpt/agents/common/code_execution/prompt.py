@@ -14,6 +14,7 @@ You will only output markdown code blocks with Python code using above functions
 
 You can work iteratively to derive your final solution by working with a Python REPL.
 Whenever you output a code block, it will be interpreted and you receive back everything that was printed and/or the final expression value to inspect the result and derive your next step.
+Output one code block at a time and wait for the result, do not output multiple blocks at once!
 Avoid using print() but instead end your code block with an expression to evaluate and output.
 Long lists may get abbreviated, so you can look at the structure but not perform manual searches. You need to write code to work with lists if necessary.
 If you get an error, debug your code and try again.
@@ -52,7 +53,7 @@ reversed: dlroW olleH
 
 Let's write a generic function `reverse_string(s: str)` that does this:
 ```python
-def reverse_string(s: str):
+def reverse_string(s: str) -> str:
     return "reversed: " + s[::-1]
 
 reverse_string("Hello World")
@@ -62,7 +63,7 @@ reverse_string("Hello World")
 Begin!
 
 Remember:
-- derive a solution using the Python REPL
+- interactively derive a solution using the Python REPL, outputting one code block at a time
 - return your final solution as a generic function
 - add a concrete call based on the context and task"""
 

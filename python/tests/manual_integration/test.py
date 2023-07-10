@@ -3,27 +3,30 @@ from inspect import signature
 from typing import List, Tuple
 
 import pytest
-from langchain import Cohere
+from langchain import Cohere, SQLDatabase
 from langchain.chains import RetrievalQA, FlareChain
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import AlephAlpha
 
 import langchain
 from langchain.cache import SQLiteCache
+from langchain.tools import ListSQLDatabaseTool, InfoSQLDatabaseTool
 from langchain.vectorstores import Chroma, Weaviate
+from langchain.vectorstores.weaviate import _default_schema
+from sqlalchemy import create_engine
 
 from gpt.agents.common.code_execution.chain import PythonCodeExecutionChain
 from gpt.agents.common.code_execution.comment_chain import create_code_comment_chain
 from gpt.agents.common.code_execution.eval_chain import create_code_eval_chain
-from gpt.agents.common.code_execution.util import extract_function_calls
+from gpt.agents.common.code_execution.util import extract_function_calls, get_python_functions_descriptions
 from gpt.agents.database_agent.agent import create_database_agent
+from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
 from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
 from gpt.chains.support.sub_query_retriever.chain import create_sub_query_chain
-from gpt.util.functions import get_python_functions_descriptions
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 
@@ -310,6 +313,45 @@ def test_index_test_docs():
         by_text=False
     )
 
+def test_create_index():
+    vs = get_vector_store(
+        'weaviate://http://localhost:8080/SkillLibrary',
+        OpenAIEmbeddings(),
+    )
+    vs._client.schema.create_class({
+        "class": 'SkillLibrary',
+        "properties": [
+            {
+                "name": "text",
+                "dataType": ["text"],
+            },
+            {
+                "name": "task",
+                "dataType": ["text"],
+            },
+            {
+                "name": "comment",
+                "dataType": ["text"],
+            },
+            {
+                "name": "function",
+                "dataType": ["text"],
+            },
+            {
+                "name": "example_call",
+                "dataType": ["text"],
+            },
+        ],
+    })
+
+def test_clear_skills():
+    vs = get_vector_store(
+        'weaviate://http://localhost:8080/SkillLibrary',
+        OpenAIEmbeddings(),
+        meta_attributes=['task', 'comment', 'function', 'example_call']
+    )
+    vs._client.schema.delete_class('SkillLibrary')
+
 
 def test_retrieve():
     qa = create_retrieval_chain(
@@ -410,6 +452,18 @@ def sum_account_balances():
 sum_account_balances()
         """,
         result="3745.01"
+    ))
+
+
+def test_database_functions():
+    llm = get_openai_chat_llm(model_name='gpt-4')
+    db = SQLDatabase(create_engine('postgresql://postgres:postgres@localhost:5438/postgres'), schema='sales')
+
+    agent = create_database_code_execution_agent(llm=llm, db=db)
+
+    print(agent.run(
+        context="customerName: Charolette Rice",
+        input="Find the phone number of the customer"
     ))
 
 

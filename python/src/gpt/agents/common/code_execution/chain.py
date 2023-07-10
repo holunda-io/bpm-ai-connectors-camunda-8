@@ -78,7 +78,7 @@ class PythonCodeExecutionChain(Chain):
         functions: Sequence[Callable],
         output_schema: dict,
         output_key: str = "result"
-    ):
+    ) -> "PythonCodeExecutionChain":
         code_execution_agent = create_python_code_execution_agent(llm=llm, functions=functions)
         extract_chain = create_data_extract_chain(llm=llm)
         schema = schema_from_properties(output_schema)['properties']

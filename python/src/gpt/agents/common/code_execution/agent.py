@@ -53,7 +53,7 @@ class PythonReplAgent(Agent):
 
     @property
     def _stop(self) -> List[str]:
-        return ["DUMMY_STOP"]  # todo
+        return ["```\n"]
 
     @classmethod
     def _get_default_output_parser(cls, **kwargs: Any) -> AgentOutputParser:
@@ -73,9 +73,6 @@ class PythonReplAgent(Agent):
             ))
         return thoughts
 
-    def get_function_descriptions(self):
-        return get_python_functions_descriptions(self.get_all_functions())
-
     @root_validator()
     def validate_prompt(cls, values: Dict) -> Dict:
         return values
@@ -89,7 +86,7 @@ class PythonReplAgent(Agent):
         system_prompt = PromptTemplate(
             template=system_message,
             input_variables=[],
-            partial_variables={"functions": self.get_function_descriptions}
+            partial_variables={"functions": get_python_functions_descriptions(self.get_all_functions())}
         )
         messages = [
             SystemMessagePromptTemplate(prompt=system_prompt),

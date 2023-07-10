@@ -135,7 +135,7 @@ class PythonReplAgentExecutor(AgentExecutor):
             skill_functions_strs = [s.metadata['function'] for s in relevant_skill_documents]
             skill_functions = [create_func_obj(s.metadata['function'], s.metadata['comment']) for s in relevant_skill_documents]
 
-            name_to_tool_map['Python_REPL'] = PythonREPLTool.from_functions(self.agent.functions, skill_functions_strs)
+            name_to_tool_map['python'] = PythonREPLTool.from_functions(self.agent.functions, skill_functions_strs)
 
             self.agent.skill_functions = skill_functions
 

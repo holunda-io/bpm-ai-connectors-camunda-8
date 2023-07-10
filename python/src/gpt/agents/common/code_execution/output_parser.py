@@ -53,7 +53,7 @@ class PythonCodeAgentOutputParser(AgentOutputParser):
                 output = PythonREPLTool.from_functions(self.functions).run(response)
                 return AgentFinish({"output": output, "code": response}, text)
             else:
-                return AgentAction("Python_REPL", response, text)
+                return AgentAction("python", response, text)
         except Exception as e:
             raise OutputParserException(f"Could not parse LLM output: {text}") from e
 

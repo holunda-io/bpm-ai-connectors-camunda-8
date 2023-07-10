@@ -21,10 +21,11 @@ def abbreviate(val) -> str:
 class PythonREPLTool(BaseTool):
     """A tool for running python code in a REPL."""
 
-    name = "Python_REPL"
+    name = "python"
     description = (
-        "A Python shell. Use this to execute python commands. "
-        "Input should be a valid python command. "
+        "A Python REPL. Use this to execute python code. "
+        "Input should be valid python code. "
+        "Output is the evaluated last expression of the code."
     )
     globals: Optional[Dict] = Field(default_factory=dict)
     sanitize_input: bool = True
