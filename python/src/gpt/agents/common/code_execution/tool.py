@@ -1,22 +1,24 @@
 import ast
 from contextlib import redirect_stdout
 from io import StringIO
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Type
 from typing import Sequence, Callable
 
 from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain.tools.base import BaseTool
 from langchain.tools.python.tool import sanitize_input, _get_default_python_repl
 from langchain.utilities import PythonREPL
-from pydantic import Field
+from pydantic import Field, BaseModel
 
 
 def abbreviate(val) -> str:
     if isinstance(val, list):
         return str(val[:3])[:-1] + ', ...]'
     else:
-        return val
+        return str(val)
 
+class PythonREPLSchema(BaseModel):
+    input: str = Field(description="valid python code")
 
 class PythonREPLTool(BaseTool):
     """A tool for running python code in a REPL."""
@@ -27,8 +29,11 @@ class PythonREPLTool(BaseTool):
         "Input should be valid python code. "
         "Output is the evaluated last expression of the code."
     )
+    args_schema: Type[PythonREPLSchema] = PythonREPLSchema
     globals: Optional[Dict] = Field(default_factory=dict)
     sanitize_input: bool = True
+
+    functions: Sequence[Callable]
 
     @classmethod
     def from_functions(cls, functions: Sequence[Callable] = [], functions_str: Sequence[str] = []):
@@ -36,18 +41,18 @@ class PythonREPLTool(BaseTool):
         _globals.update({f.__name__: f for f in functions})
         for f in functions_str:
             exec(f, _globals)
-        return cls(globals=_globals)
+        return cls(globals=_globals, functions=functions)
 
     def _run(
         self,
-        query: str,
+        input: str,
         run_manager: Optional[CallbackManagerForToolRun] = None,
     ) -> str:
         """Use the tool."""
         try:
             if self.sanitize_input:
-                query = sanitize_input(query)
-            tree = ast.parse(query)
+                input = sanitize_input(input)
+            tree = ast.parse(input)
             module = ast.Module(tree.body[:-1], type_ignores=[])
             exec(ast.unparse(module), self.globals)  # type: ignore
             module_end = ast.Module(tree.body[-1:], type_ignores=[])

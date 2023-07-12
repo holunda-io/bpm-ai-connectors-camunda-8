@@ -79,7 +79,6 @@ class PythonReplAgent(Agent):
 
     def create_prompt(
             self,
-            functions: Sequence[Callable],
             system_message: str = SYSTEM_MESSAGE,
             human_message: str = HUMAN_MESSAGE,
     ) -> BasePromptTemplate:
@@ -102,7 +101,6 @@ class PythonReplAgent(Agent):
         **kwargs: Any,
     ) -> Union[AgentAction, AgentFinish]:
         prompt = self.create_prompt(
-            self.functions,
             system_message=self.system_message,
             human_message=self.human_message,
         )
