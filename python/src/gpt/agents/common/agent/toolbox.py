@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import logging
-from abc import abstractmethod
-from typing import List, Optional, Dict, Any, Tuple
+from typing import List, Optional, Dict
 
 from langchain.agents.agent import ExceptionTool
+from langchain.agents.agent_toolkits.base import BaseToolkit
 from langchain.agents.tools import InvalidTool
 from langchain.callbacks.manager import CallbackManagerForToolRun
-from langchain.schema import BaseMessage, AgentAction
+from langchain.schema import AgentAction
 from langchain.tools import BaseTool
 
 logger = logging.getLogger(__name__)
@@ -29,6 +29,10 @@ class Toolbox:
         self._tools: Dict[str, BaseTool] = {tool.name: tool for tool in tools} if tools else {}
         self._virtual_tools: Dict[str, BaseTool] = self._default_virtual_tools()
         self.verbose = verbose
+
+    @classmethod
+    def from_toolkit(cls, toolkit: BaseToolkit) -> Toolbox:
+        return cls(tools=toolkit.get_tools())
 
     @staticmethod
     def _default_virtual_tools():

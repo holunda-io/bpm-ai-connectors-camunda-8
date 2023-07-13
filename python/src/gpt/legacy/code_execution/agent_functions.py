@@ -2,16 +2,15 @@ import json
 from json import JSONDecodeError
 from typing import Any, List, Optional, Sequence, Tuple, Union, Callable, Type
 
-from langchain import LLMChain, PromptTemplate
-from langchain.agents import BaseSingleActionAgent, AgentExecutor
-from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent, _format_intermediate_steps, _FunctionsAgentAction
+from langchain import PromptTemplate
+from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent, _format_intermediate_steps, \
+    _FunctionsAgentAction
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackManager
 from langchain.callbacks.manager import Callbacks, CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain.chat_models.openai import ChatOpenAI
 from langchain.prompts.base import BasePromptTemplate
 from langchain.prompts.chat import (
-    BaseMessagePromptTemplate,
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
     MessagesPlaceholder, SystemMessagePromptTemplate, AIMessagePromptTemplate, ChatMessagePromptTemplate,
@@ -24,10 +23,9 @@ from langchain.schema import (
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 
-from gpt.agents.common.code_execution.prompt import CODE_RESPONSE_TEMPLATE, SYSTEM_MESSAGE, HUMAN_MESSAGE, SYSTEM_MESSAGE_FUNCTIONS
-from gpt.agents.common.code_execution.tool import PythonREPLTool
-from gpt.agents.common.code_execution.util import get_python_functions_descriptions
-from langchain.tools import tool
+from gpt.legacy.code_execution.prompt import CODE_RESPONSE_TEMPLATE, HUMAN_MESSAGE, SYSTEM_MESSAGE_FUNCTIONS
+from gpt.legacy.code_execution.tool import PythonREPLTool
+from gpt.legacy.code_execution.util import get_python_functions_descriptions
 
 
 class StoreFinalResultSchema(BaseModel):

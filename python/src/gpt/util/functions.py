@@ -1,5 +1,4 @@
-from inspect import signature
-from typing import Union, List, Dict, Sequence, Callable
+from typing import Union, List, Dict
 
 from langchain import LLMChain, BasePromptTemplate
 from langchain.base_language import BaseLanguageModel

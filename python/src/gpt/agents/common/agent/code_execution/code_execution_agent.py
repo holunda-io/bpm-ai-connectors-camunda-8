@@ -3,19 +3,17 @@ from typing import Dict, Any, Optional, Callable, List, Sequence
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate
-from langchain.schema import AIMessage, FunctionMessage, HumanMessage
 from langchain.vectorstores import VectorStore
 
-from gpt.agents.common.code_execution.agent_functions import StoreFinalResultTool
-from gpt.agents.common.code_execution.prompt import SYSTEM_MESSAGE_FUNCTIONS, DEFAULT_FEW_SHOT_PROMPT_MESSAGES
-from gpt.agents.common.code_execution.tool import PythonREPLTool
-from gpt.agents.common.code_execution.util import create_func_obj, get_python_functions_descriptions
-from gpt.agents.common.new_agent.base import AgentParameterResolver, Agent
-from gpt.agents.common.new_agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
-from gpt.agents.common.new_agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
-from gpt.agents.common.new_agent.output_parser import AgentOutputParser
-from gpt.agents.common.new_agent.step import AgentStep
-from gpt.agents.common.new_agent.toolbox import Toolbox
+from gpt.agents.common.agent.base import AgentParameterResolver, Agent
+from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
+from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
+from gpt.agents.common.agent.step import AgentStep
+from gpt.agents.common.agent.toolbox import Toolbox
+from gpt.legacy.code_execution.agent_functions import StoreFinalResultTool
+from gpt.legacy.code_execution.prompt import SYSTEM_MESSAGE_FUNCTIONS, DEFAULT_FEW_SHOT_PROMPT_MESSAGES
+from gpt.legacy.code_execution.tool import PythonREPLTool
+from gpt.legacy.code_execution import create_func_obj, get_python_functions_descriptions
 
 
 class CodeExecutionParameterResolver(AgentParameterResolver):
@@ -46,10 +44,9 @@ class CodeExecutionParameterResolver(AgentParameterResolver):
             functions += skill_functions
 
         return {
-            "input": inputs["input"],
-            # "context": inputs["context"],
             "functions": get_python_functions_descriptions(functions),
             "transcript": agent_step.transcript,
+            **inputs
         }
 
 

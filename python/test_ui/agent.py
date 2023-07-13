@@ -1,11 +1,8 @@
 import streamlit as st
 from dotenv import load_dotenv
 from langchain.callbacks import StreamlitCallbackHandler
-from langchain.tools import ListDirectoryTool, ReadFileTool
 
-from gpt.agents.common.new_agent.code_execution.code_execution_agent import PythonCodeExecutionAgent
-from gpt.agents.common.new_agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
-from gpt.agents.common.new_agent.toolbox import Toolbox
+from gpt.agents.common.agent.code_execution.code_execution_agent import PythonCodeExecutionAgent
 from gpt.config import get_openai_chat_llm
 
 load_dotenv(dotenv_path='../../connector-secrets.txt')

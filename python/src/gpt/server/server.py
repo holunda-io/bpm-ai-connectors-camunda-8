@@ -13,7 +13,6 @@ from gpt.chains.generic_chain.chain import create_generic_chain
 from gpt.chains.retrieval_chain.chain import create_retrieval_chain
 from gpt.chains.translate_chain.chain import create_translate_chain
 from gpt.config import model_id_to_llm
-from gpt.output_parsers.json_output_parser import JsonOutputParser
 
 load_dotenv(dotenv_path='../../../../connector-secrets.txt')
 from gpt.agents.openapi_agent.agent import create_openapi_agent

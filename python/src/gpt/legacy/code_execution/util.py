@@ -1,6 +1,6 @@
 import ast
 from inspect import signature
-from typing import Sequence, Callable, Tuple
+from typing import Sequence, Callable
 
 import astunparse
 

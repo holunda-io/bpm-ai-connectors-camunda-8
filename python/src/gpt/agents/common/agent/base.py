@@ -1,24 +1,22 @@
 from __future__ import annotations
 
 import logging
-import re
 from abc import abstractmethod
-from collections.abc import Iterable, Callable
-from hashlib import md5
-from typing import List, Optional, Union, Dict, Any, Tuple
+from typing import List, Optional, Dict, Any
 
 from langchain.callbacks.manager import CallbackManagerForChainRun, Callbacks
 from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
 from langchain.load.serializable import Serializable
 from langchain.prompts import ChatPromptTemplate
-from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder
-from langchain.schema import BaseLanguageModel, AIMessage, BaseMessage, HumanMessage
+from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
+    MessagesPlaceholder
+from langchain.schema import BaseMessage, HumanMessage, AgentFinish
 from langchain.tools import Tool
 
-from gpt.agents.common.new_agent.output_parser import AgentOutputParser, AgentAction
-from gpt.agents.common.new_agent.step import AgentStep
-from gpt.agents.common.new_agent.toolbox import Toolbox
+from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction
+from gpt.agents.common.agent.step import AgentStep
+from gpt.agents.common.agent.toolbox import Toolbox
 
 logger = logging.getLogger(__name__)
 
@@ -44,18 +42,19 @@ class Agent(Chain):
     few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None
     stop_words: Optional[List[str]] = None
     max_steps: int = 10
+    output_key: str = "output"
 
     verbose = True
 
     @property
     def input_keys(self) -> List[str]:
         """Return the keys expected to be in the chain input."""
-        return ["input"]
+        return ["input", "context"]
 
     @property
     def output_keys(self) -> List[str]:
         """Return the keys expected to be in the chain output."""
-        return ["output"] #, "last_step"]
+        return [self.output_key] #, "last_step"]
 
     def add_tool(self, tool: Tool):
         """
@@ -102,6 +101,9 @@ class Agent(Chain):
             observation_message = self._create_observation_message(next_step.parsed_action, observation)
             # update the next step with the observation
             next_step.complete(observation_message)
+
+            if self.toolbox.get_tool(next_step.parsed_action.tool).return_direct:
+                next_step.parsed_action = AgentFinish({self.output_key: next_step.transcript[-1].content}, log=next_step.parsed_action.log)  # todo not ideal
         else:
             if run_manager:
                 run_manager.on_agent_finish(next_step.parsed_action, color="blue")

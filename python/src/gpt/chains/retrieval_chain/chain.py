@@ -5,9 +5,9 @@ from langchain.chains import RetrievalQA
 from langchain.chains.base import Chain
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.embeddings.base import Embeddings
+from langchain.retrievers.multi_query import MultiQueryRetriever
 from langchain.vectorstores import Weaviate
 from langchain.vectorstores.weaviate import _create_weaviate_client
-from langchain.retrievers.multi_query import MultiQueryRetriever
 
 from gpt.chains.retrieval_chain.prompt import MULTI_QUERY_PROMPT
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
@@ -49,8 +49,6 @@ def create_retrieval_chain(
 
     embeddings = get_embeddings(embedding_provider, embedding_model)
     vector_store = get_vector_store(database_url, embeddings)
-
-    vector_store.aadd_texts()
 
     # rephrase query multiple times and get union of docs
     multi_retriever = MultiQueryRetriever.from_llm(

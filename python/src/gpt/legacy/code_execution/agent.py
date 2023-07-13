@@ -1,11 +1,9 @@
-from inspect import signature
-from typing import Any, Optional, Union, Dict
+from typing import Any, Union, Dict
 from typing import List, Sequence, Tuple, Callable
 
 from langchain import LLMChain, PromptTemplate
 from langchain.agents import Agent, AgentOutputParser
 from langchain.base_language import BaseLanguageModel
-from langchain.callbacks.base import BaseCallbackManager
 from langchain.callbacks.manager import Callbacks
 from langchain.prompts.base import BasePromptTemplate
 from langchain.prompts.chat import (
@@ -18,9 +16,9 @@ from langchain.schema import (
     AgentAction, BaseMessage, AIMessage, HumanMessage, AgentFinish, )
 from pydantic import root_validator
 
-from gpt.agents.common.code_execution.output_parser import PythonCodeAgentOutputParser
-from gpt.agents.common.code_execution.prompt import CODE_RESPONSE_TEMPLATE, SYSTEM_MESSAGE, HUMAN_MESSAGE
-from gpt.agents.common.code_execution.util import get_python_functions_descriptions
+from gpt.legacy.code_execution.output_parser import PythonCodeAgentOutputParser
+from gpt.legacy.code_execution.prompt import CODE_RESPONSE_TEMPLATE, SYSTEM_MESSAGE, HUMAN_MESSAGE
+from gpt.legacy.code_execution.util import get_python_functions_descriptions
 
 
 class PythonReplAgent(Agent):

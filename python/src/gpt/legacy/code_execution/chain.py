@@ -13,8 +13,8 @@ from langchain.callbacks.manager import (
 from langchain.chains.base import Chain
 from langchain.embeddings import OpenAIEmbeddings
 
-from gpt.agents.common.code_execution.agent import PythonReplAgent
-from gpt.agents.common.code_execution.agent_executor import PythonReplAgentExecutor
+from gpt.legacy.code_execution.agent import PythonReplAgent
+from gpt.legacy.code_execution.agent_executor import PythonReplAgentExecutor
 from gpt.chains.retrieval_chain.chain import get_vector_store
 from gpt.util.data_extract import create_data_extract_chain
 from gpt.util.functions import schema_from_properties

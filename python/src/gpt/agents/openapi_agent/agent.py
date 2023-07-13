@@ -3,9 +3,9 @@ Agent that interacts with OpenAPI APIs via a multistep planning approach.
 """
 from typing import Optional
 
-from langchain.base_language import BaseLanguageModel
 from langchain.chains import SequentialChain, TransformChain
 from langchain.chains.base import Chain
+from langchain.chat_models import ChatOpenAI
 
 from gpt.agents.openapi_agent.api_controller.controller import create_api_controller_agent
 from gpt.agents.openapi_agent.api_planner.planner import create_api_planner_chain
@@ -16,7 +16,7 @@ from gpt.util.data_extract import create_data_extract_chain
 
 def create_openapi_agent(
         api_spec_url: str,
-        llm: BaseLanguageModel,
+        llm: ChatOpenAI,
         headers: Optional[dict] = None,
 ) -> Chain:
     api_spec = load_api_spec(api_spec_url)
@@ -34,7 +34,7 @@ def create_openapi_agent(
         return {}
 
     def check_result(inputs: dict) -> dict:
-        plan = inputs["output"]
+        plan = inputs["data"]
         if "PLAN_FAILED" in plan:
             raise Exception("Plan execution failed.")
         return {}
@@ -57,9 +57,14 @@ def create_openapi_agent(
                 transform=check_plan
             ),
             # execute plan
+            TransformChain(
+                input_variables=["query"],
+                output_variables=["input"],
+                transform=lambda inputs: {"input": inputs["query"]}
+            ),
             create_api_controller_agent(api_spec, headers, llm, output_key="data"),
             TransformChain(
-                input_variables=["output"],
+                input_variables=["data"],
                 output_variables=[],
                 transform=check_result
             ),

@@ -1,9 +1,5 @@
-from typing import Union
-
-from gpt.chains.support.constitutional_chain.principle_chain import create_generate_principle_chain
-from gpt.chains.support.constitutional_chain.prompt import CRITIQUE_PROMPT, REVISION_PROMPT
-
 from typing import Any, Dict, List, Optional
+from typing import Union
 
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.manager import CallbackManagerForChainRun
@@ -11,6 +7,9 @@ from langchain.chains.base import Chain
 from langchain.chains.constitutional_ai.models import ConstitutionalPrinciple
 from langchain.chains.constitutional_ai.principles import PRINCIPLES
 from langchain.chains.llm import LLMChain
+
+from gpt.chains.support.constitutional_chain.principle_chain import create_generate_principle_chain
+from gpt.chains.support.constitutional_chain.prompt import CRITIQUE_PROMPT, REVISION_PROMPT
 
 
 class ConstitutionalChain(Chain):

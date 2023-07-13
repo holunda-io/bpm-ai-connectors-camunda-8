@@ -3,8 +3,8 @@ from typing import Union
 
 from langchain.schema import BaseMessage, AgentAction, AgentFinish
 
-from gpt.agents.common.new_agent.output_parser import AgentOutputParser
-from gpt.agents.common.new_agent.react.prompt import FINAL_ANSWER_PREFIX
+from gpt.agents.common.agent.output_parser import AgentOutputParser
+from gpt.agents.common.agent.react.prompt import FINAL_ANSWER_PREFIX
 
 
 class ReActOutputParser(AgentOutputParser):
@@ -28,7 +28,7 @@ class ReActOutputParser(AgentOutputParser):
             return AgentAction(action, tool_input, log=response_text)
 
         elif includes_answer:
-            return AgentFinish({"output": response_text.split(FINAL_ANSWER_PREFIX)[-1].strip()}, log=response_text)
+            return AgentFinish({self.output_key: response_text.split(FINAL_ANSWER_PREFIX)[-1].strip()}, log=response_text)
 
         if not re.search(self.action_pattern, response_text, re.DOTALL):
             raise Exception(f"Could not parse LLM output: `{response_text}`. Invalid Format: Missing 'Action:' after 'Thought:'")

@@ -1,4 +1,4 @@
-from gpt.agents.common.code_execution.util import extract_function_calls, extract_functions, extract_imports, is_simple_call
+from gpt.legacy.code_execution import extract_function_calls, extract_functions, extract_imports, is_simple_call
 
 TEST_SOURCE_CODE = """
 import os

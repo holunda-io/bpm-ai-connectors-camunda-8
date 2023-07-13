@@ -1,18 +1,16 @@
-import re
-from typing import Dict, Any, Callable, Optional, List
+from typing import Dict, Any, Optional, List
 
-from langchain.callbacks.manager import CallbackManagerForChainRun, Callbacks
+from langchain.callbacks.manager import Callbacks
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, MessagesPlaceholder, SystemMessagePromptTemplate
+from langchain.prompts import HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate
-from langchain.schema import AIMessage, BaseMessage, FunctionMessage, AgentAction
+from langchain.schema import BaseMessage, FunctionMessage, AgentAction
 from langchain.tools import format_tool_to_openai_function
 
-from gpt.agents.common.new_agent.base import Agent, AgentParameterResolver
-from gpt.agents.common.new_agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
-from gpt.agents.common.new_agent.output_parser import AgentOutputParser
-from gpt.agents.common.new_agent.step import AgentStep
-from gpt.agents.common.new_agent.toolbox import Toolbox
+from gpt.agents.common.agent.base import Agent, AgentParameterResolver
+from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
+from gpt.agents.common.agent.step import AgentStep
+from gpt.agents.common.agent.toolbox import Toolbox
 
 
 class OpenAIFunctionsParameterResolver(AgentParameterResolver):
@@ -21,9 +19,8 @@ class OpenAIFunctionsParameterResolver(AgentParameterResolver):
 
         """
         return {
-            "input": inputs["input"],
-            #"context": inputs["context"],
             "transcript": agent_step.transcript,
+            **inputs
         }
 
 
@@ -36,8 +33,9 @@ class OpenAIFunctionsAgent(Agent):
         user_prompt_template: Optional[HumanMessagePromptTemplate] = None,
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
         prompt_parameters_resolver: Optional[AgentParameterResolver] = None,
-        output_parser: Optional[AgentOutputParser] = None,
         toolbox: Optional[Toolbox] = None,
+        no_function_call_means_final_answer: bool = False,
+        output_key: str = "output",
         stop_words: Optional[List[str]] = None,
         max_steps: int = 10
     ):
@@ -50,7 +48,8 @@ class OpenAIFunctionsAgent(Agent):
             ),
             few_shot_prompt_messages=few_shot_prompt_messages,
             prompt_parameters_resolver=prompt_parameters_resolver or OpenAIFunctionsParameterResolver(),
-            output_parser=output_parser or OpenAIFunctionsOutputParser(),
+            output_parser=OpenAIFunctionsOutputParser(output_key=output_key, no_function_call_means_final_answer=no_function_call_means_final_answer),
+            output_key=output_key,
             toolbox=toolbox,
             stop_words=stop_words,
             max_steps=max_steps

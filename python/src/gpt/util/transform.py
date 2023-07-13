@@ -1,5 +1,3 @@
-import json
-
 from langchain.chains import TransformChain
 
 from gpt.util.json import json_to_md

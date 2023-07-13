@@ -1,6 +1,5 @@
 # flake8: noqa
 from langchain.prompts import HumanMessagePromptTemplate, AIMessagePromptTemplate, ChatMessagePromptTemplate
-from langchain.schema import HumanMessage, AIMessage, FunctionMessage
 
 SYSTEM_MESSAGE = """\
 You are a genius Python code execution agent that solves user tasks by generating correct Python code snippets.
@@ -119,7 +118,7 @@ DEFAULT_FEW_SHOT_PROMPT_MESSAGES = [
         template="To reverse a string, we can use a slice:",
         additional_kwargs={"function_call": {"name": "python", "arguments": '{ "input": "\"Hello World\"[::-1]" }'}}
     ),
-    ChatMessagePromptTemplate.from_template(
+    ChatMessagePromptTemplate.from_template(  # todo not shown as function message in langsmith trace, why?
         role="function",
         template="dlroW olleH",
         additional_kwargs={"name": "python"}
@@ -137,7 +136,7 @@ DEFAULT_FEW_SHOT_PROMPT_MESSAGES = [
         template="Let's write a generic function `reverse_string(s: str)` that does this:",
         additional_kwargs={"function_call": {"name": "store_final_result",
                                              "arguments": '{ '
-                                                          '"function_def": "def reverse_string(s: str) -> str:    \nreturn \"reversed: \" + s[::-1]", '
+                                                          '"function_def": "def reverse_string(s: str) -> str:\n    return \"reversed: \" + s[::-1]", '
                                                           '"function_call": "reverse_string(\"Hello World\")" }'
                                              }
                            }

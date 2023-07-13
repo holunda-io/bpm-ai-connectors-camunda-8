@@ -1,4 +1,3 @@
-import itertools
 from typing import Dict, Optional, Any, List, Tuple, Union
 
 from langchain.agents import AgentExecutor
@@ -11,11 +10,12 @@ from langchain.schema import AgentFinish, AgentAction, OutputParserException
 from langchain.tools import BaseTool
 from langchain.vectorstores import VectorStore
 
-from gpt.agents.common.code_execution.agent import PythonReplAgent
-from gpt.agents.common.code_execution.comment_chain import create_code_comment_chain
-from gpt.agents.common.code_execution.eval_chain import create_code_eval_chain
-from gpt.agents.common.code_execution.tool import PythonREPLTool
-from gpt.agents.common.code_execution.util import extract_functions, extract_function_calls, extract_imports, get_python_functions_descriptions, \
+from gpt.legacy.code_execution.agent import PythonReplAgent
+from gpt.legacy.code_execution.comment_chain import create_code_comment_chain
+from gpt.legacy.code_execution.eval_chain import create_code_eval_chain
+from gpt.legacy.code_execution.tool import PythonREPLTool
+from gpt.legacy.code_execution.util import extract_functions, extract_function_calls, extract_imports, \
+    get_python_functions_descriptions, \
     create_func_obj, is_simple_call
 
 

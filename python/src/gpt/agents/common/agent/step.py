@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, Dict, Any, Callable, Union, List
+from typing import Optional, Union, List
 
 from langchain.load.serializable import Serializable
-from langchain.schema import AIMessage, BaseMessage, HumanMessage
+from langchain.schema import BaseMessage
 
-from gpt.agents.common.new_agent.output_parser import AgentOutputParser, AgentAction, AgentFinish
+from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction, AgentFinish
 
 logger = logging.getLogger(__name__)
 

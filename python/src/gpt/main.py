@@ -1,16 +1,6 @@
 import os
 
 from dotenv import load_dotenv
-from langchain.chains import FlareChain
-from langchain.chat_models import ChatOpenAI
-from langchain.document_loaders import WebBaseLoader
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
-from llama_index import ServiceContext, LLMPredictor, VectorStoreIndex, Document, OpenAIEmbedding
-from llama_index.query_engine import FLAREInstructQueryEngine
-
-from gpt.config import get_openai_chat_llm
 
 load_dotenv(dotenv_path='../../../connector-secrets.txt')
 

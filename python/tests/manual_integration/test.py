@@ -1,32 +1,26 @@
 import json
-from inspect import signature
 from typing import List, Tuple
 
+import langchain
 import pytest
-from langchain import Cohere, SQLDatabase
+from langchain import Cohere
+from langchain.cache import SQLiteCache
 from langchain.chains import RetrievalQA, FlareChain
+from langchain.document_loaders import WebBaseLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import AlephAlpha
-
-import langchain
-from langchain.cache import SQLiteCache
-from langchain.tools import ListSQLDatabaseTool, InfoSQLDatabaseTool
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma, Weaviate
-from langchain.vectorstores.weaviate import _default_schema
-from sqlalchemy import create_engine
 
-from gpt.agents.common.code_execution.chain import PythonCodeExecutionChain
-from gpt.agents.common.code_execution.comment_chain import create_code_comment_chain
-from gpt.agents.common.code_execution.eval_chain import create_code_eval_chain
-from gpt.agents.common.code_execution.util import extract_function_calls, get_python_functions_descriptions
+from gpt.legacy.code_execution.comment_chain import create_code_comment_chain
+from gpt.legacy.code_execution.eval_chain import create_code_eval_chain
+from gpt.legacy.code_execution import get_python_functions_descriptions
 from gpt.agents.database_agent.agent import create_database_agent
-from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
 from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
-from gpt.chains.support.sub_query_retriever.chain import create_sub_query_chain
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 
@@ -41,7 +35,7 @@ from langchain.chains.openai_functions.openapi import get_openapi_chain
 @pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_openapi_agent():
     agent = create_openapi_agent(
-        llm=get_openai_chat_llm(model_name="gpt-4-0613"),
+        llm=get_openai_chat_llm(model_name="gpt-4"),
         api_spec_url="http://localhost:8090/v3/api-docs"
     )
     result = agent.run(
@@ -56,16 +50,17 @@ def test_openapi_agent():
 @pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_database_agent():
     agent = create_database_agent(
-        llm=get_openai_chat_llm(model_name="gpt-4-0613"),
-        database_url="postgresql://postgres:password@localhost:5432/mydb"
+        llm=get_openai_chat_llm(model_name="gpt-4"),
+        database_url='postgresql://postgres:postgres@localhost:5438/postgres'
     )
     result = agent.run(
         input="Return the details of the customer.",
         context='{"customerId": 1}',
-        output_schema='{"birthday": "the birthday in format yyyy-mm-dd", "name": "lastname, firstname"}'
+        output_schema='{"street": "the street and number in format `street number`", "name": "lastname, firstname"}'
     )
     print(result)
-    assert "Mustermann" in result
+    assert "Burks, Debra" in result
+    assert "Thorne Ave. 9273" in result
 
 
 @pytest.mark.skip(reason="only on demand, uses real LLM")
@@ -210,7 +205,7 @@ def test_generic_standard():
     print(chain.run(json.dumps(input)))
 
 
-#@pytest.mark.skip(reason="only on demand, uses real LLM")
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_compose():
     input = {
         "firstname": "Jim",
@@ -230,6 +225,7 @@ def test_compose():
         style="informal",
         tone="very unfriendly and aggressive",
         sender="My company",
+        length="short"
     )
     print(chain.run(input=input))
 
@@ -238,33 +234,6 @@ def test_compose():
 def test_openapi():
     chain = get_openapi_chain("http://localhost:8090/v3/api-docs", verbose=True)
     print(chain.run("list some email addresses of customers (start at page 0)"))
-
-
-from langchain.document_loaders import WebBaseLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-
-def test_retrieval():
-    loader = WebBaseLoader([
-        "https://help.netflix.com/en/node/24926?ui_action=kb-article-popular-categories",
-        "https://help.netflix.com/en/node/41049?ui_action=kb-article-popular-categories",
-        "https://help.netflix.com/en/node/407"
-    ])
-    documents = loader.load()
-
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-    texts = text_splitter.split_documents(documents)
-
-    embeddings = OpenAIEmbeddings()
-    chroma_retriever = Chroma.from_documents(texts, embeddings).as_retriever()
-
-    qa = RetrievalQA.from_chain_type(
-        llm=get_openai_chat_llm(),
-        chain_type="stuff",
-        retriever=chroma_retriever
-    )
-
-    print("\n\n")
-    print(qa.run("account charged too much"))
 
 
 def test_flare():
@@ -313,7 +282,7 @@ def test_index_test_docs():
         by_text=False
     )
 
-def test_create_index():
+def test_create_skill_index():
     vs = get_vector_store(
         'weaviate://http://localhost:8080/SkillLibrary',
         OpenAIEmbeddings(),
@@ -356,19 +325,12 @@ def test_clear_skills():
 def test_retrieve():
     qa = create_retrieval_chain(
         llm=get_openai_chat_llm(),
-        database_url='weaviate://http://localhost:8080/Test_index'
+        database_url='weaviate://http://localhost:8080/Test_index',
+        embedding_provider="openai",
+        embedding_model="text-embedding-ada-002"
     )
     #print(qa.run('what happens if an account is canceled that still has gift card balance?'))
     print(qa.run('what happens if an account is canceled and how do I restart it?'))
-
-
-def test_sub_query():
-    chain = create_sub_query_chain(llm=get_openai_chat_llm(model_name='gpt-4'))
-    print(chain.run('what happens if an account is canceled and how do I restart it?'))
-    #print(chain.run('compare hp of tesla model y and vw golf'))
-    #print(chain.run('what is the price of the cheapest plan if I dont want to watch ads?'))
-    #print(chain.run('What happens when I throw a ball while on a moving truck?'))
-    #print(chain.run('What is the cancel policy? Specifically for the pro plan?'))
 
 
 def test_flare_instruct():
@@ -385,32 +347,9 @@ def test_flare_instruct():
         retriever=retriever,
     )
 
-    chain = FLAREInstructChain.from_llm(llm=llm, retriever=retrieval_qa)
+    chain = FLAREInstructChain.from_llm(llm=llm, retriever=retriever, retrieval_qa=retrieval_qa)
     print(chain.run('What is the cancel policy? Specifically for the pro plan?'))
 
-
-def test_code_execution():
-    llm = get_openai_chat_llm(model_name='gpt-4')
-
-    def get_accounts() -> List[Tuple[int, str, float]]:
-        """Returns all accounts as a tuple (id, full name, balance)"""
-        return [
-            (1, "Max Power", 213.1),
-            (2, "Jeff Jefferson", 2343.3),
-            (3, "Heinz Wolff", 100.0),
-            (4, "Job Jeb", 98.11),
-            (5, "Max Mustermann", 990.5),
-        ]
-
-    chain = PythonCodeExecutionChain.from_llm_and_functions(
-        llm=llm,
-        functions=[get_accounts],
-        output_schema={"sum": "the sum of all accounts"}
-    )
-    print(chain.run(
-        context="",
-        input="Return the first account"
-    ))
 
 def test_code_eval():
     def get_accounts() -> List[Tuple[int, str, float]]:
@@ -455,15 +394,39 @@ sum_account_balances()
     ))
 
 
-def test_database_functions():
-    llm = get_openai_chat_llm(model_name='gpt-4')
-    db = SQLDatabase(create_engine('postgresql://postgres:postgres@localhost:5438/postgres'), schema='sales')
+# todo old agents
+# def test_code_execution():
+#     llm = get_openai_chat_llm(model_name='gpt-4')
+#
+#     def get_accounts() -> List[Tuple[int, str, float]]:
+#         """Returns all accounts as a tuple (id, full name, balance)"""
+#         return [
+#             (1, "Max Power", 213.1),
+#             (2, "Jeff Jefferson", 2343.3),
+#             (3, "Heinz Wolff", 100.0),
+#             (4, "Job Jeb", 98.11),
+#             (5, "Max Mustermann", 990.5),
+#         ]
+#
+#     chain = PythonCodeExecutionChain.from_llm_and_functions(
+#         llm=llm,
+#         functions=[get_accounts],
+#         output_schema={"sum": "the sum of all accounts"}
+#     )
+#     print(chain.run(
+#         context="",
+#         input="Return the first account"
+#     ))
 
-    agent = create_database_code_execution_agent(llm=llm, db=db)
-
-    print(agent.run(
-        context="customerName: Charolette Rice",
-        input="Find the phone number of the customer"
-    ))
+# def test_database_code_execution():
+#     llm = get_openai_chat_llm(model_name='gpt-4')
+#     db = SQLDatabase(create_engine('postgresql://postgres:postgres@localhost:5438/postgres'))
+#
+#     agent = create_database_code_execution_agent(llm=llm, db=db)
+#
+#     print(agent.run(
+#         context="customerName: Charolette Rice",
+#         input="Find the phone number of the customer"
+#     ))
 
 

@@ -1,22 +1,24 @@
 from typing import Optional
 
-from langchain.agents.agent import AgentExecutor
-from langchain.base_language import BaseLanguageModel
+from langchain.chains.base import Chain
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
+from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
+from gpt.agents.common.agent.toolbox import Toolbox
 from gpt.agents.openapi_agent.api_controller.prompt import API_CONTROLLER_HUMAN_MESSAGE, \
     API_CONTROLLER_SYSTEM_MESSAGE_FUNCTIONS
 from gpt.agents.openapi_agent.api_controller.tools import RequestsToolkit
 from gpt.agents.openapi_agent.openapi import OpenAPISpec
-from gpt.agents.common.functions_agent.base import FunctionsAgent
 from gpt.config import supports_openai_functions
 
 
 def create_api_controller_agent(
         api_spec: OpenAPISpec,
         headers: Optional[dict],
-        llm: BaseLanguageModel,
+        llm: ChatOpenAI,
         output_key: str = "output",
-) -> AgentExecutor:
+) -> Chain:
     if not supports_openai_functions(llm):
         raise Exception("OpenAPI agent is currently only supported for OpenAI models with function calling")
     toolkit = RequestsToolkit(
@@ -25,16 +27,11 @@ def create_api_controller_agent(
         llm=llm,
         verbose=True,
     )
-    agent = FunctionsAgent.from_llm_and_tools(
+    return OpenAIFunctionsAgent(
         llm=llm,
-        tools=toolkit.get_tools(),
-        system_message=API_CONTROLLER_SYSTEM_MESSAGE_FUNCTIONS,
-        human_message=API_CONTROLLER_HUMAN_MESSAGE,
-        output_key=output_key,
-        verbose=True
-    )
-    return AgentExecutor.from_agent_and_tools(
-        agent=agent,
-        tools=toolkit.get_tools(),
-        verbose=True
+        system_prompt_template=SystemMessagePromptTemplate.from_template(API_CONTROLLER_SYSTEM_MESSAGE_FUNCTIONS),
+        user_prompt_template=HumanMessagePromptTemplate.from_template(API_CONTROLLER_HUMAN_MESSAGE),
+        toolbox=Toolbox.from_toolkit(toolkit),
+        no_function_call_means_final_answer=True,
+        output_key=output_key
     )

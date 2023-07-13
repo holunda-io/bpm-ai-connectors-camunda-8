@@ -1,13 +1,12 @@
 import ast
 from contextlib import redirect_stdout
 from io import StringIO
-from typing import Any, Dict, Optional, List, Type
+from typing import Any, Dict, Optional, Type
 from typing import Sequence, Callable
 
 from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain.tools.base import BaseTool
-from langchain.tools.python.tool import sanitize_input, _get_default_python_repl
-from langchain.utilities import PythonREPL
+from langchain.tools.python.tool import sanitize_input
 from pydantic import Field, BaseModel
 
 
