@@ -11,10 +11,10 @@ from langchain.tools import BaseTool
 from langchain.vectorstores import VectorStore
 
 from gpt.legacy.code_execution.agent import PythonReplAgent
-from gpt.legacy.code_execution.comment_chain import create_code_comment_chain
-from gpt.legacy.code_execution.eval_chain import create_code_eval_chain
-from gpt.legacy.code_execution.tool import PythonREPLTool
-from gpt.legacy.code_execution.util import extract_functions, extract_function_calls, extract_imports, \
+from gpt.agents.common.agent.code_execution.skill_creation.comment_chain import create_code_comment_chain
+from gpt.agents.common.agent.code_execution.skill_creation.eval_chain import create_code_eval_chain
+from gpt.agents.common.agent.code_execution.python_tool import PythonREPLTool
+from gpt.agents.common.agent.code_execution.util import extract_functions, extract_function_calls, extract_imports, \
     get_python_functions_descriptions, \
     create_func_obj, is_simple_call
 

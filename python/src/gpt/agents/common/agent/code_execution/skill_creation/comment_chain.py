@@ -44,6 +44,7 @@ def create_code_comment_chain(
         )
     ])
     return LLMChain(
+        tags=["code-comment"],
         llm=llm,
         prompt=prompt,
         verbose=verbose

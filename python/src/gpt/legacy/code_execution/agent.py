@@ -17,8 +17,8 @@ from langchain.schema import (
 from pydantic import root_validator
 
 from gpt.legacy.code_execution.output_parser import PythonCodeAgentOutputParser
-from gpt.legacy.code_execution.prompt import CODE_RESPONSE_TEMPLATE, SYSTEM_MESSAGE, HUMAN_MESSAGE
-from gpt.legacy.code_execution.util import get_python_functions_descriptions
+from gpt.agents.common.agent.code_execution.prompt import CODE_RESPONSE_TEMPLATE, SYSTEM_MESSAGE, HUMAN_MESSAGE
+from gpt.agents.common.agent.code_execution.util import get_python_functions_descriptions
 
 
 class PythonReplAgent(Agent):

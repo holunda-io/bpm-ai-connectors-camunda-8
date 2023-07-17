@@ -6,7 +6,7 @@ from langchain.agents import AgentOutputParser
 from langchain.schema import AgentAction, AgentFinish
 from langchain.schema import OutputParserException, BaseOutputParser
 
-from gpt.legacy.code_execution.tool import PythonREPLTool
+from gpt.agents.common.agent.code_execution.python_tool import PythonREPLTool
 
 
 def parse_python_markdown(s: str) -> str:

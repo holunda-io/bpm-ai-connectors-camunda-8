@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, Union, List
+from typing import Optional, Union, List, Callable, Any
 
 from langchain.load.serializable import Serializable
 from langchain.schema import BaseMessage
@@ -56,11 +56,23 @@ class AgentStep(Serializable):
         """
         return isinstance(self.parsed_action, AgentFinish) or self.current_step > self.max_steps
 
+    def is_finish(self) -> bool:
+        return isinstance(self.parsed_action, AgentFinish)
+
+    def update_output(self, f: Callable[[dict], dict]):
+        if not self.is_finish():
+            raise Exception("Trying to modify return values, but current step is not finish.")
+        self.parsed_action.return_values = f(self.parsed_action.return_values)
+
+
     @property
     def return_values(self) -> dict:
         if not self.is_last():
-            raise Exception("Trying to access return values while current step is not the last.")
-        return self.parsed_action.return_values
+            raise Exception("Trying to access return values, but current step is not the last.")
+        if self.is_finish():
+            return self.parsed_action.return_values
+        else:
+            return {}
 
     def complete(self, observation_message: Optional[BaseMessage]) -> None:
         """

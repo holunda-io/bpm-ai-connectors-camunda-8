@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Any
 
 from langchain import PromptTemplate
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain.prompts.chat import BaseStringMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain.schema import BaseMessage, FunctionMessage
 
 
 def filter_messages_by_type(messages: List[BaseStringMessagePromptTemplate], type) -> List[str]:
@@ -31,3 +32,13 @@ def chat_to_standard_prompt(chat_prompt: ChatPromptTemplate) -> PromptTemplate:
         template=template,
         input_variables=chat_prompt.input_variables
     )
+
+
+class FunctionMessagePromptTemplate(BaseStringMessagePromptTemplate):
+
+    name: str
+    """The name of the function that was executed."""
+
+    def format(self, **kwargs: Any) -> BaseMessage:
+        text = self.prompt.format(**kwargs)
+        return FunctionMessage(name=self.name, content=text, additional_kwargs=self.additional_kwargs)

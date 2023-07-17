@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 
 from langchain.agents.agent import ExceptionTool
 from langchain.agents.agent_toolkits.base import BaseToolkit
@@ -71,7 +71,7 @@ class Toolbox:
         """
         return "\n".join([f"{tool.name}: {tool.description}" for tool in self.tools.values()])
 
-    def run_tool(self, agent_action: AgentAction, run_manager: Optional[CallbackManagerForToolRun] = None) -> str:
+    def run_tool(self, agent_action: AgentAction, run_manager: Optional[CallbackManagerForToolRun] = None) -> Any:
         if agent_action.tool in self._tools:
             tool: BaseTool = self.tools[agent_action.tool]
         elif agent_action.tool in self._virtual_tools:

@@ -10,17 +10,19 @@ from langchain.document_loaders import WebBaseLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import AlephAlpha
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.utilities.openapi import OpenAPISpec
 from langchain.vectorstores import Chroma, Weaviate
 
-from gpt.legacy.code_execution.comment_chain import create_code_comment_chain
-from gpt.legacy.code_execution.eval_chain import create_code_eval_chain
-from gpt.legacy.code_execution import get_python_functions_descriptions
+from gpt.agents.common.agent.code_execution.skill_creation.comment_chain import create_code_comment_chain
+from gpt.agents.common.agent.code_execution.skill_creation.eval_chain import create_code_eval_chain
+from gpt.agents.common.agent.code_execution.util import get_python_functions_descriptions
 from gpt.agents.database_agent.agent import create_database_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
 from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
+from openapi_agent.openapi_spec import get_test_api_spec_str_for_url
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 
@@ -29,7 +31,7 @@ from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.agents.openapi_agent.agent import create_openapi_agent
 from gpt.agents.plan_and_execute.executor.executor import create_executor
 from gpt.chains.translate_chain.chain import create_translate_chain
-from langchain.chains.openai_functions.openapi import get_openapi_chain
+from langchain.chains.openai_functions.openapi import get_openapi_chain, openapi_spec_to_openai_fn
 
 
 @pytest.mark.skip(reason="only on demand, uses real LLM")
@@ -429,4 +431,22 @@ sum_account_balances()
 #         input="Find the phone number of the customer"
 #     ))
 
+def test_openapi_functions():
+    spec = get_test_api_spec_str_for_url("http://localhost:8090")
+    if isinstance(spec, str):
+        for conversion in (
+            OpenAPISpec.from_url,
+            OpenAPISpec.from_file,
+            OpenAPISpec.from_text,
+        ):
+            try:
+                spec = conversion(spec)  # type: ignore[arg-type]
+                break
+            except Exception:  # noqa: E722
+                pass
+        if isinstance(spec, str):
+            raise ValueError(f"Unable to parse spec from source {spec}")
+    openai_fns, call_api_fn = openapi_spec_to_openai_fn(spec)
+    #print(json.dumps(openai_fns, indent=2))
+    print(call_api_fn("getcustomers", {"params": {"page": 0, "pageSize": 1}}).text)
 

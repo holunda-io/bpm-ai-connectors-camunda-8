@@ -2,21 +2,22 @@ from __future__ import annotations
 
 import logging
 from abc import abstractmethod
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, TypedDict
 
 from langchain.callbacks.manager import CallbackManagerForChainRun, Callbacks
-from langchain.chains.base import Chain
-from langchain.chat_models import ChatOpenAI
 from langchain.load.serializable import Serializable
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
     MessagesPlaceholder
 from langchain.schema import BaseMessage, HumanMessage, AgentFinish
 from langchain.tools import Tool
+from pydantic import Field
 
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction
 from gpt.agents.common.agent.step import AgentStep
 from gpt.agents.common.agent.toolbox import Toolbox
+from langchain.chains.base import Chain
+from langchain.chat_models import ChatOpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,12 @@ class Agent(Chain):
     max_steps: int = 10
     output_key: str = "output"
 
+    return_last_step = False
+
     verbose = True
+
+    template_params: Dict[str, Any] = Field({})
+    """Contains the resolved template parameters for the current step."""
 
     @property
     def input_keys(self) -> List[str]:
@@ -54,7 +60,7 @@ class Agent(Chain):
     @property
     def output_keys(self) -> List[str]:
         """Return the keys expected to be in the chain output."""
-        return [self.output_key] #, "last_step"]
+        return [self.output_key] + ("last_step" if self.return_last_step else []) #+ (self.input_keys if self.return_inputs else [])
 
     def add_tool(self, tool: Tool):
         """
@@ -83,7 +89,21 @@ class Agent(Chain):
         agent_step = AgentStep.empty(self.output_parser, self.max_steps)
         while not agent_step.is_last():
             agent_step = self._step(inputs, agent_step, run_manager)
-        return {**agent_step.return_values} #, "last_step": agent_step}
+
+        return self._return(inputs, self.template_params, last_step=agent_step, run_manager=run_manager)
+
+    def _return(
+        self,
+        inputs: Dict[str, Any],
+        template_params: Dict[str, Any],
+        last_step: AgentStep,
+        run_manager: Optional[CallbackManagerForChainRun] = None
+    ) -> Dict[str, Any]:
+        return {
+            **last_step.return_values,
+            #**(inputs if self.return_inputs else {}), # already done by Chain...
+            **({"last_step": last_step} if self.return_last_step else {})
+        }
 
     def _step(self, inputs: Dict[str, Any], current_step: AgentStep, run_manager: Optional[CallbackManagerForChainRun] = None):
         # plan next step using the LLM
@@ -98,12 +118,17 @@ class Agent(Chain):
                 run_manager.on_agent_action(next_step.parsed_action, color="green")
 
             observation = self.toolbox.run_tool(next_step.parsed_action, run_manager.get_child() if run_manager else None)
-            observation_message = self._create_observation_message(next_step.parsed_action, observation)
-            # update the next step with the observation
-            next_step.complete(observation_message)
 
             if self.toolbox.get_tool(next_step.parsed_action.tool).return_direct:
-                next_step.parsed_action = AgentFinish({self.output_key: next_step.transcript[-1].content}, log=next_step.parsed_action.log)  # todo not ideal
+                if isinstance(observation, dict):
+                    output = observation
+                else:
+                    output = {self.output_key: str(observation)}
+                next_step.parsed_action = AgentFinish(output, log=next_step.parsed_action.log)  # todo not ideal
+            else:
+                observation_message = self._create_observation_message(next_step.parsed_action, observation)
+                # update the next step with the observation
+                next_step.complete(observation_message)
         else:
             if run_manager:
                 run_manager.on_agent_finish(next_step.parsed_action, color="blue")
@@ -114,13 +139,13 @@ class Agent(Chain):
 
     def _plan(self, inputs: Dict[str, Any], current_step: AgentStep, callbacks: Callbacks = None) -> BaseMessage:
         # first resolve prompt template params
-        template_params = self.prompt_parameters_resolver.resolve_parameters(inputs=inputs, agent=self, agent_step=current_step)
+        self.template_params = self.prompt_parameters_resolver.resolve_parameters(inputs=inputs, agent=self, agent_step=current_step)
 
         # check for template parameters mismatch
-        self.check_prompt_template(template_params)
+        self.check_prompt_template(self.template_params)
 
         # invoke via LLM
-        formatted_messages = self.prompt_template.format_messages(**template_params)
+        formatted_messages = self.prompt_template.format_messages(**self.template_params)
         return self._predict(formatted_messages, callbacks)
 
     def _predict(self, formatted_messages: List[BaseMessage], callbacks: Callbacks = None):
@@ -160,13 +185,13 @@ class Agent(Chain):
     def create_prompt(
         cls,
         system_prompt_template: SystemMessagePromptTemplate,
-        user_prompt_template: HumanMessagePromptTemplate,
+        user_prompt_templates: List[BaseMessagePromptTemplate],
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None
     ):
         return ChatPromptTemplate.from_messages([
             system_prompt_template,
             *(few_shot_prompt_messages or []),
-            user_prompt_template,
+            *user_prompt_templates,
             MessagesPlaceholder(variable_name="transcript"),
         ])
 

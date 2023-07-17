@@ -1,13 +1,13 @@
 import json
 from json import JSONDecodeError
-from typing import Any, List, Optional, Sequence, Tuple, Union, Callable, Type
+from typing import Any, List, Optional, Sequence, Tuple, Union, Callable
 
 from langchain import PromptTemplate
 from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent, _format_intermediate_steps, \
     _FunctionsAgentAction
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.base import BaseCallbackManager
-from langchain.callbacks.manager import Callbacks, CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
+from langchain.callbacks.manager import Callbacks
 from langchain.chat_models.openai import ChatOpenAI
 from langchain.prompts.base import BasePromptTemplate
 from langchain.prompts.chat import (
@@ -20,49 +20,10 @@ from langchain.schema import (
     AgentFinish,
     BaseMessage, AIMessage, OutputParserException,
 )
-from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
 
-from gpt.legacy.code_execution.prompt import CODE_RESPONSE_TEMPLATE, HUMAN_MESSAGE, SYSTEM_MESSAGE_FUNCTIONS
-from gpt.legacy.code_execution.tool import PythonREPLTool
-from gpt.legacy.code_execution.util import get_python_functions_descriptions
-
-
-class StoreFinalResultSchema(BaseModel):
-    function_def: str = Field(description="generic python function definition")
-    function_call: str = Field(description="concrete call")
-
-
-class StoreFinalResultTool(BaseTool):
-
-    name = "store_final_result"
-    description = "Stores the final python function definition and call."
-    args_schema: Type[StoreFinalResultSchema] = StoreFinalResultSchema
-    return_direct = True
-
-    repl: PythonREPLTool
-
-    @classmethod
-    def from_repl(cls, repl: PythonREPLTool):
-        return cls(repl=repl)
-
-    def _run(
-        self,
-        function_def: str,
-        function_call: str,
-        run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> str:
-        """Use the tool."""
-        return self.repl.run(function_def + '\n' + function_call)
-
-    async def _arun(
-        self,
-        function_def: str,
-        function_call: str,
-        run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
-    ) -> Any:
-        """Use the tool asynchronously."""
-        raise self.repl.run(function_def + '\n' + function_call)
+from gpt.agents.common.agent.code_execution.prompt import CODE_RESPONSE_TEMPLATE, HUMAN_MESSAGE, SYSTEM_MESSAGE_FUNCTIONS
+from gpt.agents.common.agent.code_execution.python_tool import PythonREPLTool
+from gpt.agents.common.agent.code_execution.util import get_python_functions_descriptions
 
 
 class PythonReplFunctionsAgent(OpenAIFunctionsAgent):
@@ -196,7 +157,7 @@ class PythonReplFunctionsAgent(OpenAIFunctionsAgent):
             human_message=human_message,
             python_functions=python_functions,
             prompt=PromptTemplate.from_template("{agent_scratchpad}"),
-            tools=[repl_tool, StoreFinalResultTool.from_repl(repl=repl_tool)],
+            #tools=[repl_tool, StoreFinalResultTool.from_repl(repl=repl_tool)],
             callback_manager=callback_manager,
             output_key=output_key,
             **kwargs,

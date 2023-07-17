@@ -1,6 +1,8 @@
 # flake8: noqa
 from langchain.prompts import HumanMessagePromptTemplate, AIMessagePromptTemplate, ChatMessagePromptTemplate
 
+from gpt.util.prompt import FunctionMessagePromptTemplate
+
 SYSTEM_MESSAGE = """\
 You are a genius Python code execution agent that solves user tasks by generating correct Python code snippets.
 You will receive a task from the user and must ultimately come up with a Python function to solve the task end to end.
@@ -110,27 +112,52 @@ Remember:
 - interactively derive a solution using `python` REPL
 - return your final solution as a generic function add a concrete call based on the context and task using `store_final_result`"""
 
+SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB = """\
+Assistant is a genius Python code execution agent that solves user tasks by generating correct Python code snippets.
+You will receive a task from the user and must ultimately come up with an implementation of a Python function to solve the task end to end.
+You will be given a stub of the result function that you need to implement and find a fitting name for.
+
+Here are the functions that you can use in your code:
+{functions}
+Do not add placeholders for these functions but assume that they are in scope.
+
+Additionally, you can use basic functions from the standard library, e.g. for strings, lists, dicts, and math.
+
+You will use the `python` repl tool with Python code using above functions (or standard lib functions).
+
+You can work iteratively to derive your final solution by working with the Python REPL.
+Whenever you call `python` with code, it will be interpreted and you receive back everything that was printed and/or the final expression value to inspect the result and derive your next step.
+Avoid using print() but instead end your code block with an expression to evaluate and output.
+Long lists may get abbreviated, so you can look at the structure but not perform manual searches. You need to write code to work with lists if necessary.
+If you get an error, debug your code and try again.
+
+If you think you are ready to output a final solution for the user task call `store_final_result` with the full implementation of the function stub containing the full code to solve the task and returning the final result.
+
+Begin!
+
+Remember:
+- interactively derive a solution using `python` REPL
+- return your final solution as an implementation of the given function stub using `store_final_result`"""
+
 DEFAULT_FEW_SHOT_PROMPT_MESSAGES = [
     HumanMessagePromptTemplate.from_template(
-        template='Reverse the string "Hello World" and prepend it with "reversed: "'
+        template='# Context\n\n\n# User Task\nReverse the string "Hello World" and prepend it with "reversed: "'
     ),
     AIMessagePromptTemplate.from_template(
         template="To reverse a string, we can use a slice:",
-        additional_kwargs={"function_call": {"name": "python", "arguments": '{ "input": "\"Hello World\"[::-1]" }'}}
+        additional_kwargs={"function_call": {"name": "python", "arguments": '{ "code": "\"Hello World\"[::-1]" }'}}
     ),
-    ChatMessagePromptTemplate.from_template(  # todo not shown as function message in langsmith trace, why?
-        role="function",
+    FunctionMessagePromptTemplate.from_template(
+        name="python",
         template="dlroW olleH",
-        additional_kwargs={"name": "python"}
     ),
     AIMessagePromptTemplate.from_template(
         template='Great. Now we need to prepend the string "reversed: ":',
-        additional_kwargs={"function_call": {"name": "python", "arguments": '{ "input": "\"reversed: \" + \"Hello World\"[::-1]" }'}}
+        additional_kwargs={"function_call": {"name": "python", "arguments": '{ "code": "\"reversed: \" + \"Hello World\"[::-1]" }'}}
     ),
-    ChatMessagePromptTemplate.from_template(
-        role="function",
+    FunctionMessagePromptTemplate.from_template(
+        name="python",
         template="reversed: dlroW olleH",
-        additional_kwargs={"name": "python"}
     ),
     AIMessagePromptTemplate.from_template(
         template="Let's write a generic function `reverse_string(s: str)` that does this:",
@@ -141,9 +168,47 @@ DEFAULT_FEW_SHOT_PROMPT_MESSAGES = [
                                              }
                            }
     ),
-    ChatMessagePromptTemplate.from_template(
-        role="function",
+    FunctionMessagePromptTemplate.from_template(
+        name="python",
         template="Result stored.",
-        additional_kwargs={"name": "store_final_result"}
+    )
+]
+
+DEFAULT_FEW_SHOT_PROMPT_MESSAGES_WITH_STUB = [
+    HumanMessagePromptTemplate.from_template(
+        template="""\
+# Function Stub
+def rename_me(s: str) -> str:
+    # TODO: implement
+    return # TODO
+
+# User Task
+Reverse the string and prepend it with \"reversed: \""""
+    ),
+    AIMessagePromptTemplate.from_template(
+        template="To reverse a string, we can use a slice:",
+        additional_kwargs={"function_call": {"name": "python", "arguments": '{ "code": "\"Hello World\"[::-1]" }'}}
+    ),
+    FunctionMessagePromptTemplate.from_template(
+        name="python",
+        template="dlroW olleH",
+    ),
+    AIMessagePromptTemplate.from_template(
+        template='Great. Now we need to prepend the string "reversed: ":',
+        additional_kwargs={"function_call": {"name": "python", "arguments": '{ "code": "\"reversed: \" + \"Hello World\"[::-1]" }'}}
+    ),
+    FunctionMessagePromptTemplate.from_template(
+        name="python",
+        template="reversed: dlroW olleH",
+    ),
+    AIMessagePromptTemplate.from_template(
+        template="Let's write a function `reverse_string(s: str)` that does this:",
+        additional_kwargs={"function_call": {"name": "store_final_result",
+                                             "arguments": '{ "function_def": "def reverse_string(s: str) -> str:\n    return \"reversed: \" + s[::-1]" }'}
+                           }
+    ),
+    FunctionMessagePromptTemplate.from_template(
+        name="store_final_result",
+        template="Result stored.",
     )
 ]

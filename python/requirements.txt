@@ -1,7 +1,7 @@
 uvicorn~=0.22.0
 fastapi==0.98.0
 python-dotenv~=1.0.0
-langchain==0.0.229
+langchain==0.0.232
 pydantic~=1.10.7
 requests==2.31.0
 PyYAML~=6.0

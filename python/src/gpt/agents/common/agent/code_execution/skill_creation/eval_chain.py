@@ -19,7 +19,7 @@ You should look at:
  - the result: Does the result value indicate a successful run and seem plausible?
 Decide if everything in combination was successful at solving the user task.
 
-First describe your reasoning in 1-2 sentences and then, if you think it was a success, output "SUCCESS", if it was no success, output "FAILURE".
+First describe your reasoning in 1-2 sentences and then, if you think it was a success, output "TASK_SUCCESS", if it was no success, output "TASK_FAILURE".
 Do not output anything else."""
 
 HUMAN_MESSAGE = """\
@@ -38,7 +38,7 @@ HUMAN_MESSAGE = """\
 # Result:
 {result}
 
-SUCCESS or FAILURE:"""
+TASK_SUCCESS or TASK_FAILURE:"""
 
 
 def create_code_eval_chain(
@@ -53,8 +53,9 @@ def create_code_eval_chain(
             HUMAN_MESSAGE
         )
     ])
-    output_parser = BooleanContainsOutputParser(true_tag="SUCCESS", false_tag="FAILURE")
+    output_parser = BooleanContainsOutputParser(true_tag="TASK_SUCCESS", false_tag="TASK_FAILURE")
     return LLMChain(
+        tags=["code-eval"],
         llm=llm,
         prompt=prompt,
         output_parser=output_parser,
