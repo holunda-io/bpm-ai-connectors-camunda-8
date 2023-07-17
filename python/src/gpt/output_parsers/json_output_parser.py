@@ -1,6 +1,6 @@
 import json
-from typing import List, Any, Optional
 import re
+from typing import Any, Optional
 
 from langchain.schema import OutputParserException, BaseOutputParser
 

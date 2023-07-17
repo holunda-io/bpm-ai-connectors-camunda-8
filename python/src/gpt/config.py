@@ -19,7 +19,7 @@ def get_openai_chat_llm(model_name: str = DEFAULT_OPENAI_MODEL) -> ChatOpenAI:
 
 
 def supports_openai_functions(llm: BaseLanguageModel):
-    return isinstance(llm, ChatOpenAI) and llm.model_name.endswith('0613')
+    return isinstance(llm, ChatOpenAI)
 
 
 def model_id_to_llm(model_id: str) -> BaseLanguageModel:

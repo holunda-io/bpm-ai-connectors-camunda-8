@@ -8,7 +8,8 @@ from langchain.chains.retrieval_qa.base import BaseRetrievalQA
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import BaseRetriever
 
-from gpt.chains.support.flare_instruct.answer_inserter.answer_inserter import LLMLookaheadAnswerInserter, BaseLookaheadAnswerInserter
+from gpt.chains.support.flare_instruct.answer_inserter.answer_inserter import LLMLookaheadAnswerInserter, \
+    BaseLookaheadAnswerInserter
 from gpt.chains.support.flare_instruct.output_parser import IsDoneOutputParser, QueryTaskOutputParser
 from gpt.chains.support.flare_instruct.prompt import DEFAULT_INSTRUCT_PROMPT, HUMAN_MESSAGE_TEMPLATE
 
@@ -103,7 +104,7 @@ class FLAREInstructChain(Chain):
         query = inputs[self.input_key]
         print(f"Query: {query}\n")
 
-        init_docs = self.retriever.get_relevant_documents(query)
+        init_docs = self.retriever.get_relevant_documents(query)  # todo use vector store similarity_search_with_relevance_scores to filter out irrelevant docs?
         init_doc_str = "\n\n".join([d.page_content for d in init_docs])
 
         cur_response = ""

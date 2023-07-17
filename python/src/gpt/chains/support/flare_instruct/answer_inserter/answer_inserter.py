@@ -8,7 +8,8 @@ from langchain.base_language import BaseLanguageModel
 from langchain.load.serializable import Serializable
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 
-from gpt.chains.support.flare_instruct.answer_inserter.prompt import DEFAULT_ANSWER_INSERT_PROMPT, HUMAN_MESSAGE_TEMPLATE
+from gpt.chains.support.flare_instruct.answer_inserter.prompt import DEFAULT_ANSWER_INSERT_PROMPT, \
+    HUMAN_MESSAGE_TEMPLATE
 from gpt.chains.support.flare_instruct.schema import QueryTask
 
 
