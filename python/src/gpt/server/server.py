@@ -4,6 +4,7 @@ from typing import Dict, List, Any, Optional
 from dotenv import load_dotenv
 
 from gpt.agents.database_agent.agent import create_database_agent
+from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
 from gpt.agents.plan_and_execute.executor.executor import create_executor
 from gpt.agents.plan_and_execute.planner.planner import create_planner
 from gpt.chains.compose_chain.chain import create_compose_chain
@@ -55,16 +56,22 @@ class DatabaseTask(BaseModel):
 
 @app.post("/database")
 async def post(task: DatabaseTask):
-    agent = create_database_agent(
-        task.databaseUrl,
-        llm=model_id_to_llm(task.model)
+    agent = create_database_code_execution_agent(
+        llm=model_id_to_llm(task.model),
+        database_url=task.databaseUrl,
+        #skill_store=skill_store,
+        enable_skill_creation=False,
+        output_schema=task.outputSchema,
+        call_direct=True
     )
-    res = agent.run(
-        input=task.task,
-        context=json.dumps(task.context, indent=2),
-        output_schema=json.dumps(task.outputSchema, indent=2)
-    )
-    return json.loads(res)
+    res = agent(
+        inputs={
+            "input": task.task,
+            "context": json.dumps(task.context, indent=2),
+        },
+        return_only_outputs=True
+    )["output"]
+    return res
 
 
 class PlannerTask(BaseModel):

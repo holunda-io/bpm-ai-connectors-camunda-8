@@ -69,9 +69,9 @@ def create_sql_agent(
         agent = OpenAIFunctionsAgent(
             llm=llm,
             system_prompt_template=SystemMessagePromptTemplate.from_template(prefix),
-            user_prompt_template=HumanMessagePromptTemplate.from_template(human_message or HUMAN_MESSAGE_FUNCTIONS),
+            user_prompt_templates=[HumanMessagePromptTemplate.from_template(human_message or HUMAN_MESSAGE_FUNCTIONS)],
             toolbox=Toolbox(tools),
-            output_parser=OpenAIFunctionsOutputParser(no_function_call_means_final_answer=True),
+            no_function_call_means_final_answer=True,
             **kwargs,
         )
     else:

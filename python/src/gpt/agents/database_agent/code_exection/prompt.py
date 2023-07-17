@@ -47,7 +47,7 @@ def rename_me(prefix: str):
             additional_kwargs={"function_call": {"name": "store_final_result",
                                                  "arguments": '{ '
                                                               '"function_def": "def reverse_first_table_name(prefix: str):\n    first_table_name = sql_list_tables()[0]\n    return prefix + first_table_name[::-1]"'
-                                                              + ', "function_call": "reverse_first_table_name(\"reversed: \")" }' if not call_direct else ''
+                                                              + (', "function_call": "reverse_first_table_name(\"reversed: \")" }' if not call_direct else '')
                                                  }
                                }
         ),

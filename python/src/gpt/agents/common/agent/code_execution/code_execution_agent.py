@@ -154,9 +154,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
 
         # if output schema has just one field, the result function returns a simple value, and we need to wrap it
         if self.output_schema and len(self.output_schema.items()) == 1 and not isinstance(output, dict):
-            res = {list(self.output_schema.keys())[0]: output}
-            print(f'output: {res}')
-            output = res
+            output = {list(self.output_schema.keys())[0]: output}
 
         return_vals = {'output': output, **return_vals}
 

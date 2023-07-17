@@ -195,7 +195,7 @@ def camel_to_snake(camel_str):
 
 
 def named_parameters_snake_case(input_dict):
-    return ", ".join(f"{camel_to_snake(k)}={v}" for k, v in input_dict.items())
+    return ", ".join(f"{camel_to_snake(k)}={repr(v)}" for k, v in input_dict.items())
 
 
 def python_exec(code: str, _globals: Optional[dict] = None, sanitize: bool = True, truncate: bool = False) -> Any:
