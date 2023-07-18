@@ -216,7 +216,7 @@ def python_exec(code: str, _globals: Optional[dict] = None, sanitize: bool = Tru
                     return io_buffer.getvalue()
                 else:
                     if truncate:
-                        return truncate_to_n_chars(ret, 1000)
+                        return truncate_to_n_chars(ret, 1500)
                     else:
                         return ret
         except Exception:

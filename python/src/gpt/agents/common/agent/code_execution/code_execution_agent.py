@@ -8,6 +8,7 @@ from pydantic import Field
 from gpt.agents.common.agent.base import AgentParameterResolver, Agent
 from gpt.agents.common.agent.code_execution.skill_creation.create_skill import CreateSkillTool
 from gpt.agents.common.agent.code_execution.store_final_result import StoreFinalResultWithCallTool, StoreFinalResultDefTool
+from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
 from gpt.agents.common.agent.step import AgentStep
 from gpt.agents.common.agent.toolbox import Toolbox
@@ -54,7 +55,7 @@ class CodeExecutionParameterResolver(AgentParameterResolver):
         return {
             "functions": get_python_functions_descriptions(all_functions),
             "function_names": [f.__name__ for f in all_functions],
-            **({"result_function_stub": generate_function_stub(json.loads(inputs['context']), self.output_schema)} if (self.output_schema or self.call_direct) else {}),
+            **({"result_function_stub": generate_function_stub(inputs['context'], self.output_schema)} if (self.output_schema or self.call_direct) else {}),
             "transcript": agent_step.transcript,
             **inputs
         }
@@ -98,7 +99,8 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         system_prompt_template: Optional[SystemMessagePromptTemplate] = None,
         user_prompt_templates: Optional[List[BaseMessagePromptTemplate]] = None,
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
-        max_steps: int = 10
+        max_steps: int = 10,
+        agent_memory: Optional[AgentMemory] = None
     ):
         python_tool = PythonREPLTool.from_functions(python_functions)
         # without call_direct the LLM generates the concrete call
@@ -110,7 +112,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
                 SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB if (output_schema or call_direct) else SYSTEM_MESSAGE_FUNCTIONS)
             ),
             user_prompt_templates=user_prompt_templates or [HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE)],
-            few_shot_prompt_messages=few_shot_prompt_messages or DEFAULT_FEW_SHOT_PROMPT_MESSAGES,
+            few_shot_prompt_messages=few_shot_prompt_messages if few_shot_prompt_messages is not None else DEFAULT_FEW_SHOT_PROMPT_MESSAGES,
             prompt_parameters_resolver=CodeExecutionParameterResolver(
                 skill_store=skill_store,
                 output_schema=output_schema,
@@ -118,10 +120,10 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
             ),
             toolbox=Toolbox([python_tool, final_tool]),
             stop_words=None,
-            max_steps=max_steps
+            max_steps=max_steps,
+            agent_memory=agent_memory
         )
         self.base_functions = python_functions
-        self.call_direct = call_direct
         self.output_schema = output_schema
         self.call_direct = call_direct
         if enable_skill_creation and not skill_store:
@@ -145,7 +147,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         if self.call_direct:
             function = return_vals['function_def']
             function_name = return_vals["function_name"]
-            function_params = json.loads(inputs['context'])
+            function_params = inputs['context']
             function_and_call = f'{function}\n\n{function_name}({named_parameters_snake_case(function_params)})'
             output = python_tool.run(function_and_call, truncate=False)
         else:

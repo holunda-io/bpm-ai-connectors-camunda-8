@@ -20,5 +20,8 @@ At the end of your plan, say '<END_OF_PLAN>'.
 Begin!"""
 
 PLANNER_USER_MESSAGE = """\
-Context: {context}
-Task: {task}"""
+# Context:
+{context}
+
+# Task:
+{task}"""

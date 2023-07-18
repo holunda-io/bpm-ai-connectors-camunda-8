@@ -6,6 +6,7 @@ from typing import Optional, Union, List, Callable, Any
 from langchain.load.serializable import Serializable
 from langchain.schema import BaseMessage
 
+from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction, AgentFinish
 
 logger = logging.getLogger(__name__)
@@ -82,6 +83,10 @@ class AgentStep(Serializable):
         self.transcript += [self.llm_response]
         if observation_message:
             self.transcript += [observation_message]
+
+    def manual_finish(self, output: dict, observation_message: Optional[BaseMessage]):
+        self.parsed_action = AgentFinish(output, log=self.parsed_action.log)
+        self.complete(observation_message)
 
     def __repr__(self) -> str:
         """

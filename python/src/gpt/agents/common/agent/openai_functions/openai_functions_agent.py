@@ -8,6 +8,7 @@ from langchain.schema import BaseMessage, FunctionMessage, AgentAction
 from langchain.tools import format_tool_to_openai_function
 
 from gpt.agents.common.agent.base import Agent, AgentParameterResolver
+from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.openai_functions.no_function_call_tool import NoFunctionCallTool
 from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
 from gpt.agents.common.agent.step import AgentStep
@@ -38,24 +39,26 @@ class OpenAIFunctionsAgent(Agent):
         no_function_call_means_final_answer: bool = False,
         output_key: str = "output",
         stop_words: Optional[List[str]] = None,
-        max_steps: int = 10
+        max_steps: int = 10,
+        agent_memory: Optional[AgentMemory] = None
     ):
         if not no_function_call_means_final_answer:
             toolbox.add_tool(NoFunctionCallTool())
         super().__init__(
             llm=llm,
+            user_prompt_templates=user_prompt_templates,
             prompt_template=Agent.create_prompt(
                 system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant."),
                 user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")],
                 few_shot_prompt_messages
             ),
-            few_shot_prompt_messages=few_shot_prompt_messages,
             prompt_parameters_resolver=prompt_parameters_resolver or OpenAIFunctionsParameterResolver(),
             output_parser=OpenAIFunctionsOutputParser(output_key=output_key, no_function_call_means_final_answer=no_function_call_means_final_answer),
             output_key=output_key,
             toolbox=toolbox,
             stop_words=stop_words,
-            max_steps=max_steps
+            max_steps=max_steps,
+            agent_memory=agent_memory
         )
 
     @property
