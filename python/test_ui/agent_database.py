@@ -42,17 +42,17 @@ if prompt := st.chat_input():
         agent = create_database_code_execution_agent(
             llm=ChatOpenAI(model="gpt-4", streaming=True),
             database_url='postgresql://postgres:postgres@localhost:5438/postgres',
-            # skill_store=skill_store,
-            enable_skill_creation=False,
+            skill_store=skill_store,
+            enable_skill_creation=True,
             output_schema=json.loads(output_schema) if output_schema else None,
-            call_direct=False,
+            call_direct=True,
             agent_memory=memory()
         )
 
         response = agent(
             inputs={
                 "input": prompt,
-                "context": context,
+                "context": json.loads(context) if context else "",
             },
             callbacks=[st_callback],
             return_only_outputs=True

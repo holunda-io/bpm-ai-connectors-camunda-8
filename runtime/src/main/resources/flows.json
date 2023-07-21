@@ -1,0 +1,27 @@
+[
+    {
+        "from": "start",
+        "to": "check_customer",
+        "condition": null
+    },
+    {
+        "from": "check_customer",
+        "to": "customer_exists",
+        "condition": null
+    },
+    {
+        "from": "customer_exists",
+        "to": "create_subscription",
+        "condition": "customer_data.exists"
+    },
+    {
+        "from": "create_subscription",
+        "to": "end",
+        "condition": null
+    },
+    {
+        "from": "customer_exists",
+        "to": "end",
+        "condition": "!customer_data.exists"
+    }
+]

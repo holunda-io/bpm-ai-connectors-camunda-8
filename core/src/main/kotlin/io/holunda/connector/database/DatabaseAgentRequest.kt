@@ -9,6 +9,7 @@ data class DatabaseAgentRequest(
   val inputJson: JsonNode,
   val taskDescription: String,
   val databaseUrl: String,
+  val skillStoreUrl: String?,
   val outputSchema: JsonNode,
   val missingDataBehavior: MissingDataBehavior,
   val model: Model,

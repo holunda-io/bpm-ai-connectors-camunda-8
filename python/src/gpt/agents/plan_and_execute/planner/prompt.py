@@ -13,11 +13,12 @@ In your plan, ONLY use the tools listed above! Do not make up or assume any othe
 
 Output the plan starting with the header 'Plan:' and then followed by a numbered list of steps.
 Each step (except the final step) should include exactly ONE tool to use. The steps will later be executed by an Executor, so make sure to precisely describe what each tool should be used for.
-Make the plan the minimum number of steps required to accurately complete the task.
+Make the plan the minimum number of steps required to accurately complete the task. Do not overcomplicate the solution.
+Be brief but but precise in you descriptions. No more than two sentences.
 If the task is a question, the final step should almost always be 'Given the above steps taken, respond with the final result of the original task'.
 At the end of your plan, say '<END_OF_PLAN>'.
 
-Begin!"""
+Begin! Remember, keep it simple."""
 
 PLANNER_USER_MESSAGE = """\
 # Context:

@@ -32,7 +32,7 @@ If expressions may only use boolean fields from previous results, make sure to r
 The function must return string literals (no format string!) that describe the types of end events.
 
 # Example
-Here is an example:
+Here is an example for the task `create a new subscription for the customer`:
 
 def process(customer_email: str) -> str:
     id_result = customer_database(
@@ -64,6 +64,7 @@ Begin!
 Remember:
 - only use the provided functions and nothing else!
 - implement a task-solving process in the function stub according to the plan
+- keep it simple and don't overcomplicate things
 - return values must be string literals
 - Do NOT use any standard lib functions.
 - return your final solution as an implementation of the given function stub using `store_final_result`"""
@@ -102,7 +103,7 @@ def create_process_generation_agent(
     llm: ChatOpenAI,
     output_schema: Optional[Dict[str, Any]] = None
 ) -> Chain:
-    return PythonCodeExecutionAgent(
+    return PythonCodeExecutionAgent.from_functions(
         llm=llm,
         python_functions=[human_task, extract_data, customer_database, subscription_service],
         system_prompt_template=SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE),

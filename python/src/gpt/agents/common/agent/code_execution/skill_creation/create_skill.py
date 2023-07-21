@@ -61,6 +61,7 @@ class CreateSkillTool(BaseTool):
         function = extract_functions(function_def)[0]
         imports = '\n'.join(extract_imports(function_def))
         function_with_imports = imports + '\n' + function
+
         self.skill_store.add_texts(
             texts=[f'# {task}\n\n{comment}\n{function_with_imports}'],
             metadatas=[{

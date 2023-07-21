@@ -2,6 +2,7 @@ import json
 from typing import Dict, List, Any, Optional
 
 from dotenv import load_dotenv
+from langchain.embeddings import OpenAIEmbeddings
 
 from gpt.agents.database_agent.agent import create_database_agent
 from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
@@ -11,7 +12,7 @@ from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
-from gpt.chains.retrieval_chain.chain import create_retrieval_chain
+from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
 from gpt.chains.translate_chain.chain import create_translate_chain
 from gpt.config import model_id_to_llm
 
@@ -50,24 +51,34 @@ class DatabaseTask(BaseModel):
     model: str
     task: str
     context: dict
-    outputSchema: dict
-    databaseUrl: str
+    output_schema: dict
+    database_url: str
+    skill_store_url: Optional[str] = None
 
 
 @app.post("/database")
 async def post(task: DatabaseTask):
+    if task.skill_store_url:
+        skill_store = get_vector_store(
+            task.skill_store_url,
+            OpenAIEmbeddings(),
+            meta_attributes=['task', 'comment', 'function', 'example_call']
+        )
+    else:
+        skill_store = None
+
     agent = create_database_code_execution_agent(
         llm=model_id_to_llm(task.model),
-        database_url=task.databaseUrl,
-        #skill_store=skill_store,
-        enable_skill_creation=False,
-        output_schema=task.outputSchema,
+        database_url=task.database_url,
+        skill_store=skill_store,
+        enable_skill_creation=(skill_store is not None),
+        output_schema=task.output_schema,
         call_direct=True
     )
     res = agent(
         inputs={
             "input": task.task,
-            "context": json.dumps(task.context, indent=2),
+            "context": task.context,
         },
         return_only_outputs=True
     )["output"]

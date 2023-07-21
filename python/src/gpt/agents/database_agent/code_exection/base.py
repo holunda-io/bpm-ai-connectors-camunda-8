@@ -24,7 +24,7 @@ def create_database_code_execution_agent(
     db = SQLDatabase.from_uri(database_url)
     tables_str = ", ".join(db.get_usable_table_names())
     function_stub = generate_function_stub({"prefix": "reversed: "}, output_schema)
-    return PythonCodeExecutionAgent(
+    return PythonCodeExecutionAgent.from_functions(
         llm=llm,
         python_functions=get_database_functions(llm, db),
         user_prompt_templates=create_user_prompt_messages(tables_str, call_direct, stub_function=(output_schema or call_direct)),

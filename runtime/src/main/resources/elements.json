@@ -1,0 +1,43 @@
+[
+  {
+    "type": "start",
+    "name": "start"
+  },
+  {
+    "type": "customer_database",
+    "name": "check_customer",
+    "instruction": "Check if the customer with this email exists in the database",
+    "input_variables": [
+      "customer_email"
+    ],
+    "output_variable": "customer_data",
+    "output_schema": {
+      "exists": {
+        "type": "boolean",
+        "description": "whether the customer exists in the database"
+      },
+      "customer_data": {
+        "type": "object",
+        "description": "the customer's data if the customer exists"
+      }
+    }
+  },
+  {
+    "type": "gateway",
+    "name": "customer_exists"
+  },
+  {
+    "type": "subscription_service",
+    "name": "create_subscription",
+    "instruction": "Create a new subscription for the customer",
+    "input_variables": [
+      "customer_data.customer_data"
+    ],
+    "output_variable": null,
+    "output_schema": null
+  },
+  {
+    "type": "end",
+    "name": "end"
+  }
+]

@@ -3,11 +3,7 @@ import json
 import streamlit as st
 from dotenv import load_dotenv
 
-from gpt.agents.database_agent.agent import create_database_agent
-from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
-from gpt.agents.process_generation_agent.process_generation_agent import create_process_generation_agent, ProcessGenerationChain
-from gpt.chains.retrieval_chain.chain import get_vector_store
-from gpt.config import get_openai_chat_llm
+from gpt.agents.process_generation_agent.process_generation_agent_2 import create_process_generation_agent
 
 load_dotenv(dotenv_path='../../connector-secrets.txt')
 
@@ -29,21 +25,22 @@ if prompt := st.chat_input():
     with st.chat_message("assistant"):
         st_callback = StreamlitCallbackHandler(st.container())
 
-        agent = ProcessGenerationChain.from_llm(
+        agent = create_process_generation_agent(
             llm=ChatOpenAI(model="gpt-4", streaming=True),
             tools={
                 "human_task": "A human task. You should only use this if a subtask is not suitable for the automated tools.",
                 "extract_data": "A service that can transform unstructured data into a given output format.",
                 "customer_database": "A service that can retrieve information about a customer and its data.",
                 "subscription_service": "A service that can manage customer subscriptions."
-            }
+            },
+            context=json.loads(context)
             #output_schema=json.loads(output_schema) if output_schema else None,
         )
 
         response = agent(
             inputs={
                 "input": prompt,
-                "context": json.loads(context),
+                "context": ""
             },
             callbacks=[st_callback],
             return_only_outputs=True

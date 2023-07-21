@@ -10,13 +10,13 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
     MessagesPlaceholder
 from langchain.schema import BaseMessage, HumanMessage, AgentFinish
-from langchain.tools import Tool
+from langchain.tools import Tool, BaseTool
 from pydantic import Field
 
 from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction
 from gpt.agents.common.agent.step import AgentStep
-from gpt.agents.common.agent.toolbox import Toolbox
+from gpt.agents.common.agent.toolbox import Toolbox, AutoFinishTool
 from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
 
@@ -45,7 +45,7 @@ class Agent(Chain):
     prompt_template: ChatPromptTemplate
 
     stop_words: Optional[List[str]] = None
-    max_steps: int = 10
+    max_steps: int = 25
     output_key: str = "output"
 
     return_last_step = False
@@ -69,12 +69,12 @@ class Agent(Chain):
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
         output_key: str = "output",
         stop_words: Optional[List[str]] = None,
-        max_steps: int = 10,
+        max_steps: int = 25,
         agent_memory: Optional[AgentMemory] = None
     ):
-        system_prompt_template = system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant."),
-        user_prompt_templates = user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")],
-        cls(
+        system_prompt_template = system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant.")
+        user_prompt_templates = user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")]
+        return cls(
             llm=llm,
             user_prompt_templates=user_prompt_templates,
             prompt_template=Agent.create_prompt(
@@ -101,9 +101,18 @@ class Agent(Chain):
         """Return the keys expected to be in the chain output."""
         return [self.output_key] + ("last_step" if self.return_last_step else []) #+ (self.input_keys if self.return_inputs else [])
 
-    def add_tool(self, tool: Tool):
+    def add_tools(self, tools: List[BaseTool]):
         """
-        Add a tool to the Agent. This also updates the PromptTemplate for the Agent's PromptNode with the tool name.
+        Add the tools to the Agent.
+
+        :param tools: The tools to add to the Agent.
+        """
+        for tool in tools:
+            self.toolbox.add_tool(tool)
+
+    def add_tool(self, tool: BaseTool):
+        """
+        Add a tool to the Agent.
 
         :param tool: The tool to add to the Agent.
         """
@@ -126,7 +135,6 @@ class Agent(Chain):
         Runs the Agent.
         """
         agent_step = AgentStep.empty(self.output_parser, self.max_steps)
-        print(f"first agent step: {agent_step.transcript}")
         while not agent_step.is_last():
             agent_step = self._step(inputs, agent_step, run_manager)
 
@@ -164,7 +172,8 @@ class Agent(Chain):
             observation = self.toolbox.run_tool(next_step.parsed_action, run_manager.get_child() if run_manager else None)
             observation_message = self._create_observation_message(next_step.parsed_action, observation)
 
-            if self.toolbox.get_tool(next_step.parsed_action.tool).return_direct:
+            tool = self.toolbox.get_tool(next_step.parsed_action.tool)
+            if isinstance(tool, AutoFinishTool) and tool.is_finish(observation):
                 if isinstance(observation, dict):
                     output = observation
                 else:

@@ -28,23 +28,18 @@ class OpenAIFunctionsParameterResolver(AgentParameterResolver):
 
 class OpenAIFunctionsAgent(Agent):
 
-    def __init__(
-        self,
+    @classmethod
+    def create(
+        cls,
         llm: ChatOpenAI,
         system_prompt_template: Optional[SystemMessagePromptTemplate] = None,
         user_prompt_templates: Optional[List[BaseMessagePromptTemplate]] = None,
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
-        prompt_parameters_resolver: Optional[AgentParameterResolver] = None,
-        toolbox: Optional[Toolbox] = None,
         no_function_call_means_final_answer: bool = False,
         output_key: str = "output",
-        stop_words: Optional[List[str]] = None,
-        max_steps: int = 10,
-        agent_memory: Optional[AgentMemory] = None
+        **kwargs
     ):
-        if not no_function_call_means_final_answer:
-            toolbox.add_tool(NoFunctionCallTool())
-        super().__init__(
+        agent = cls(
             llm=llm,
             user_prompt_templates=user_prompt_templates,
             prompt_template=Agent.create_prompt(
@@ -52,14 +47,13 @@ class OpenAIFunctionsAgent(Agent):
                 user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")],
                 few_shot_prompt_messages
             ),
-            prompt_parameters_resolver=prompt_parameters_resolver or OpenAIFunctionsParameterResolver(),
+            prompt_parameters_resolver=OpenAIFunctionsParameterResolver(),
             output_parser=OpenAIFunctionsOutputParser(output_key=output_key, no_function_call_means_final_answer=no_function_call_means_final_answer),
-            output_key=output_key,
-            toolbox=toolbox,
-            stop_words=stop_words,
-            max_steps=max_steps,
-            agent_memory=agent_memory
+            **kwargs
         )
+        if not no_function_call_means_final_answer:
+            agent.add_tool(NoFunctionCallTool())
+        return agent
 
     @property
     def openai_functions(self) -> List[dict]:

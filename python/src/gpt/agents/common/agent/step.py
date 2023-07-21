@@ -18,14 +18,14 @@ class AgentStep(Serializable):
     """
 
     output_parser: AgentOutputParser
-    max_steps: int = 10
+    max_steps: int = 25
     current_step: int = 1
     llm_response: Optional[BaseMessage] = None
     parsed_action: Optional[Union[AgentAction, AgentFinish]] = None
     transcript: List[BaseMessage] = []
 
     @classmethod
-    def empty(cls, output_parser: AgentOutputParser, max_steps: int = 10):
+    def empty(cls, output_parser: AgentOutputParser, max_steps: int = 25):
         return cls(output_parser=output_parser, max_steps=max_steps)
 
     def create_next_step(self, llm_response: BaseMessage, current_step: Optional[int] = None) -> AgentStep:

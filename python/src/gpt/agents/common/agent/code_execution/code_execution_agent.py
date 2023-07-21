@@ -1,23 +1,24 @@
 import json
-from typing import Dict, Any, Optional, Callable, List
+import os
+from typing import Dict, Any, Optional, Callable, List, Type
 
-from langchain.callbacks.manager import CallbackManagerForChainRun
+from langchain.callbacks.manager import CallbackManagerForChainRun, AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
 from langchain.vectorstores import VectorStore
-from pydantic import Field
+from pydantic import Field, BaseModel, validator
 
 from gpt.agents.common.agent.base import AgentParameterResolver, Agent
 from gpt.agents.common.agent.code_execution.skill_creation.create_skill import CreateSkillTool
-from gpt.agents.common.agent.code_execution.store_final_result import StoreFinalResultWithCallTool, StoreFinalResultDefTool
 from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
+from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
 from gpt.agents.common.agent.step import AgentStep
-from gpt.agents.common.agent.toolbox import Toolbox
+from gpt.agents.common.agent.toolbox import Toolbox, AutoFinishTool
 from gpt.agents.common.agent.code_execution.skill_creation.eval_chain import create_code_eval_chain
 from gpt.agents.common.agent.code_execution.prompt import SYSTEM_MESSAGE_FUNCTIONS, DEFAULT_FEW_SHOT_PROMPT_MESSAGES, HUMAN_MESSAGE, \
     SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB
 from gpt.agents.common.agent.code_execution.python_tool import PythonREPLTool
 from gpt.agents.common.agent.code_execution.util import create_func_obj, get_python_functions_descriptions, is_simple_call, generate_function_stub, python_exec, \
-    named_parameters_snake_case
+    named_parameters_snake_case, get_function_name
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate
 from langchain.chat_models import ChatOpenAI
@@ -88,8 +89,9 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
     skill_store: Optional[VectorStore] = None
     enable_skill_creation: bool = False
 
-    def __init__(
-        self,
+    @classmethod
+    def from_functions(
+        cls,
         llm: ChatOpenAI,
         python_functions: Optional[List[Callable]] = None,
         call_direct: bool = True,
@@ -101,35 +103,78 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
         max_steps: int = 10,
         agent_memory: Optional[AgentMemory] = None
-    ):
-        python_tool = PythonREPLTool.from_functions(python_functions)
-        # without call_direct the LLM generates the concrete call
-        final_tool = StoreFinalResultDefTool() if call_direct else StoreFinalResultWithCallTool()
-        super().__init__(
+    ) -> "PythonCodeExecutionAgent":
+        if enable_skill_creation and not skill_store:
+            raise Exception("When enabling skill creation a vector store for the skills must be provided.")
+
+        system_prompt_template = system_prompt_template or (
+            # if we want to directly call the result function without LLM help or get a defined output schema, we need to predefine a function stub
+            SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB if (output_schema or call_direct) else SYSTEM_MESSAGE_FUNCTIONS)
+        )
+        user_prompt_templates = user_prompt_templates or [HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE)]
+
+        agent = cls(
             llm=llm,
-            system_prompt_template=system_prompt_template or (
-                # if we want to directly call the result function without LLM help or get a defined output schema, we need to predefine a function stub
-                SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB if (output_schema or call_direct) else SYSTEM_MESSAGE_FUNCTIONS)
+            user_prompt_templates=user_prompt_templates,
+            prompt_template=Agent.create_prompt(
+                system_prompt_template,
+                user_prompt_templates,
+                few_shot_prompt_messages if few_shot_prompt_messages is not None else DEFAULT_FEW_SHOT_PROMPT_MESSAGES,
             ),
-            user_prompt_templates=user_prompt_templates or [HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE)],
-            few_shot_prompt_messages=few_shot_prompt_messages if few_shot_prompt_messages is not None else DEFAULT_FEW_SHOT_PROMPT_MESSAGES,
             prompt_parameters_resolver=CodeExecutionParameterResolver(
                 skill_store=skill_store,
                 output_schema=output_schema,
                 call_direct=call_direct
             ),
-            toolbox=Toolbox([python_tool, final_tool]),
+            output_parser=OpenAIFunctionsOutputParser(no_function_call_means_final_answer=False),
+            toolbox=Toolbox(),
+            base_functions=python_functions,
+            enable_skill_creation=enable_skill_creation,
+            skill_store=skill_store,
+            output_schema=output_schema,
+            call_direct=call_direct,
             stop_words=None,
             max_steps=max_steps,
             agent_memory=agent_memory
         )
-        self.base_functions = python_functions
-        self.output_schema = output_schema
-        self.call_direct = call_direct
-        if enable_skill_creation and not skill_store:
-            raise Exception("When enabling skill creation a vector store for the skills must be provided.")
-        self.skill_store = skill_store
-        self.enable_skill_creation = enable_skill_creation
+
+        python_tool = PythonREPLTool.from_functions(python_functions)
+        final_tool = StoreFinalResultDefTool(agent=agent) if call_direct else StoreFinalResultWithCallTool(agent=agent)
+        agent.add_tools([python_tool, final_tool])
+
+        return agent
+
+    def _call(
+        self,
+        inputs: Dict[str, Any],
+        run_manager: Optional[CallbackManagerForChainRun] = None,
+    ) -> Dict[str, Any]:
+
+        if self.call_direct:
+            task = inputs['input']
+            context = inputs['context']
+            filename = str(task).lower().replace(' ', '_') + "_".join(context.keys())
+            if os.path.exists(filename):
+                with open(filename, "r") as f:
+                    function_def = f.read()
+
+                    # todo duplication
+                    python_tool = self.toolbox.get_tool('python')
+                    function = function_def
+                    function_name = get_function_name(function_def)
+                    function_params = context
+                    function_call = f'{function_name}({named_parameters_snake_case(function_params)})'
+                    function_and_call = f'{function}\n\n{function_call}'
+
+                    output = python_tool.run(function_and_call, truncate=False)
+
+                    # todo duplication
+                    if self.output_schema and len(self.output_schema.items()) == 1 and not isinstance(output, dict):
+                        output = {list(self.output_schema.keys())[0]: output}
+
+                    return {self.output_key: output}
+
+        return super()._call(inputs, run_manager)
 
     def _return(
         self,
@@ -141,24 +186,11 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         if self.enable_skill_creation and self.skill_store:
             self.run_skill_creation(inputs, template_params, last_step, run_manager)
 
-        python_tool = self.toolbox.get_tool('python')
-
         return_vals = last_step.return_values
-        if self.call_direct:
-            function = return_vals['function_def']
-            function_name = return_vals["function_name"]
-            function_params = inputs['context']
-            function_and_call = f'{function}\n\n{function_name}({named_parameters_snake_case(function_params)})'
-            output = python_tool.run(function_and_call, truncate=False)
-        else:
-            function_and_call = return_vals['function_def'] + "\n\n" + return_vals['function_call']
-            output = python_tool.run(function_and_call, truncate=False)
 
         # if output schema has just one field, the result function returns a simple value, and we need to wrap it
-        if self.output_schema and len(self.output_schema.items()) == 1 and not isinstance(output, dict):
-            output = {list(self.output_schema.keys())[0]: output}
-
-        return_vals = {'output': output, **return_vals}
+        if self.output_schema and len(self.output_schema.items()) == 1 and not isinstance(return_vals['output'], dict):
+            return_vals['output'] = {list(self.output_schema.keys())[0]: return_vals['output']}
 
         return {
             **return_vals,
@@ -193,8 +225,113 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
                     {"task": task, **last_step.return_values},
                     callbacks=run_manager.get_child() if run_manager else None
                 )
+
+                if self.call_direct:
+                    filename = str(task).lower().replace(' ', '_') + "_".join(dict(context).keys())
+                    with open(filename, mode="wt") as f:
+                        f.write(function_def)
+
             else:
                 print("Code evaluation failed, don't create new skill")
         else:
             print("Trivial composition, don't create new skill")
 
+
+class StoreFinalResultWithCallSchema(BaseModel):
+    function_def: str = Field(description="generic python function definition")
+    function_call: str = Field(description="concrete call")
+
+class StoreFinalResultWithCallTool(AutoFinishTool):
+
+    name = "store_final_result"
+    description = "Stores the final python function definition and call."
+    args_schema: Type[StoreFinalResultWithCallSchema] = StoreFinalResultWithCallSchema
+
+    agent: PythonCodeExecutionAgent
+
+    def is_finish(self, observation: Any) -> bool:
+        """
+        If the result of the tool run did not raise any errors, we can finish.
+        """
+        return "<python_error>" not in str(observation['output'])
+
+    def _run(
+        self,
+        function_def: str,
+        function_call: str,
+        run_manager: Optional[CallbackManagerForToolRun] = None,
+    ) -> dict:
+        """Use the tool."""
+        python_tool = self.agent.toolbox.get_tool('python')
+
+        function_and_call = function_def + "\n\n" + function_call
+
+        output = python_tool.run(function_and_call, truncate=False)
+
+        return {
+            "output": output,
+            "function_def": function_def,
+            "function_name": get_function_name(function_def),
+            "function_call": function_call
+        }
+
+    async def _arun(
+        self,
+        function_def: str,
+        function_call: str,
+        run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
+    ) -> str:
+        """Use the tool asynchronously."""
+        raise Exception("async not supported")
+
+######################################################################################################
+
+
+class StoreFinalResultDefSchema(BaseModel):
+    function_def: str = Field(description="full implementation of function stub")
+
+
+class StoreFinalResultDefTool(AutoFinishTool):
+
+    name = "store_final_result"
+    description = "Stores the final implementation of the python function stub."
+    args_schema: Type[StoreFinalResultDefSchema] = StoreFinalResultDefSchema
+
+    agent: PythonCodeExecutionAgent
+
+    def is_finish(self, observation: Any) -> bool:
+        """
+        If the result of the tool run did not raise any errors, we can finish.
+        """
+        return "<python_error>" not in str(observation['output'])
+
+    def _run(
+        self,
+        function_def: str,
+        run_manager: Optional[CallbackManagerForToolRun] = None,
+    ) -> dict:
+        """Use the tool."""
+        python_tool = self.agent.toolbox.get_tool('python')
+
+        function = function_def
+        function_name = get_function_name(function_def)
+        function_params = self.agent.template_params['context']
+        function_call = f'{function_name}({named_parameters_snake_case(function_params)})'
+        function_and_call = f'{function}\n\n{function_call}'
+
+        output = python_tool.run(function_and_call, truncate=False)
+
+        return {
+            "output": output,
+            "function_def": function_def,
+            "function_name": function_name,
+            "function_call": function_call
+        }
+
+    async def _arun(
+        self,
+        function_def: str,
+        run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
+    ) -> str:
+        """Use the tool asynchronously."""
+        raise Exception("async not supported")
