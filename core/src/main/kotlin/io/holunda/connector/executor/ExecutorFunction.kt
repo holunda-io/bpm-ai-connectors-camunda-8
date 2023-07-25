@@ -36,7 +36,7 @@ class ExecutorFunction : OutboundConnectorFunction {
     val previousStepsAndResults = task.pastSteps.zip(task.results).toString()
     val currentPlanStep = task.plan.getOrElse(task.results.size) { _ -> "" }
 
-    val currentStep = LangchainClient.run("executor",
+    val currentStep = LLMServiceClient.run("executor",
       ExecutorTask(
         request.model.modelId,
         task.task,

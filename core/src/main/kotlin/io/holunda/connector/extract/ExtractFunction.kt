@@ -28,7 +28,7 @@ class ExtractFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: ExtractDataRequest): ExtractResult {
-    val result = LangchainClient.run(
+    val result = LLMServiceClient.run(
       "extract",
         ExtractTask(
           request.model.modelId,

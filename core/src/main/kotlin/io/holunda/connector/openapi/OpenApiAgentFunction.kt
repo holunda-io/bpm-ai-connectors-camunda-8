@@ -27,10 +27,10 @@ class OpenApiAgentFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: OpenApiAgentRequest): OpenApiAgentResult {
-    val result = LangchainClient.run("openapi",
+    val result = LLMServiceClient.run("openapi",
       OpenApiAgentTask(
         request.model.modelId,
-        request.taskDescription,
+        request.query,
         request.inputJson,
         request.specUrl,
         request.outputSchema

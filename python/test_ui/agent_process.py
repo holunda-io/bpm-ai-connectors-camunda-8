@@ -3,7 +3,7 @@ import json
 import streamlit as st
 from dotenv import load_dotenv
 
-from gpt.agents.process_generation_agent.process_generation_agent_2 import create_process_generation_agent
+from gpt.agents.process_generation_agent.process_generation_agent import create_process_generation_agent
 
 load_dotenv(dotenv_path='../../connector-secrets.txt')
 

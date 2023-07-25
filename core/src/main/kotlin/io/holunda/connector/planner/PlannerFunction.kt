@@ -28,7 +28,7 @@ class PlannerFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: PlannerRequest): PlannerResult {
-    val result = LangchainClient.run("planner", PlannerTask(
+    val result = LLMServiceClient.run("planner", PlannerTask(
         request.model.modelId,
         request.taskDescription,
         request.inputJson,

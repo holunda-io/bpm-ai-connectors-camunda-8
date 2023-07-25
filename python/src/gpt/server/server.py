@@ -8,6 +8,7 @@ from gpt.agents.database_agent.agent import create_database_agent
 from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
 from gpt.agents.plan_and_execute.executor.executor import create_executor
 from gpt.agents.plan_and_execute.planner.planner import create_planner
+from gpt.agents.process_generation_agent.process_generation_agent import create_process_generation_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.extract_chain.chain import create_extract_chain
@@ -127,6 +128,29 @@ async def post(task: ExecutorTask):
         previous_steps=task.previous_steps,
         current_step=task.current_step
     )
+
+
+class ProcessTask(BaseModel):
+    model: str
+    task: str
+    activities: Dict[str, str]
+    context: dict
+
+
+@app.post("/process")
+async def post(task: ProcessTask):
+    agent = create_process_generation_agent(
+        llm=model_id_to_llm(task.model),
+        tools=task.activities,
+        context=task.context
+    )
+    return agent(
+        inputs={
+            "input": task.task,
+            "context": ""  # todo not necessary
+        },
+        return_only_outputs=True
+    )["process"]
 
 
 class ExtractTask(BaseModel):

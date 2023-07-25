@@ -32,7 +32,7 @@ class ComposeFunction : OutboundConnectorFunction {
       else -> request.constitutionalPrinciple
     }
 
-    val result = LangchainClient.run("compose",
+    val result = LLMServiceClient.run("compose",
       ComposeTask(
         request.model.modelId,
         request.inputJson,

@@ -28,10 +28,10 @@ class DatabaseAgentFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: DatabaseAgentRequest): DatabaseAgentResult {
-    val result = LangchainClient.run("database",
+    val result = LLMServiceClient.run("database",
       DatabaseAgentTask(
         request.model.modelId,
-        request.taskDescription,
+        request.query,
         request.inputJson,
         request.databaseUrl,
         request.outputSchema,

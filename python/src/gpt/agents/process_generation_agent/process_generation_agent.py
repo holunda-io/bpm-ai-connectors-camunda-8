@@ -1,188 +1,201 @@
 import json
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Union, Type
 
-from langchain import SQLDatabase, LLMChain
-from langchain.callbacks.manager import CallbackManagerForChainRun
+from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
-from langchain.experimental.plan_and_execute.planners.base import LLMPlanner
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.vectorstores import VectorStore
+from langchain.tools import tool
+from pydantic import BaseModel, Field
 
-from gpt.agents.common.agent.code_execution.code_execution_agent import PythonCodeExecutionAgent
-from gpt.agents.common.agent.code_execution.util import generate_function_stub
-from gpt.agents.database_agent.code_exection.functions import get_database_functions
-from gpt.agents.database_agent.code_exection.prompt import create_user_prompt_messages, create_few_shot_messages
-from gpt.agents.plan_and_execute.planner.planner import create_planner
+from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
+from gpt.agents.common.agent.toolbox import AutoFinishTool
+from gpt.agents.process_generation_agent.engine import Engine
 
 SYSTEM_MESSAGE = """\
-Assistant is a genius Python programmer and business process modeler that implements business processes in Python code to solve a task.
-You will receive a task and a high-level plan to solve the task. Your task is to implement an executable business process as a Python function to solve the task end to end according to the plan.
-You will be given a stub of the result function that you need to implement.
+Assistant is a genius business process modeler that models correct and efficient business processes to solve a given task.
+You will receive a task and a set of process input variables.
+Your task is to model an executable business process to solve the task end to end.
+You will call functions to model the process step by step and get feedback from the process engine.
 
-# Available Python Functions
-Here are the functions that you can use in your code:
-{functions}
-Do not add placeholders for these functions but assume that they are in scope.
+# Supported Elements
+## Tasks
+Here are the task types that you can use in your process:
+{tasks}
 
-All functions follow this schema: `task_type(task_instructions: str, output_schema: dict, **input_variables) -> dict`
-Every function will use the input variable values to perform the given high-level instruction and return a result dict according to the output_schema json schema.
-Make sure every function receives the input variables it needs to fulfill its task!
-If expressions may only use boolean fields from previous results, make sure to request the boolean type if you plan on using a value in an if expression!
-The function must return string literals (no format string!) that describe the types of end events.
+All tasks need a natural language instruction on what to do, a set of input variable expressions, an output variable (or None) and an output_schema (if there is an output variable).
 
-# Example
-Here is an example for the task `create a new subscription for the customer`:
+## Other Elements
+- "start": The single start event
+- "end": An end event
+- "gateway": An exclusive gateway
 
-def process(customer_email: str) -> str:
-    id_result = customer_database(
-        'Find the id of the customer by his email',
-        output_schema={{"id": "the id of the customer"}}
-        customer_email=customer_email
-    )
-    subscription_result = subscription_service(
-        'Create a new subscription for the customer',
-        output_schema={{"success": {{"type": "boolean", "description": "whether the subscription was created successfully"}}}}
-        customer_id=id_result['id'],
-    )
-    if subscription_result['success']:
-        return "Subscription created"
-    else:
-        return "Subscription not created"
+## Flows
+Flows go "from_" an element name "to_" another element name.
+Flows that exit a gateway have a condition expression that references an input variable or previous result variable.
+Nested fields are accessed by dot notation. Negation uses "!".
+Flows that don't belong to a gateway have no condition.
 
-The Python environment uses "tinypy" Python implementation that only supports a very minimal set of Python features:
-- if/else and if/elif/else with simple boolean expression
-- function calls with keyword and positional arguments
-- dicts
+Make sure that you input all variables to a task that are required to fulfill its instructions.
+Make sure to correctly access existing variables and fields.
+Gateway conditions must be exclusive and only use boolean variable value types.
 
-Do NOT use any other functions than the ones listed above! Do NOT use any standard lib functions.
-
-Call `store_final_result` with the full implementation of the function stub containing the full code to solve the task and returning the final result.
+# Instructions
+- Always describe your thoughts first and describe step-by-step what needs to be done
+- Model the process step-by-step by adding elements and their flows and pay attention to the feedback from the process engine
+- If you encounter an error, fix it and try again
+- make sure the process follows the structure of a valid BPMN process (one start event, process may only split on gateways, every path ends with an end event)
+- when you think you are done, submit your solution
 
 Begin!
 
 Remember:
-- only use the provided functions and nothing else!
-- implement a task-solving process in the function stub according to the plan
+- describe your thoughts, think and model step-by-step
 - keep it simple and don't overcomplicate things
-- return values must be string literals
-- Do NOT use any standard lib functions.
-- return your final solution as an implementation of the given function stub using `store_final_result`"""
+- process must be correct and valid
+- variable access must be correct"""
 
 HUMAN_MESSAGE = """\
 # Task:
-{input}
+{{input}}
 
-# Plan:
-{plan}
+# Input Variables:
+{context}"""
 
-# Function stub:
-{result_function_stub}"""
+class SubmitSolutionToolSchema(BaseModel):
+    done: bool = Field(True)
 
-def human_task(task: str, output_schema: dict, **kwargs) -> dict:
-    """A human task. You should only use this if a subtask is not suitable for the automated functions. The human will receive all keyword arguments and return a result as a dict according to output_schema."""
-    print(f"{task}: {kwargs}")
-    return output_schema
+class SubmitSolutionTool(AutoFinishTool):
 
-def extract_data(task: str, output_schema: dict, **kwargs) -> dict:
-    """A service that can transform unstructured data into a given output format. Returns a result as a dict according to output_schema."""
-    print(f"{task}: {kwargs}")
-    return output_schema
+    name = "submit_solution"
+    description = "Submits the modelled process."
+    args_schema: Type[SubmitSolutionToolSchema] = SubmitSolutionToolSchema
 
-def customer_database(task: str, output_schema: dict, **kwargs) -> dict:
-    """A service that can retrieve information about a customer and its data. Needs appropriate input to find the customer. Returns a result as a dict according to output_schema."""
-    print(f"{task}: {kwargs}")
-    return output_schema
+    context: dict
+    engine: Engine
 
-def subscription_service(task: str, output_schema: dict, **kwargs) -> dict:
-    """A service that can manage customer subscriptions. Returns a result as a dict according to output_schema."""
-    print(f"{task}: {kwargs}")
-    return output_schema
+    def is_finish(self, observation: Any) -> bool:
+        """
+        If the result of the tool run did not raise any errors, we can finish.
+        """
+        return "<engine_error>" not in str(observation)
+
+    def _run(
+        self,
+        done: bool = True,
+        run_manager: Optional[CallbackManagerForToolRun] = None,
+    ) -> Union[dict, str]:
+        """Use the tool."""
+        try:
+            for i in range(25):
+                print(f"Running process #{i}")
+                self.engine.run(self.context)
+        except Exception as e:
+            return "<engine_error>" + str(e)
+
+        write_json_to_file(self.engine.raw_elements, 'elements.json')
+        write_json_to_file(self.engine.raw_flows, 'flows.json')
+
+        return {"output": self.engine.log, "process": {"elements": self.engine.raw_elements, "flows": self.engine.raw_flows}}
+
+    async def _arun(
+        self,
+        done: bool = True,
+        run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
+    ) -> dict:
+        """Use the tool asynchronously."""
+        raise Exception("async not supported")
+
+def write_json_to_file(dict_obj, filename):
+    try:
+        with open(filename, 'w') as file:
+            file.write(json.dumps(dict_obj, indent=4))
+        print(f"Dictionary successfully written to {filename}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 def create_process_generation_agent(
     llm: ChatOpenAI,
-    output_schema: Optional[Dict[str, Any]] = None
+    context: dict,
+    tools: Dict[str, Union[str, dict]]
 ) -> Chain:
-    return PythonCodeExecutionAgent.from_functions(
+
+    engine = Engine([], [])
+
+    @tool
+    def add_task(type: str, name: str, instruction: str, input_variables: List[str], output_variable: Optional[str] = None,
+                 output_schema: Optional[dict] = None) -> str:
+        """Adds a new task."""
+        try:
+            engine.add_element({
+                "type": type,
+                "name": name,
+                "instruction": instruction,
+                "input_variables": input_variables,
+                "output_variable": output_variable,
+                "output_schema": output_schema
+            })
+        except Exception as e:
+            return str(e)
+        return f"Task '{name}' added."
+
+    @tool
+    def add_gateway(name: str) -> str:
+        """Adds a new gateway."""
+        try:
+            engine.add_element({
+                "type": "gateway",
+                "name": name
+            })
+        except Exception as e:
+            return str(e)
+        return f"Gateway '{name}' added."
+
+    @tool
+    def add_start_event(name: str) -> str:
+        """Adds the start event."""
+        engine.add_element({
+            "type": "start",
+            "name": name
+        })
+        return f"Start event '{name}' added."
+
+    @tool
+    def add_end_event(name: str) -> str:
+        """Adds a new end event."""
+        engine.add_element({
+            "type": "end",
+            "name": name
+        })
+        return f"End event '{name}' added."
+
+    @tool
+    def add_flow(from_: str, to_: str, condition: Optional[str] = None) -> str:
+        """Adds a new flow from an element to another."""
+        try:
+            engine.add_flow({
+                "from": from_,
+                "to": to_,
+                "condition": condition
+            })
+        except Exception as e:
+            return str(e)
+        return f"Flow from '{from_}' to '{to_}'{' on condition ' + condition if condition else ''} added."
+
+    agent = OpenAIFunctionsAgent.create(
         llm=llm,
-        python_functions=[human_task, extract_data, customer_database, subscription_service],
-        system_prompt_template=SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE),
-        user_prompt_templates=[HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE)],
+        system_prompt_template=SystemMessagePromptTemplate.from_template(
+            SYSTEM_MESSAGE.format(tasks=", ".join(tools.keys()))
+        ),
+        user_prompt_templates=[
+            HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE.format(context=", ".join(context.keys())))
+        ],
         few_shot_prompt_messages=[],
-        enable_skill_creation=False,
-        skill_store=None,
-        call_direct=True,
-        output_schema=output_schema
+        max_steps=20
     )
 
+    agent.add_tools([
+        add_start_event, add_task, add_flow, add_gateway, add_end_event, SubmitSolutionTool(context=context, engine=engine)
+    ])
 
-def to_markdown_ordered_list(lst):
-    return '\n'.join(f'{i+1}. {item}' for i, item in enumerate(lst))
-
-
-class ProcessGenerationChain(Chain):
-
-    output_key: str = "output"  #: :meta private:
-
-    llm: ChatOpenAI
-    agent: Chain
-    planner: LLMPlanner
-
-    verbose = True
-
-    @property
-    def input_keys(self) -> List[str]:
-        return ["input", "context"]
-
-    @property
-    def output_keys(self) -> List[str]:
-        return [self.output_key]
-
-    @classmethod
-    def from_llm(
-        cls,
-        llm: ChatOpenAI,
-        tools: Dict[str, str],
-        output_schema: Optional[Dict[str, Any]] = None,
-        **kwargs: Any,
-    ) -> "ProcessGenerationChain":
-        """Initialize from LLM."""
-        return cls(
-            llm=llm,
-            planner=create_planner(llm=llm, tools=tools),
-            agent=create_process_generation_agent(llm, output_schema),
-            **kwargs
-        )
-
-    def _call(
-        self,
-        inputs: Dict[str, Any],
-        run_manager: Optional[CallbackManagerForChainRun] = None,
-    ) -> Dict[str, Any]:
-        """Query and get response."""
-        input = inputs['input']
-        context = inputs['context']
-
-        plan = self.planner.plan({
-            "context": json.dumps(context, indent=2),
-            "task": input
-        })
-        steps = [s.value for s in plan.steps]
-        plan_str = to_markdown_ordered_list(steps)
-
-        agent = create_process_generation_agent(
-            llm=self.llm,
-            # output_schema=json.loads(output_schema) if output_schema else None,
-        )
-
-        function_def = agent(
-            inputs={
-                "input": input,
-                "plan": plan_str,
-                #"context": plan_str + "\n\n# Function Stub:\n" + generate_function_stub(context),
-                "context": context
-            },
-            return_only_outputs=True
-        )["function_def"]
-
-        return {self.output_key: function_def}
+    return agent

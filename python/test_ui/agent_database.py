@@ -42,10 +42,10 @@ if prompt := st.chat_input():
         agent = create_database_code_execution_agent(
             llm=ChatOpenAI(model="gpt-4", streaming=True),
             database_url='postgresql://postgres:postgres@localhost:5438/postgres',
-            skill_store=skill_store,
-            enable_skill_creation=True,
+            #skill_store=skill_store,
+            enable_skill_creation=False,
             output_schema=json.loads(output_schema) if output_schema else None,
-            call_direct=True,
+            call_direct=False,
             agent_memory=memory()
         )
 

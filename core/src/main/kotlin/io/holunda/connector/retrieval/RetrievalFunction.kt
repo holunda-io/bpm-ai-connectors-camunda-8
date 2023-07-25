@@ -29,7 +29,7 @@ class RetrievalFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: RetrievalRequest): RetrievalResult {
-    val result = LangchainClient.run("retrieval",
+    val result = LLMServiceClient.run("retrieval",
       RetrievalTask(
         request.model.modelId,
         request.query,

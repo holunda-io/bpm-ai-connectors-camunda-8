@@ -12,9 +12,9 @@ import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import kotlinx.coroutines.*
 
-object LangchainClient {
+object LLMServiceClient {
 
-  const val BASE_URL = "http://localhost:9999"
+  val llmServiceUrl = System.getenv("LLM_SERVICE_URL") ?: "http://localhost:9999"
 
   val client = HttpClient {
     install(ContentNegotiation) {
@@ -37,7 +37,7 @@ object LangchainClient {
   val jsonMapper = jacksonObjectMapper()
 
   inline fun <reified T: Any> run(task: String, request: T): JsonNode = runBlocking {
-    val response: String = client.post("$BASE_URL/$task") {
+    val response: String = client.post("${llmServiceUrl}/$task") {
       contentType(ContentType.Application.Json)
       setBody(jsonMapper.writeValueAsString(request))
     }.body()

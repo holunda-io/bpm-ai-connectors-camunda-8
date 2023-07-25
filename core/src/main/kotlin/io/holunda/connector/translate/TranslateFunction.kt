@@ -28,7 +28,7 @@ class TranslateFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: TranslateRequest): TranslateResult {
-    val result = LangchainClient.run("translate",
+    val result = LLMServiceClient.run("translate",
         TranslateTask(
           request.model.modelId,
           request.inputJson,

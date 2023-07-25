@@ -8,3 +8,4 @@ io.holunda.connector.database.DatabaseAgentFunction
 io.holunda.connector.planner.PlannerFunction
 io.holunda.connector.executor.ExecutorFunction
 io.holunda.connector.retrieval.RetrievalFunction
+io.holunda.connector.process.ProcessAgentFunction
