@@ -87,14 +87,13 @@ class SubmitSolutionTool(AutoFinishTool):
     ) -> Union[dict, str]:
         """Use the tool."""
         try:
-            for i in range(25):
-                print(f"Running process #{i}")
+            for i in range(100):
                 self.engine.run(self.context)
         except Exception as e:
             return "<engine_error>" + str(e)
 
-        write_json_to_file(self.engine.raw_elements, 'elements.json')
-        write_json_to_file(self.engine.raw_flows, 'flows.json')
+        #write_json_to_file(self.engine.raw_elements, 'elements.json')
+        #write_json_to_file(self.engine.raw_flows, 'flows.json')
 
         return {"output": self.engine.log, "process": {"elements": self.engine.raw_elements, "flows": self.engine.raw_flows}}
 
