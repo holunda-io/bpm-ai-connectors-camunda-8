@@ -266,9 +266,9 @@ def test_flare():
 
 def test_index_test_docs():
     loader = WebBaseLoader([
-        "https://help.netflix.com/en/node/24926?ui_action=kb-article-popular-categories",
-        "https://help.netflix.com/en/node/41049?ui_action=kb-article-popular-categories",
-        "https://help.netflix.com/en/node/407"
+        "https://en.wikipedia.org/wiki/Trek_Bicycle_Corporation",
+        "https://en.wikipedia.org/wiki/Electra_Bicycle_Company",
+        "https://en.wikipedia.org/wiki/LeMond_Racing_Cycles"
     ])
     documents = loader.load()
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
@@ -332,7 +332,7 @@ def test_retrieve():
         embedding_model="text-embedding-ada-002"
     )
     #print(qa.run('what happens if an account is canceled that still has gift card balance?'))
-    print(qa.run('what happens if an account is canceled and how do I restart it?'))
+    print(qa.run('when was trek founded?'))
 
 
 def test_flare_instruct():
@@ -449,4 +449,3 @@ def test_openapi_functions():
     openai_fns, call_api_fn = openapi_spec_to_openai_fn(spec)
     #print(json.dumps(openai_fns, indent=2))
     print(call_api_fn("getcustomers", {"params": {"page": 0, "pageSize": 1}}).text)
-

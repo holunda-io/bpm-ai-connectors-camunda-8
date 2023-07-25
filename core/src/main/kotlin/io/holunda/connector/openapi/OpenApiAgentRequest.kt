@@ -7,7 +7,7 @@ import io.holunda.connector.extract.*
 
 data class OpenApiAgentRequest(
   val inputJson: JsonNode,
-  val taskDescription: String,
+  val query: String,
   val specUrl: String,
   val outputSchema: JsonNode,
   val missingDataBehavior: MissingDataBehavior,

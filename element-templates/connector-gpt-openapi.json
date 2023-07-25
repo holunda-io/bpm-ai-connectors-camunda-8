@@ -113,7 +113,7 @@
       "value": "",
       "binding": {
         "type": "zeebe:input",
-        "name": "taskDescription"
+        "name": "query"
       },
       "constraints": {
         "notEmpty": true

@@ -34,6 +34,10 @@
       "label": "Task"
     },
     {
+      "id": "advanced",
+      "label": "Advanced"
+    },
+    {
       "id": "output",
       "label": "Output Mapping"
     }
@@ -112,10 +116,21 @@
       "value": "",
       "binding": {
         "type": "zeebe:input",
-        "name": "taskDescription"
+        "name": "query"
       },
       "constraints": {
         "notEmpty": true
+      }
+    },
+    {
+      "label": "Skill Store URL",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "skillStoreUrl"
       }
     },
     {

@@ -27,7 +27,7 @@ class GenericFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: GenericRequest): GenericResult {
-    val result = LangchainClient.run("generic",
+    val result = LLMServiceClient.run("generic",
       GenericTask(
         request.model.modelId,
         request.inputJson,

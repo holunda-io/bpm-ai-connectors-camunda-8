@@ -28,7 +28,7 @@ class DecideFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: DecideRequest): DecideResult {
-    val result = LangchainClient.run("decide",
+    val result = LLMServiceClient.run("decide",
       DecideTask(
         request.model.modelId,
         request.inputJson,

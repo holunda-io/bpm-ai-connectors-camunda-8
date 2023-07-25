@@ -7,8 +7,9 @@ import io.holunda.connector.extract.*
 
 data class DatabaseAgentRequest(
   val inputJson: JsonNode,
-  val taskDescription: String,
+  val query: String,
   val databaseUrl: String,
+  val skillStoreUrl: String?,
   val outputSchema: JsonNode,
   val missingDataBehavior: MissingDataBehavior,
   val model: Model,

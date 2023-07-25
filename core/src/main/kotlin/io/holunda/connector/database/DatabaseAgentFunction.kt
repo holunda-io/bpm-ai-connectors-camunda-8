@@ -12,7 +12,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-database",
-  inputVariables = ["inputJson", "taskDescription", "databaseUrl", "outputSchema", "missingDataBehavior", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskDescription", "databaseUrl", "outputSchema", "missingDataBehavior", "skillStoreUrl", "model", "apiKey"],
   type = "gpt-database"
 )
 class DatabaseAgentFunction : OutboundConnectorFunction {
@@ -28,13 +28,14 @@ class DatabaseAgentFunction : OutboundConnectorFunction {
   }
 
   private fun executeConnector(request: DatabaseAgentRequest): DatabaseAgentResult {
-    val result = LangchainClient.run("database",
+    val result = LLMServiceClient.run("database",
       DatabaseAgentTask(
         request.model.modelId,
-        request.taskDescription,
+        request.query,
         request.inputJson,
         request.databaseUrl,
-        request.outputSchema
+        request.outputSchema,
+        request.skillStoreUrl
       )
     )
 
@@ -47,8 +48,9 @@ class DatabaseAgentFunction : OutboundConnectorFunction {
     val model: String,
     val task: String,
     val context: JsonNode,
-    val databaseUrl: String,
-    val outputSchema: JsonNode
+    val database_url: String,
+    val output_schema: JsonNode,
+    val skill_store_url: String?,
   )
 
   companion object : KLogging()

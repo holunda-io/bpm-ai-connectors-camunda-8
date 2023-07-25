@@ -57,9 +57,8 @@
           <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
           <zeebe:input source="GPT_3" target="model" />
           <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
-          <zeebe:input source="={&#10;  firstname: &#34;first name&#34;,&#10;  lastname: &#34;last name&#34;,&#10;  language: &#34;what is the language that the email body is written in, as two letter ISO code?&#34;,&#10;  question: &#34;what question does the customer have?&#34;&#10;}" target="extractionJson" />
-          <zeebe:input source="REPEATED" target="mode" />
-          <zeebe:input source="Mentioned persons" target="entitiesDescription" />
+          <zeebe:input source="={&#10;  firstname: &#34;first name&#34;,&#10;  lastname: &#34;last name&#34;,&#10;  language: &#34;what is the language that the email body is written in, as two letter ISO code?&#34;,&#10;  question: &#34;what question does the customer have? Should be a fully formed question.&#34;&#10;}" target="extractionJson" />
+          <zeebe:input source="SINGLE" target="mode" />
           <zeebe:input source="NULL" target="missingDataBehavior" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
@@ -84,7 +83,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="input" />
           <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
-          <zeebe:input source="GPT_3" target="model" />
+          <zeebe:input source="GPT_4" target="model" />
           <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
           <zeebe:input source="Decide what the primary intention of the customer&#39;s mail is." target="instructions" />
           <zeebe:input source="STRING" target="outputType" />
@@ -129,7 +128,7 @@
         <zeebe:taskDefinition type="gpt-extract" />
         <zeebe:ioMapping>
           <zeebe:input source="secrets.OPENAI_API_KEY" target="apiKey" />
-          <zeebe:input source="GPT_3" target="model" />
+          <zeebe:input source="GPT_4" target="model" />
           <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
           <zeebe:input source="={ &#10;  orderNo: {&#10;    description: &#34;the order number&#34;,&#10;    type: &#34;integer&#34;&#10;  }&#10;}" target="extractionJson" />
           <zeebe:input source="SINGLE" target="mode" />
@@ -212,7 +211,7 @@
         <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_12on07k" />
         <zeebe:ioMapping>
           <zeebe:input source="=orderNo" target="orderNo" />
-          <zeebe:input source="=questionEN" target="question" />
+          <zeebe:input source="=if (question != null) then question else customerInfo.question" target="question" />
           <zeebe:output source="=answer" target="answer" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -230,7 +229,7 @@
           <zeebe:input source="English" target="language" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultExpression" value="={ &#10;  &#34;questionEN&#34;: result.question&#10;}" />
+          <zeebe:header key="resultExpression" value="={ &#10;  &#34;question&#34;: result.question&#10;}" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1cl3hnn</bpmn:incoming>

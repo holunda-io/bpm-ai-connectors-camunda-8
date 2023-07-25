@@ -216,7 +216,7 @@ def python_exec(code: str, _globals: Optional[dict] = None, sanitize: bool = Tru
                     return io_buffer.getvalue()
                 else:
                     if truncate:
-                        return truncate_to_n_chars(ret, 1000)
+                        return truncate_to_n_chars(ret, 2000)
                     else:
                         return ret
         except Exception:
@@ -224,4 +224,4 @@ def python_exec(code: str, _globals: Optional[dict] = None, sanitize: bool = Tru
                 exec(module_end_str, _globals)
             return io_buffer.getvalue()
     except Exception as e:
-        return "{}: {}".format(type(e).__name__, str(e))
+        return "<python_error> {}: {}".format(type(e).__name__, str(e))

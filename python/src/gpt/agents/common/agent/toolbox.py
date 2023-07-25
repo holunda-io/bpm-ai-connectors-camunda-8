@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from abc import abstractmethod
 from typing import List, Optional, Dict, Any
 
 from langchain.agents.agent import ExceptionTool
@@ -79,3 +80,9 @@ class Toolbox:
         else:
             raise Exception(f"Tool {agent_action.tool} not found in ToolBox.")
         return tool.run(agent_action.tool_input, verbose=self.verbose, callbacks=run_manager)
+
+
+class AutoFinishTool(BaseTool):
+    @abstractmethod
+    def is_finish(self, observation: Any) -> bool:
+        """Whether the tool run should make the agent finish."""

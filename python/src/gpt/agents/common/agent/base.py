@@ -10,12 +10,13 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
     MessagesPlaceholder
 from langchain.schema import BaseMessage, HumanMessage, AgentFinish
-from langchain.tools import Tool
+from langchain.tools import Tool, BaseTool
 from pydantic import Field
 
+from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction
 from gpt.agents.common.agent.step import AgentStep
-from gpt.agents.common.agent.toolbox import Toolbox
+from gpt.agents.common.agent.toolbox import Toolbox, AutoFinishTool
 from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
 
@@ -36,21 +37,59 @@ class Agent(Chain):
     """
 
     llm: ChatOpenAI
-    prompt_template: ChatPromptTemplate
     prompt_parameters_resolver: AgentParameterResolver
     output_parser: AgentOutputParser
     toolbox: Toolbox = Toolbox()
-    few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None
+
+    user_prompt_templates: List[BaseMessagePromptTemplate]
+    prompt_template: ChatPromptTemplate
+
     stop_words: Optional[List[str]] = None
-    max_steps: int = 10
+    max_steps: int = 25
     output_key: str = "output"
 
     return_last_step = False
+
+    agent_memory: Optional[AgentMemory] = None
 
     verbose = True
 
     template_params: Dict[str, Any] = Field({})
     """Contains the resolved template parameters for the current step."""
+
+    @classmethod
+    def init(
+        cls,
+        llm: ChatOpenAI,
+        prompt_parameters_resolver: AgentParameterResolver,
+        output_parser: AgentOutputParser,
+        toolbox: Toolbox,
+        system_prompt_template: Optional[SystemMessagePromptTemplate] = None,
+        user_prompt_templates: Optional[List[BaseMessagePromptTemplate]] = None,
+        few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
+        output_key: str = "output",
+        stop_words: Optional[List[str]] = None,
+        max_steps: int = 25,
+        agent_memory: Optional[AgentMemory] = None
+    ):
+        system_prompt_template = system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant.")
+        user_prompt_templates = user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")]
+        return cls(
+            llm=llm,
+            user_prompt_templates=user_prompt_templates,
+            prompt_template=Agent.create_prompt(
+                system_prompt_template,
+                user_prompt_templates,
+                few_shot_prompt_messages
+            ),
+            prompt_parameters_resolver=prompt_parameters_resolver,
+            output_parser=output_parser,
+            output_key=output_key,
+            toolbox=toolbox,
+            stop_words=stop_words,
+            max_steps=max_steps,
+            agent_memory=agent_memory
+        )
 
     @property
     def input_keys(self) -> List[str]:
@@ -62,9 +101,18 @@ class Agent(Chain):
         """Return the keys expected to be in the chain output."""
         return [self.output_key] + ("last_step" if self.return_last_step else []) #+ (self.input_keys if self.return_inputs else [])
 
-    def add_tool(self, tool: Tool):
+    def add_tools(self, tools: List[BaseTool]):
         """
-        Add a tool to the Agent. This also updates the PromptTemplate for the Agent's PromptNode with the tool name.
+        Add the tools to the Agent.
+
+        :param tools: The tools to add to the Agent.
+        """
+        for tool in tools:
+            self.toolbox.add_tool(tool)
+
+    def add_tool(self, tool: BaseTool):
+        """
+        Add a tool to the Agent.
 
         :param tool: The tool to add to the Agent.
         """
@@ -89,6 +137,10 @@ class Agent(Chain):
         agent_step = AgentStep.empty(self.output_parser, self.max_steps)
         while not agent_step.is_last():
             agent_step = self._step(inputs, agent_step, run_manager)
+
+        if self.agent_memory:
+            user_messages = ChatPromptTemplate.from_messages(self.user_prompt_templates).format_messages(**self.template_params)
+            self.agent_memory.add_transcript(user_messages + agent_step.transcript)
 
         return self._return(inputs, self.template_params, last_step=agent_step, run_manager=run_manager)
 
@@ -118,15 +170,17 @@ class Agent(Chain):
                 run_manager.on_agent_action(next_step.parsed_action, color="green")
 
             observation = self.toolbox.run_tool(next_step.parsed_action, run_manager.get_child() if run_manager else None)
+            observation_message = self._create_observation_message(next_step.parsed_action, observation)
 
-            if self.toolbox.get_tool(next_step.parsed_action.tool).return_direct:
+            tool = self.toolbox.get_tool(next_step.parsed_action.tool)
+            if isinstance(tool, AutoFinishTool) and tool.is_finish(observation):
                 if isinstance(observation, dict):
                     output = observation
                 else:
                     output = {self.output_key: str(observation)}
-                next_step.parsed_action = AgentFinish(output, log=next_step.parsed_action.log)  # todo not ideal
+
+                next_step.manual_finish(output, observation_message)
             else:
-                observation_message = self._create_observation_message(next_step.parsed_action, observation)
                 # update the next step with the observation
                 next_step.complete(observation_message)
         else:
@@ -140,6 +194,9 @@ class Agent(Chain):
     def _plan(self, inputs: Dict[str, Any], current_step: AgentStep, callbacks: Callbacks = None) -> BaseMessage:
         # first resolve prompt template params
         self.template_params = self.prompt_parameters_resolver.resolve_parameters(inputs=inputs, agent=self, agent_step=current_step)
+
+        # load history from memory, if any
+        self.template_params = {"history": self.agent_memory.get_transcript() if self.agent_memory else [], **self.template_params}
 
         # check for template parameters mismatch
         self.check_prompt_template(self.template_params)
@@ -191,6 +248,7 @@ class Agent(Chain):
         return ChatPromptTemplate.from_messages([
             system_prompt_template,
             *(few_shot_prompt_messages or []),
+            MessagesPlaceholder(variable_name="history"),
             *user_prompt_templates,
             MessagesPlaceholder(variable_name="transcript"),
         ])
