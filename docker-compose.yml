@@ -92,9 +92,9 @@ services:
     networks:
       - camunda-platform
 
-    ###############################################
+  ###############################################
 
-  connector:
+  connector-runtime:
     profiles:
       - connector
     image: camunda/connectors:0.10.0
@@ -107,10 +107,11 @@ services:
       CAMUNDA_OPERATE_CLIENT_USERNAME: demo
       CAMUNDA_OPERATE_CLIENT_PASSWORD: demo
       ZEEBE_CLIENT_SECURITY_PLAINTEXT: true
+      LLM_SERVICE_URL: llm-service:9999
     volumes:
       - ./core/target/camunda-8-connector-gpt-core-0.1.1-SNAPSHOT-with-dependencies.jar:/opt/app/connector.jar
 
-  langchain:
+  llm-service:
     build:
       context: python
       dockerfile: Dockerfile
@@ -119,34 +120,6 @@ services:
     networks:
       - camunda-platform
     env_file: ./connector-secrets.txt
-
-  weaviate:
-    image: semitechnologies/weaviate:1.19.9
-    ports:
-      - "8080:8080"
-    environment:
-      QUERY_DEFAULTS_LIMIT: 25
-      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
-      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
-      DEFAULT_VECTORIZER_MODULE: 'none'
-      CLUSTER_HOSTNAME: 'node1'
-
-  postgres-bikestore-example:
-    image: postgres:15.3
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    logging:
-      options:
-        max-size: 10m
-        max-file: "3"
-    ports:
-      - '5438:5432'
-    volumes:
-      - ./example/postgres-data:/var/lib/postgresql/data
-      - ./example/sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
-      - ./example/sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
 
 volumes:
   zeebe:

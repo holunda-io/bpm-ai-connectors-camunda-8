@@ -57,7 +57,7 @@
     },
     {
       "id": "model",
-      "label": "LLM Model",
+      "label": "LLM",
       "group": "general",
       "type": "Dropdown",
       "value": "GPT_3",

@@ -57,7 +57,7 @@
     },
     {
       "id": "model",
-      "label": "LLM Model",
+      "label": "LLM",
       "group": "general",
       "type": "Dropdown",
       "value": "GPT_3",
@@ -123,14 +123,11 @@
       "description": "Optional list of possible output values. If not provided, the model can output any value of the given type.",
       "group": "decision",
       "type": "Text",
-      "feel": "required",
+      "feel": "optional",
       "value": "=[\n  \"CANCEL_SUBSCRIPTION\",\n  \"CHANGE_SUBSCRIPTION\",\n  \"COMPLAINT\",\n  \"OTHER\"\n]",
       "binding": {
         "type": "zeebe:input",
         "name": "possibleValues"
-      },
-      "constraints": {
-        "notEmpty": true
       },
       "condition": {
         "property": "outputType",

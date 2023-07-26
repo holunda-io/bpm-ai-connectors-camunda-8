@@ -61,7 +61,7 @@
     },
     {
       "id": "model",
-      "label": "LLM Model",
+      "label": "LLM",
       "group": "general",
       "type": "Dropdown",
       "value": "GPT_3",
@@ -92,12 +92,12 @@
       }
     },
     {
-      "label": "Extraction Fields",
-      "description": "Specify what to extract from the input. Must be a map from result field names to descriptions of what to extract into that field.",
+      "label": "Output Schema",
+      "description": "JSON schema of what fields to extract from the input.",
       "group": "extract",
       "type": "Text",
       "feel": "required",
-      "value": "={\n  name: \"full name\",\n  birthdate: \"birthday in ISO format\"\n}",
+      "value": "={\n  name: \"full name\",\n  age: { type: \"integer\", description: \"birthday in ISO format\" }\n}",
       "binding": {
         "type": "zeebe:input",
         "name": "extractionJson"
@@ -124,7 +124,7 @@
     },
     {
       "label": "Entities Description",
-      "description": "General description of the entities to extract, if fields are not clear enough.",
+      "description": "General description of the entity type to extract, if fields are not clear enough.",
       "group": "extract",
       "type": "String",
       "feel": "optional",
@@ -133,9 +133,6 @@
         "name": "entitiesDescription"
       },
       "value": "Mentioned persons",
-      "constraints": {
-        "notEmpty": true
-      },
       "condition": {
         "property": "mode",
         "equals": "REPEATED"

@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+
+  weaviate:
+    image: semitechnologies/weaviate:1.19.9
+    ports:
+      - "8080:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      CLUSTER_HOSTNAME: 'node1'
+
+  postgres-bikestore-example:
+    image: postgres:15.3
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - '5438:5432'
+    volumes:
+      - ./example/postgres-data:/var/lib/postgresql/data
+      - ./example/sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./example/sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
