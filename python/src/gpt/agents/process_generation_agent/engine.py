@@ -1,7 +1,7 @@
 import random
 import re
 import string
-from typing import List
+from typing import List, Optional
 
 
 class Element:
@@ -67,9 +67,9 @@ class Flow:
 
 
 class Engine:
-    def __init__(self, element_infos: List[dict], flow_infos: List[dict]):
-        self.elements = {element_info["name"]: Element(element_info) for element_info in element_infos}
-        self.flows = [Flow(flow_info) for flow_info in flow_infos]
+    def __init__(self, element_infos: Optional[List[dict]] = None, flow_infos: Optional[List[dict]] = None):
+        self.elements = {element_info["name"]: Element(element_info) for element_info in (element_infos or [])}
+        self.flows = [Flow(flow_info) for flow_info in (flow_infos or [])]
         self.log = []
         self.variables = {}
 
@@ -78,12 +78,14 @@ class Engine:
 
     def add_element(self, element_info):
         elem = Element(element_info)
-        if elem.output_variable and not elem.output_schema:
-            raise Exception("output_schema required if element has an output variable.")
-        elif elem.output_schema:
+        if bool(elem.output_variable) ^ bool(elem.output_schema):
+            raise Exception("Both output_schema and output_variable are required if element has an output.")
+        if elem.output_variable and "." in elem.output_variable:
+            raise Exception("Output variable must be a simple variable, no field access into an object.")
+        if elem.output_schema:
             for t in elem.output_schema.values():
                 if not isinstance(t, dict) or (not t.get("type", None) or not t.get("description", None)):
-                    raise Exception('output_schema must be json schema of form: {"foo": {"type": "<type>", "description": "<description>"}, ...}')
+                    raise Exception('output_schema must be json schema of form: {"<field>": {"type": "<type>", "description": "<description>"}, ...}')
         self.elements[elem.name] = elem
         self.raw_elements.append(element_info)
 

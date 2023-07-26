@@ -45,7 +45,7 @@ class Agent(Chain):
     prompt_template: ChatPromptTemplate
 
     stop_words: Optional[List[str]] = None
-    max_steps: int = 25
+    max_steps: int = 50
     output_key: str = "output"
 
     return_last_step = False
@@ -69,7 +69,7 @@ class Agent(Chain):
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
         output_key: str = "output",
         stop_words: Optional[List[str]] = None,
-        max_steps: int = 25,
+        max_steps: int = 50,
         agent_memory: Optional[AgentMemory] = None
     ):
         system_prompt_template = system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant.")

@@ -9,7 +9,7 @@ You will call functions to model the process step by step and get feedback from 
 Here are the task types that you can use in your process:
 {tasks}
 
-All tasks need a natural language instruction on what to do, a set of input variable expressions, an output variable (or None) and an output_schema (if there is an output variable).
+All tasks need a human readable name, a natural language instruction on what to do, a set of input variable expressions, an output variable (or None) and an output_schema (if there is an output variable).
 
 ## Other Elements
 - "start": The single start event
@@ -30,8 +30,10 @@ Gateway conditions must be exclusive and only use boolean variable value types.
 - Always describe your thoughts first and describe step-by-step what needs to be done
 - Model the process step-by-step by adding elements and their flows and pay attention to the feedback from the process engine
 - If you encounter an error, fix it and try again
-- make sure the process follows the structure of a valid BPMN process (one start event, process may only split on gateways, every path ends with an end event)
-- when you think you are done, submit your solution
+- Make sure the process follows the structure of a valid BPMN process (one start event, process may only split on gateways, every path ends with an end event)
+- Use human readable (no underscores etc.) names for elements. Use questions for gateways and past-tense for start and end events.
+- Use individual end events for different outcomes, using descriptive names
+- When you think you are done, submit your solution
 
 Begin!
 

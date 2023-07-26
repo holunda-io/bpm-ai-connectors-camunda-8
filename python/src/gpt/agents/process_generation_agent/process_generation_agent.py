@@ -11,59 +11,12 @@ from pydantic import BaseModel, Field
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
 from gpt.agents.common.agent.toolbox import AutoFinishTool
 from gpt.agents.process_generation_agent.engine import Engine
+from gpt.agents.process_generation_agent.prompt import SYSTEM_MESSAGE, HUMAN_MESSAGE
 
-SYSTEM_MESSAGE = """\
-Assistant is a genius business process modeler that models correct and efficient business processes to solve a given task.
-You will receive a task and a set of process input variables.
-Your task is to model an executable business process to solve the task end to end.
-You will call functions to model the process step by step and get feedback from the process engine.
-
-# Supported Elements
-## Tasks
-Here are the task types that you can use in your process:
-{tasks}
-
-All tasks need a natural language instruction on what to do, a set of input variable expressions, an output variable (or None) and an output_schema (if there is an output variable).
-
-## Other Elements
-- "start": The single start event
-- "end": An end event
-- "gateway": An exclusive gateway
-
-## Flows
-Flows go "from_" an element name "to_" another element name.
-Flows that exit a gateway have a condition expression that references an input variable or previous result variable.
-Nested fields are accessed by dot notation. Negation uses "!".
-Flows that don't belong to a gateway have no condition.
-
-Make sure that you input all variables to a task that are required to fulfill its instructions.
-Make sure to correctly access existing variables and fields.
-Gateway conditions must be exclusive and only use boolean variable value types.
-
-# Instructions
-- Always describe your thoughts first and describe step-by-step what needs to be done
-- Model the process step-by-step by adding elements and their flows and pay attention to the feedback from the process engine
-- If you encounter an error, fix it and try again
-- make sure the process follows the structure of a valid BPMN process (one start event, process may only split on gateways, every path ends with an end event)
-- when you think you are done, submit your solution
-
-Begin!
-
-Remember:
-- describe your thoughts, think and model step-by-step
-- keep it simple and don't overcomplicate things
-- process must be correct and valid
-- variable access must be correct"""
-
-HUMAN_MESSAGE = """\
-# Task:
-{{input}}
-
-# Input Variables:
-{context}"""
 
 class SubmitSolutionToolSchema(BaseModel):
     done: bool = Field(True)
+
 
 class SubmitSolutionTool(AutoFinishTool):
 
@@ -105,13 +58,6 @@ class SubmitSolutionTool(AutoFinishTool):
         """Use the tool asynchronously."""
         raise Exception("async not supported")
 
-def write_json_to_file(dict_obj, filename):
-    try:
-        with open(filename, 'w') as file:
-            file.write(json.dumps(dict_obj, indent=4))
-        print(f"Dictionary successfully written to {filename}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
 
 def create_process_generation_agent(
     llm: ChatOpenAI,
@@ -119,7 +65,7 @@ def create_process_generation_agent(
     tools: Dict[str, Union[str, dict]]
 ) -> Chain:
 
-    engine = Engine([], [])
+    engine = Engine()
 
     @tool
     def add_task(type: str, name: str, instruction: str, input_variables: List[str], output_variable: Optional[str] = None,
@@ -184,10 +130,12 @@ def create_process_generation_agent(
     agent = OpenAIFunctionsAgent.create(
         llm=llm,
         system_prompt_template=SystemMessagePromptTemplate.from_template(
-            SYSTEM_MESSAGE.format(tasks=", ".join(tools.keys()))
+            SYSTEM_MESSAGE.format(tasks="\n".join([f"- {n}: {d}" for n, d in tools.items()]))
         ),
         user_prompt_templates=[
-            HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE.format(context=", ".join(context.keys())))
+            HumanMessagePromptTemplate.from_template(
+                HUMAN_MESSAGE.format(context=", ".join(context.keys()))
+            )
         ],
         few_shot_prompt_messages=[],
         max_steps=20
