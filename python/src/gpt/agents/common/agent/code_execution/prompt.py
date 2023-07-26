@@ -1,5 +1,5 @@
 # flake8: noqa
-from langchain.prompts import HumanMessagePromptTemplate, AIMessagePromptTemplate, ChatMessagePromptTemplate
+from langchain.prompts import HumanMessagePromptTemplate, AIMessagePromptTemplate
 
 from gpt.util.prompt import FunctionMessagePromptTemplate
 

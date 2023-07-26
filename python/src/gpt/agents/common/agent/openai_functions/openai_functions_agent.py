@@ -8,11 +8,9 @@ from langchain.schema import BaseMessage, FunctionMessage, AgentAction
 from langchain.tools import format_tool_to_openai_function
 
 from gpt.agents.common.agent.base import Agent, AgentParameterResolver
-from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.openai_functions.no_function_call_tool import NoFunctionCallTool
 from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
 from gpt.agents.common.agent.step import AgentStep
-from gpt.agents.common.agent.toolbox import Toolbox
 
 
 class OpenAIFunctionsParameterResolver(AgentParameterResolver):

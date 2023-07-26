@@ -1,10 +1,12 @@
+from typing import Union
+
 from langchain import Cohere
 from langchain.base_language import BaseLanguageModel
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import AlephAlpha
 
-OPENAI_3_5_WITH_FUNCTIONS = "gpt-3.5-turbo-0613"
-OPENAI_4_WITH_FUNCTIONS = "gpt-4-0613"
+OPENAI_3_5_WITH_FUNCTIONS = "gpt-3.5-turbo"
+OPENAI_4_WITH_FUNCTIONS = "gpt-4"
 DEFAULT_OPENAI_MODEL = OPENAI_3_5_WITH_FUNCTIONS
 
 LUMINOUS_SUPREME_CONTROL = "luminous-supreme-control"
@@ -22,7 +24,7 @@ def supports_openai_functions(llm: BaseLanguageModel):
     return isinstance(llm, ChatOpenAI)
 
 
-def model_id_to_llm(model_id: str) -> BaseLanguageModel:
+def model_id_to_llm(model_id: str) -> Union[BaseLanguageModel, ChatOpenAI]:
     match model_id:
         case "gpt-3.5-turbo":
             return get_openai_chat_llm(model_name=OPENAI_3_5_WITH_FUNCTIONS)

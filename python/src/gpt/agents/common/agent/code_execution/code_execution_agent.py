@@ -1,27 +1,28 @@
-import json
 import os
 from typing import Dict, Any, Optional, Callable, List, Type
 
-from langchain.callbacks.manager import CallbackManagerForChainRun, AsyncCallbackManagerForToolRun, CallbackManagerForToolRun
+from langchain.callbacks.manager import CallbackManagerForChainRun, AsyncCallbackManagerForToolRun, \
+    CallbackManagerForToolRun
+from langchain.chat_models import ChatOpenAI
+from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain.prompts.chat import BaseMessagePromptTemplate
 from langchain.vectorstores import VectorStore
-from pydantic import Field, BaseModel, validator
+from pydantic import Field, BaseModel
 
 from gpt.agents.common.agent.base import AgentParameterResolver, Agent
+from gpt.agents.common.agent.code_execution.prompt import SYSTEM_MESSAGE_FUNCTIONS, DEFAULT_FEW_SHOT_PROMPT_MESSAGES, \
+    HUMAN_MESSAGE, \
+    SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB
+from gpt.agents.common.agent.code_execution.python_tool import PythonREPLTool
 from gpt.agents.common.agent.code_execution.skill_creation.create_skill import CreateSkillTool
+from gpt.agents.common.agent.code_execution.skill_creation.eval_chain import create_code_eval_chain
+from gpt.agents.common.agent.code_execution.util import create_func_obj, get_python_functions_descriptions, \
+    is_simple_call, generate_function_stub, named_parameters_snake_case, get_function_name
 from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
 from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
 from gpt.agents.common.agent.step import AgentStep
 from gpt.agents.common.agent.toolbox import Toolbox, AutoFinishTool
-from gpt.agents.common.agent.code_execution.skill_creation.eval_chain import create_code_eval_chain
-from gpt.agents.common.agent.code_execution.prompt import SYSTEM_MESSAGE_FUNCTIONS, DEFAULT_FEW_SHOT_PROMPT_MESSAGES, HUMAN_MESSAGE, \
-    SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB
-from gpt.agents.common.agent.code_execution.python_tool import PythonREPLTool
-from gpt.agents.common.agent.code_execution.util import create_func_obj, get_python_functions_descriptions, is_simple_call, generate_function_stub, python_exec, \
-    named_parameters_snake_case, get_function_name
-from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.prompts.chat import BaseMessagePromptTemplate
-from langchain.chat_models import ChatOpenAI
 
 
 class CodeExecutionParameterResolver(AgentParameterResolver):

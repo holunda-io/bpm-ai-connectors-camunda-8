@@ -1,6 +1,7 @@
 from typing import Type, Optional, Any
 
-from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun, CallbackManagerForChainRun
+from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun, \
+    CallbackManagerForChainRun
 from langchain.schema import BaseLanguageModel
 from langchain.tools import BaseTool
 from langchain.vectorstores import VectorStore

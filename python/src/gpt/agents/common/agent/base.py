@@ -2,23 +2,23 @@ from __future__ import annotations
 
 import logging
 from abc import abstractmethod
-from typing import List, Optional, Dict, Any, TypedDict
+from typing import List, Optional, Dict, Any
 
 from langchain.callbacks.manager import CallbackManagerForChainRun, Callbacks
+from langchain.chains.base import Chain
+from langchain.chat_models import ChatOpenAI
 from langchain.load.serializable import Serializable
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
     MessagesPlaceholder
-from langchain.schema import BaseMessage, HumanMessage, AgentFinish
-from langchain.tools import Tool, BaseTool
+from langchain.schema import BaseMessage, HumanMessage
+from langchain.tools import BaseTool
 from pydantic import Field
 
 from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction
 from gpt.agents.common.agent.step import AgentStep
 from gpt.agents.common.agent.toolbox import Toolbox, AutoFinishTool
-from langchain.chains.base import Chain
-from langchain.chat_models import ChatOpenAI
 
 logger = logging.getLogger(__name__)
 

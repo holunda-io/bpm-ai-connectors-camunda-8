@@ -11,7 +11,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-openapi",
-  inputVariables = ["inputJson", "taskDescription", "specUrl", "outputSchema", "missingDataBehavior", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskDescription", "specUrl", "outputSchema", "model", "apiKey"],
   type = "gpt-openapi"
 )
 class OpenApiAgentFunction : OutboundConnectorFunction {

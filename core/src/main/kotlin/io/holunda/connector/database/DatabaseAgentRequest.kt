@@ -11,7 +11,6 @@ data class DatabaseAgentRequest(
   val databaseUrl: String,
   val skillStoreUrl: String?,
   val outputSchema: JsonNode,
-  val missingDataBehavior: MissingDataBehavior,
   val model: Model,
 
   @Secret

@@ -10,7 +10,6 @@ data class OpenApiAgentRequest(
   val query: String,
   val specUrl: String,
   val outputSchema: JsonNode,
-  val missingDataBehavior: MissingDataBehavior,
   val model: Model,
 
   @Secret

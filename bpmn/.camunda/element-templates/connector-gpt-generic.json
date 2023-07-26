@@ -57,7 +57,7 @@
     },
     {
       "id": "model",
-      "label": "LLM Model",
+      "label": "LLM",
       "group": "general",
       "type": "Dropdown",
       "value": "GPT_3",
@@ -103,7 +103,7 @@
       }
     },
     {
-      "label": "Output Format",
+      "label": "Output Schema",
       "description": "JSON schema for the output",
       "group": "task",
       "type": "Text",

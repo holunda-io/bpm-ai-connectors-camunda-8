@@ -1,11 +1,9 @@
 from typing import Any, Dict, Optional, Type
-from typing import Any, Dict, Optional, Type
 from typing import Sequence, Callable
 
 from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain.tools.base import BaseTool
 from pydantic import Field, BaseModel
-from decimal import Decimal
 
 from gpt.agents.common.agent.code_execution.util import python_exec, globals_from_function_defs
 

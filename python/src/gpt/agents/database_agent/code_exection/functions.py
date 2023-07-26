@@ -5,8 +5,6 @@ from langchain import SQLDatabase
 from langchain.base_language import BaseLanguageModel
 from langchain.tools import QuerySQLDataBaseTool, InfoSQLDatabaseTool, ListSQLDatabaseTool, QuerySQLCheckerTool
 
-from gpt.agents.database_agent.code_exection.util import format_template
-
 
 def get_database_functions(llm: BaseLanguageModel, db: SQLDatabase) -> List[Callable]:
 

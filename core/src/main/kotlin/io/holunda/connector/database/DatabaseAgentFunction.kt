@@ -12,7 +12,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-database",
-  inputVariables = ["inputJson", "taskDescription", "databaseUrl", "outputSchema", "missingDataBehavior", "skillStoreUrl", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskDescription", "databaseUrl", "outputSchema", "skillStoreUrl", "model", "apiKey"],
   type = "gpt-database"
 )
 class DatabaseAgentFunction : OutboundConnectorFunction {

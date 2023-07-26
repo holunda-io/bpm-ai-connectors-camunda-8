@@ -61,7 +61,7 @@
     },
     {
       "id": "model",
-      "label": "LLM Model",
+      "label": "LLM",
       "group": "general",
       "type": "Dropdown",
       "value": "GPT_3",
@@ -120,8 +120,8 @@
       }
     },
     {
-      "label": "Result Schema",
-      "description": "Specify the result schema. Must be a map from result field names to descriptions of what that field should contain.",
+      "label": "Output Schema",
+      "description": "JSON schema for the output",
       "group": "task",
       "type": "Text",
       "feel": "required",
@@ -132,22 +132,6 @@
       },
       "constraints": {
         "notEmpty": true
-      }
-    },
-    {
-      "label": "Missing Data Behavior",
-      "description": "What to do if requested data could not be found.",
-      "group": "task",
-      "type": "Dropdown",
-      "value": "NULL",
-      "choices": [
-        { "name": "Return Null", "value": "NULL" },
-        { "name": "Return Empty String", "value": "EMPTY" },
-        { "name": "Throw Error", "value": "ERROR" }
-      ],
-      "binding": {
-        "type": "zeebe:input",
-        "name": "missingDataBehavior"
       }
     },
     {

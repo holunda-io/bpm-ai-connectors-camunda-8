@@ -19,7 +19,6 @@ from langchain.prompts.chat import (
 )
 
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
-from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
 from gpt.agents.common.agent.toolbox import Toolbox
 from gpt.agents.database_agent.prompt import HUMAN_MESSAGE_FUNCTIONS, HUMAN_MESSAGE, SYSTEM_MESSAGE
 from gpt.agents.database_agent.toolkit import SQLDatabaseToolkit
