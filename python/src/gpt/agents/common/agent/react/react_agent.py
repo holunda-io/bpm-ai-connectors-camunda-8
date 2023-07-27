@@ -1,10 +1,12 @@
 from typing import Dict, Any, Optional, List
 
 from langchain.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema import BaseMessage, HumanMessage
+from langchain.chat_models.base import BaseChatModel
+from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
+from langchain.prompts.chat import BaseMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain.schema import BaseMessage, HumanMessage, BaseLanguageModel
 
-from gpt.agents.common.agent.base import Agent, AgentParameterResolver
+from gpt.agents.common.agent.base import Agent, AgentParameterResolver, DEFAULT_OUTPUT_KEY
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction
 from gpt.agents.common.agent.react.output_parser import ReActOutputParser
 from gpt.agents.common.agent.react.prompt import OBSERVATION_PREFIX, THOUGHT_PREFIX
@@ -29,25 +31,30 @@ class ReActParameterResolver(AgentParameterResolver):
 
 class ReActAgent(Agent):
 
-    def __init__(
-        self,
-        llm: ChatOpenAI,
-        prompt_template: ChatPromptTemplate,
+    @classmethod
+    def create(
+        cls,
+        llm: BaseChatModel,
+        system_prompt_template: Optional[SystemMessagePromptTemplate] = None,
+        user_prompt_templates: Optional[List[BaseMessagePromptTemplate]] = None,
+        few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
         prompt_parameters_resolver: Optional[AgentParameterResolver] = None,
         output_parser: Optional[AgentOutputParser] = None,
-        toolbox: Optional[Toolbox] = None,
-        output_key: str = "output",
+        output_key: str = DEFAULT_OUTPUT_KEY,
         stop_words: Optional[List[str]] = None,
-        max_steps: int = 10
+        toolbox: Optional[Toolbox] = None,
+        **kwargs
     ):
-        super().__init__(
+        return cls(
             llm=llm,
-            prompt_template=prompt_template,
+            system_prompt_template=system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant."),
+            user_prompt_templates=user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")],
+            few_shot_prompt_messages=few_shot_prompt_messages,
             prompt_parameters_resolver=prompt_parameters_resolver or ReActParameterResolver(),
             output_parser=output_parser or ReActOutputParser(output_key=output_key),
             toolbox=toolbox,
             stop_words=stop_words or [OBSERVATION_PREFIX],
-            max_steps=max_steps
+            **kwargs
         )
 
     @staticmethod

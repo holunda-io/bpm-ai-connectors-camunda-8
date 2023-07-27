@@ -5,8 +5,8 @@ from pytest_httpserver import HTTPServer
 from gpt.agents.openapi_agent.api_controller.tools import RequestsPostToolWithParsing, RequestsGetToolWithParsing, \
     RequestsPatchToolWithParsing, \
     RequestsDeleteToolWithParsing
-from openapi_agent.openapi_spec import get_test_api_spec
-from util.fake_llm import FakeLLM
+from agents.openapi_agent.openapi_spec import get_test_api_spec
+from util.fake_chat_llm import FakeLLM
 
 
 def test_get_tool(httpserver: HTTPServer):

@@ -1,4 +1,4 @@
-from typing import Union, Dict
+from typing import Union, Dict, Optional
 
 from langchain.base_language import BaseLanguageModel
 from langchain.chains.base import Chain
@@ -9,12 +9,12 @@ from gpt.config import supports_openai_functions
 
 
 def create_extract_chain(
-    properties: Dict[str, Union[str, dict]],
+    output_schema: Dict[str, Union[str, dict]],
     llm: BaseLanguageModel,
     repeated: bool = False,
-    repeated_description: str = ""
+    repeated_description: Optional[str] = None
 ) -> Chain:
     if supports_openai_functions(llm):
-        return create_openai_functions_extract_chain(properties, llm, repeated, repeated_description or "")
+        return create_openai_functions_extract_chain(llm, output_schema, repeated, repeated_description or "")
     else:
-        return create_standard_extract_chain(properties, llm, repeated)
+        return create_standard_extract_chain(llm, output_schema, repeated)

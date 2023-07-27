@@ -22,7 +22,7 @@ from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
 from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
-from openapi_agent.openapi_spec import get_test_api_spec_str_for_url
+from agents.openapi_agent.openapi_spec import get_test_api_spec_str_for_url
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 

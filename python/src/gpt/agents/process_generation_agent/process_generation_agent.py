@@ -63,7 +63,7 @@ def create_process_generation_agent(
     llm: ChatOpenAI,
     context: dict,
     tools: Dict[str, Union[str, dict]]
-) -> Chain:
+) -> OpenAIFunctionsAgent:
 
     engine = Engine()
 

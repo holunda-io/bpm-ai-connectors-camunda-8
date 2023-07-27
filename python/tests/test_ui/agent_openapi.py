@@ -5,11 +5,11 @@ from langchain.callbacks import StreamlitCallbackHandler
 from gpt.agents.openapi_agent.agent import create_openapi_agent
 from gpt.config import get_openai_chat_llm
 
-load_dotenv(dotenv_path='../../connector-secrets.txt')
+load_dotenv(dotenv_path='../../../connector-secrets.txt')
 import langchain
 from langchain.cache import SQLiteCache
 
-langchain.llm_cache = SQLiteCache(database_path="../tests/manual_integration/.langchain-test.db")
+langchain.llm_cache = SQLiteCache(database_path="../manual_integration/.langchain-test.db")
 
 ###############################################################################################
 

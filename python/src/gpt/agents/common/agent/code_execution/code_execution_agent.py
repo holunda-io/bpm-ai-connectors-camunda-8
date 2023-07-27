@@ -4,6 +4,7 @@ from typing import Dict, Any, Optional, Callable, List, Type
 from langchain.callbacks.manager import CallbackManagerForChainRun, AsyncCallbackManagerForToolRun, \
     CallbackManagerForToolRun
 from langchain.chat_models import ChatOpenAI
+from langchain.chat_models.base import BaseChatModel
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate
 from langchain.vectorstores import VectorStore
@@ -12,7 +13,7 @@ from pydantic import Field, BaseModel
 from gpt.agents.common.agent.base import AgentParameterResolver, Agent
 from gpt.agents.common.agent.code_execution.prompt import SYSTEM_MESSAGE_FUNCTIONS, DEFAULT_FEW_SHOT_PROMPT_MESSAGES, \
     HUMAN_MESSAGE, \
-    SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB
+    SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB, HUMAN_MESSAGE_WITH_STUB, DEFAULT_FEW_SHOT_PROMPT_MESSAGES_WITH_STUB
 from gpt.agents.common.agent.code_execution.python_tool import PythonREPLTool
 from gpt.agents.common.agent.code_execution.skill_creation.create_skill import CreateSkillTool
 from gpt.agents.common.agent.code_execution.skill_creation.eval_chain import create_code_eval_chain
@@ -32,7 +33,7 @@ class CodeExecutionParameterResolver(AgentParameterResolver):
     skill_relevance_threshold = 0.5
 
     output_schema: Optional[Dict[str, Any]] = None
-    call_direct: bool = True
+    llm_call: bool = True
 
     class Config:
         arbitrary_types_allowed = True
@@ -57,7 +58,7 @@ class CodeExecutionParameterResolver(AgentParameterResolver):
         return {
             "functions": get_python_functions_descriptions(all_functions),
             "function_names": [f.__name__ for f in all_functions],
-            **({"result_function_stub": generate_function_stub(inputs['context'], self.output_schema)} if (self.output_schema or self.call_direct) else {}),
+            **({"result_function_stub": generate_function_stub(inputs['context'], self.output_schema)} if (self.output_schema or not self.llm_call) else {}),
             "transcript": agent_step.transcript,
             **inputs
         }
@@ -85,7 +86,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
     base_functions: List[Callable] = []
 
     output_schema: Optional[Dict[str, Any]] = None
-    call_direct: bool = True
+    llm_call: bool = True
 
     skill_store: Optional[VectorStore] = None
     enable_skill_creation: bool = False
@@ -93,39 +94,41 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
     @classmethod
     def from_functions(
         cls,
-        llm: ChatOpenAI,
+        llm: BaseChatModel,
         python_functions: Optional[List[Callable]] = None,
-        call_direct: bool = True,
+        llm_call: bool = True,
         output_schema: Optional[Dict[str, Any]] = None,
         enable_skill_creation: bool = False,
         skill_store: Optional[VectorStore] = None,
         system_prompt_template: Optional[SystemMessagePromptTemplate] = None,
         user_prompt_templates: Optional[List[BaseMessagePromptTemplate]] = None,
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
-        max_steps: int = 10,
-        agent_memory: Optional[AgentMemory] = None
+        agent_memory: Optional[AgentMemory] = None,
+        **kwargs
     ) -> "PythonCodeExecutionAgent":
         if enable_skill_creation and not skill_store:
             raise Exception("When enabling skill creation a vector store for the skills must be provided.")
 
         system_prompt_template = system_prompt_template or (
             # if we want to directly call the result function without LLM help or get a defined output schema, we need to predefine a function stub
-            SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB if (output_schema or call_direct) else SYSTEM_MESSAGE_FUNCTIONS)
+            SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB if (output_schema or not llm_call) else SYSTEM_MESSAGE_FUNCTIONS)
         )
-        user_prompt_templates = user_prompt_templates or [HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE)]
+        user_prompt_templates = user_prompt_templates or (
+            [HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE_WITH_STUB if (output_schema or not llm_call) else HUMAN_MESSAGE)]
+        )
+        few_shot_prompt_messages = few_shot_prompt_messages or (
+            DEFAULT_FEW_SHOT_PROMPT_MESSAGES_WITH_STUB if (output_schema or not llm_call) else DEFAULT_FEW_SHOT_PROMPT_MESSAGES
+        )
 
         agent = cls(
             llm=llm,
+            system_prompt_template=system_prompt_template,
             user_prompt_templates=user_prompt_templates,
-            prompt_template=Agent.create_prompt(
-                system_prompt_template,
-                user_prompt_templates,
-                few_shot_prompt_messages if few_shot_prompt_messages is not None else DEFAULT_FEW_SHOT_PROMPT_MESSAGES,
-            ),
+            few_shot_prompt_messages=few_shot_prompt_messages,
             prompt_parameters_resolver=CodeExecutionParameterResolver(
                 skill_store=skill_store,
                 output_schema=output_schema,
-                call_direct=call_direct
+                llm_call=llm_call
             ),
             output_parser=OpenAIFunctionsOutputParser(no_function_call_means_final_answer=False),
             toolbox=Toolbox(),
@@ -133,14 +136,14 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
             enable_skill_creation=enable_skill_creation,
             skill_store=skill_store,
             output_schema=output_schema,
-            call_direct=call_direct,
+            llm_call=llm_call,
             stop_words=None,
-            max_steps=max_steps,
-            agent_memory=agent_memory
+            agent_memory=agent_memory,
+            **kwargs
         )
 
         python_tool = PythonREPLTool.from_functions(python_functions)
-        final_tool = StoreFinalResultDefTool(agent=agent) if call_direct else StoreFinalResultWithCallTool(agent=agent)
+        final_tool = StoreFinalResultWithCallTool(agent=agent) if llm_call else StoreFinalResultDefTool(agent=agent)
         agent.add_tools([python_tool, final_tool])
 
         return agent
@@ -151,7 +154,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         run_manager: Optional[CallbackManagerForChainRun] = None,
     ) -> Dict[str, Any]:
 
-        if self.call_direct:
+        if not self.llm_call:
             task = inputs['input']
             context = inputs['context']
             filename = str(task).lower().replace(' ', '_') + "_".join(context.keys())
@@ -227,7 +230,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
                     callbacks=run_manager.get_child() if run_manager else None
                 )
 
-                if self.call_direct:
+                if not self.llm_call:
                     filename = str(task).lower().replace(' ', '_') + "_".join(dict(context).keys())
                     with open(filename, mode="wt") as f:
                         f.write(function_def)

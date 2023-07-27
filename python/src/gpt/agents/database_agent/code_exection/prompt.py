@@ -5,7 +5,7 @@ from langchain.prompts import AIMessagePromptTemplate, HumanMessagePromptTemplat
 from gpt.util.prompt import FunctionMessagePromptTemplate
 
 
-def create_few_shot_messages(tables: str, function_stub: Optional[str] = None, call_direct: bool = False):
+def create_few_shot_messages(tables: str, function_stub: Optional[str] = None, llm_call: bool = False):
     return [
         HumanMessagePromptTemplate.from_template(
             template="""\
@@ -15,7 +15,7 @@ String: "Hello World"
 # User task:
 Reverse the name of the first table and prepend it with \"reversed: \""""
             if not function_stub else (
-                ("# Context:\nprefix: \"reversed: \"\n\n" if not call_direct else "") +
+                ("# Context:\nprefix: \"reversed: \"\n\n" if llm_call else "") +
 """\
 # User task:
 Reverse the name of the first table and prepend it with the given string.
@@ -47,7 +47,7 @@ def rename_me(prefix: str):
             additional_kwargs={"function_call": {"name": "store_final_result",
                                                  "arguments": '{ '
                                                               '"function_def": "def reverse_first_table_name(prefix: str):\n    first_table_name = sql_list_tables()[0]\n    return prefix + first_table_name[::-1]"'
-                                                              + (', "function_call": "reverse_first_table_name(\"reversed: \")" }' if not call_direct else '')
+                                                              + (', "function_call": "reverse_first_table_name(\"reversed: \")" }' if llm_call else '')
                                                  }
                                }
         ),
@@ -58,10 +58,10 @@ def rename_me(prefix: str):
     ]
 
 
-def create_user_prompt_messages(tables: str, call_direct: bool, stub_function: bool):
+def create_user_prompt_messages(tables: str, llm_call: bool, stub_function: bool):
     return [
         HumanMessagePromptTemplate.from_template(
-            template= ("# Context:\n{context}\n\n" if not call_direct else "") + """\
+            template= ("# Context:\n{context}\n\n" if llm_call else "") + """\
 # User task:
 {input}""" + ("""
 

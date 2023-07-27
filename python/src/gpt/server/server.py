@@ -30,10 +30,10 @@ app = FastAPI()
 async def post(task: ExtractTask):
     schema = task.extraction_schema
     chain = create_extract_chain(
-        properties=schema,
+        llm=model_id_to_llm(task.model),
+        output_schema=schema,
         repeated=task.repeated,
-        repeated_description=task.repeated_description,
-        llm=model_id_to_llm(task.model)
+        repeated_description=task.repeated_description
     )
     return chain.run(input=task.context)
 
@@ -41,10 +41,10 @@ async def post(task: ExtractTask):
 @app.post("/decide")
 async def post(task: DecideTask):
     chain = create_decide_chain(
+        llm=model_id_to_llm(task.model),
         instructions=task.instructions,
         output_type=task.output_type,
         possible_values=task.possible_values,
-        llm=model_id_to_llm(task.model)
     )
     return chain.run(input=task.context)
 
@@ -52,9 +52,9 @@ async def post(task: DecideTask):
 @app.post("/translate")
 async def post(task: TranslateTask):
     chain = create_translate_chain(
+        llm=model_id_to_llm(task.model),
         input_keys=list(task.input.keys()),
-        target_language=task.target_language,
-        llm=model_id_to_llm(task.model)
+        target_language=task.target_language
     )
     return chain.run(input=task.input)
 
@@ -62,14 +62,14 @@ async def post(task: TranslateTask):
 @app.post("/compose")
 async def post(task: ComposeTask):
     chain = create_compose_chain(
+        llm=model_id_to_llm(task.model),
         instructions=task.instructions,
         style=task.style,
         tone=task.tone,
         length=task.length,
         language=task.language,
         sender=task.sender,
-        constitutional_principle=task.constitutional_principle,
-        llm=model_id_to_llm(task.model)
+        constitutional_principle=task.constitutional_principle
     )
     return chain(
         inputs={"input": task.context},
@@ -80,9 +80,9 @@ async def post(task: ComposeTask):
 @app.post("/generic")
 async def post(task: GenericTask):
     chain = create_generic_chain(
+        llm=model_id_to_llm(task.model),
         instructions=task.instructions,
-        output_format=task.output_schema,
-        llm=model_id_to_llm(task.model)
+        output_format=task.output_schema
     )
     return chain.run(input=task.context)
 
@@ -118,16 +118,9 @@ async def post(task: DatabaseTask):
         skill_store=skill_store,
         enable_skill_creation=(skill_store is not None),
         output_schema=task.output_schema,
-        call_direct=True
+        llm_call=False
     )
-    res = agent(
-        inputs={
-            "input": task.task,
-            "context": task.context,
-        },
-        return_only_outputs=True
-    )["output"]
-    return res
+    return agent.run(input=task.task, context=task.context)["output"]
 
 
 @app.post("/retrieval")
@@ -149,20 +142,14 @@ async def post(task: ProcessTask):
         tools=task.activities,
         context=task.context
     )
-    return agent(
-        inputs={
-            "input": task.task,
-            "context": ""  # todo not necessary
-        },
-        return_only_outputs=True
-    )["process"]
+    return agent.run(input=task.task, context="")["process"]
 
 
 @app.post("/planner")
 async def post(task: PlannerTask):
     planner = create_planner(
-        tools=task.tools,
-        llm=model_id_to_llm(task.model)
+        llm=model_id_to_llm(task.model),
+        tools=task.tools
     )
     res = planner.plan({
         "context": json.dumps(task.context, indent=2),
@@ -175,8 +162,8 @@ async def post(task: PlannerTask):
 @app.post("/executor")
 async def post(task: ExecutorTask):
     executor = create_executor(
+        llm=model_id_to_llm(task.model),
         tools=task.tools,
-        llm=model_id_to_llm(task.model)
     )
     return executor.run(
         context=json.dumps(task.context, indent=2),

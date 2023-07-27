@@ -1,31 +1,48 @@
-"""Fake LLM wrapper for testing purposes."""
-from typing import Any, List, Mapping, Optional
+from typing import List, Optional, Any, Mapping
 
-from langchain.callbacks.manager import CallbackManagerForLLMRun
+from langchain.callbacks.manager import CallbackManagerForLLMRun, AsyncCallbackManagerForLLMRun
 from langchain.llms.base import LLM
 
 
 class FakeLLM(LLM):
-    """Fake LLM wrapper for testing purposes."""
+    """Fake LLM for testing purposes."""
 
-    def noop(self, x):
-        return x
+    responses: List[str]
+    response_idx: int = 0
 
-    f = noop
+    requests: List[str] = []
 
-    @property
-    def _llm_type(self) -> str:
-        """Return type of llm."""
-        return "fake"
+    def assert_last_request_contains(self, text: str):
+        assert text in self.requests[-1]
 
     def _call(
         self,
         prompt: str,
         stop: Optional[List[str]] = None,
         run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Any,
     ) -> str:
-        return self.f(prompt)
+        self.requests += [prompt]
+
+        response = self.responses[self.response_idx]
+        self.response_idx += 1
+
+        return response
+
+    async def _acall(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[AsyncCallbackManagerForLLMRun] = None,
+        **kwargs: Any,
+    ) -> str:
+        raise Exception()
+
+    @property
+    def _llm_type(self) -> str:
+        """Return type of llm."""
+        return "fake-list"
 
     @property
     def _identifying_params(self) -> Mapping[str, Any]:
-        return {"lambda": self.f}
+        return {"responses": self.responses}

@@ -35,7 +35,6 @@ def model_id_to_llm(model_id: str) -> Union[BaseLanguageModel, ChatOpenAI]:
         case "cohere-command-xlarge":
             return Cohere(model=COHERE_COMMAND_XLARGE, temperature=0.0)
 
-
 def llm_to_model_tag(llm: BaseLanguageModel) -> str:
     match llm:
         case ChatOpenAI():
@@ -44,3 +43,5 @@ def llm_to_model_tag(llm: BaseLanguageModel) -> str:
             return "aleph-alpha"
         case Cohere():
             return "cohere"
+        case _:
+            return "unknown"

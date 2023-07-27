@@ -17,26 +17,27 @@ class AgentStep(Serializable):
     """
 
     output_parser: AgentOutputParser
-    max_steps: int = 50
+    max_steps: int
     current_step: int = 1
     llm_response: Optional[BaseMessage] = None
     parsed_action: Optional[Union[AgentAction, AgentFinish]] = None
     transcript: List[BaseMessage] = []
 
     @classmethod
-    def empty(cls, output_parser: AgentOutputParser, max_steps: int = 50):
+    def empty(cls, output_parser: AgentOutputParser, max_steps: int):
         return cls(output_parser=output_parser, max_steps=max_steps)
 
     def create_next_step(self, llm_response: BaseMessage, current_step: Optional[int] = None) -> AgentStep:
         """
-        Creates the next agent step based on the current step and the PromptNode response.
-        :param llm_response: The PromptNode response received.
+        Creates the next agent step based on the current step and the LLM response.
+        :param llm_response: The LLM response received.
         :param current_step: The current step in the execution of the agent.
         """
         cls = type(self)
         return cls(
             output_parser=self.output_parser,
             current_step=current_step if current_step else self.current_step + 1,
+            max_steps=self.max_steps,
             llm_response=llm_response,
             transcript=self.transcript,
             parsed_action=self._try_parse(llm_response),
@@ -64,7 +65,6 @@ class AgentStep(Serializable):
             raise Exception("Trying to modify return values, but current step is not finish.")
         self.parsed_action.return_values = f(self.parsed_action.return_values)
 
-
     @property
     def return_values(self) -> dict:
         if not self.is_last():
@@ -72,7 +72,7 @@ class AgentStep(Serializable):
         if self.is_finish():
             return self.parsed_action.return_values
         else:
-            return {}
+            raise Exception("Agent did not finish because it reached max_steps.")
 
     def complete(self, observation_message: Optional[BaseMessage]) -> None:
         """

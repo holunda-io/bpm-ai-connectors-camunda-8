@@ -9,7 +9,7 @@ from langchain.cache import SQLiteCache
 from langchain.chains import RetrievalQA
 from langchain.embeddings import OpenAIEmbeddings
 
-load_dotenv(dotenv_path='../../connector-secrets.txt')
+load_dotenv(dotenv_path='../../../connector-secrets.txt')
 
 from langchain.llms import LlamaCpp
 from langchain.callbacks.manager import CallbackManager
@@ -17,7 +17,7 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 from gpt.chains.retrieval_chain.chain import get_vector_store
 
-langchain.llm_cache = SQLiteCache(database_path="../tests/manual_integration/.langchain-test.db")
+langchain.llm_cache = SQLiteCache(database_path="../manual_integration/.langchain-test.db")
 
 ##############################################################################################################
 

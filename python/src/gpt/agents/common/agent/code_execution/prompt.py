@@ -139,6 +139,13 @@ Remember:
 - interactively derive a solution using `python` REPL
 - return your final solution as an implementation of the given function stub using `store_final_result`"""
 
+HUMAN_MESSAGE_WITH_STUB = """\
+# User task:
+{input}
+
+# Function Stub:
+{result_function_stub}"""
+
 DEFAULT_FEW_SHOT_PROMPT_MESSAGES = [
     HumanMessagePromptTemplate.from_template(
         template='# Context\n\n\n# User Task\nReverse the string "Hello World" and prepend it with "reversed: "'
@@ -177,13 +184,13 @@ DEFAULT_FEW_SHOT_PROMPT_MESSAGES = [
 DEFAULT_FEW_SHOT_PROMPT_MESSAGES_WITH_STUB = [
     HumanMessagePromptTemplate.from_template(
         template="""\
-# Function Stub
+# User Task
+Reverse the string and prepend it with \"reversed: \"
+
+# Function stub
 def rename_me(s: str) -> str:
     # TODO: implement
-    return # TODO
-
-# User Task
-Reverse the string and prepend it with \"reversed: \""""
+    return # TODO"""
     ),
     AIMessagePromptTemplate.from_template(
         template="To reverse a string, we can use a slice:",

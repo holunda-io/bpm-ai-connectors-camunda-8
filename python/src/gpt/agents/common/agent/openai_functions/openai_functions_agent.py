@@ -1,13 +1,15 @@
 from typing import Dict, Any, Optional, List
 
+from langchain.agents.agent import ExceptionTool
 from langchain.callbacks.manager import Callbacks
 from langchain.chat_models import ChatOpenAI
+from langchain.chat_models.base import BaseChatModel
 from langchain.prompts import HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate
 from langchain.schema import BaseMessage, FunctionMessage, AgentAction
 from langchain.tools import format_tool_to_openai_function
 
-from gpt.agents.common.agent.base import Agent, AgentParameterResolver
+from gpt.agents.common.agent.base import Agent, AgentParameterResolver, DEFAULT_OUTPUT_KEY
 from gpt.agents.common.agent.openai_functions.no_function_call_tool import NoFunctionCallTool
 from gpt.agents.common.agent.openai_functions.output_parser import OpenAIFunctionsOutputParser
 from gpt.agents.common.agent.step import AgentStep
@@ -29,22 +31,19 @@ class OpenAIFunctionsAgent(Agent):
     @classmethod
     def create(
         cls,
-        llm: ChatOpenAI,
+        llm: BaseChatModel,
         system_prompt_template: Optional[SystemMessagePromptTemplate] = None,
         user_prompt_templates: Optional[List[BaseMessagePromptTemplate]] = None,
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
         no_function_call_means_final_answer: bool = False,
-        output_key: str = "output",
+        output_key: str = DEFAULT_OUTPUT_KEY,
         **kwargs
     ):
         agent = cls(
             llm=llm,
-            user_prompt_templates=user_prompt_templates,
-            prompt_template=Agent.create_prompt(
-                system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant."),
-                user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")],
-                few_shot_prompt_messages
-            ),
+            system_prompt_template=system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant."),
+            user_prompt_templates=user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")],
+            few_shot_prompt_messages=few_shot_prompt_messages,
             prompt_parameters_resolver=OpenAIFunctionsParameterResolver(),
             output_parser=OpenAIFunctionsOutputParser(output_key=output_key, no_function_call_means_final_answer=no_function_call_means_final_answer),
             **kwargs
@@ -55,7 +54,7 @@ class OpenAIFunctionsAgent(Agent):
 
     @property
     def openai_functions(self) -> List[dict]:
-        return [dict(format_tool_to_openai_function(t)) for t in self.toolbox.get_tools()]
+        return [dict(format_tool_to_openai_function(t)) for t in self.toolbox.get_tools() if not isinstance(t, NoFunctionCallTool) and not isinstance(t, ExceptionTool)]
 
     def _predict(self, formatted_messages: List[BaseMessage], callbacks: Callbacks = None):
         return self.llm.predict_messages(

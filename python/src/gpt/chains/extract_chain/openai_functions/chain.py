@@ -17,8 +17,8 @@ from gpt.util.transform import transform_to_md_chain
 
 
 def create_openai_functions_extract_chain(
-    properties: Dict[str, Union[str, dict]],
     llm: BaseLanguageModel,
+    output_schema: Dict[str, Union[str, dict]],
     repeated: bool = False,
     repeated_description: str = ""
 ) -> Chain:
@@ -27,7 +27,7 @@ def create_openai_functions_extract_chain(
         function = get_openai_function(
             "information_extraction",
             "Extracts the relevant entities from the passage.",
-            properties,
+            output_schema,
             array_name="entities",
             array_description=repeated_description
         )
@@ -37,7 +37,7 @@ def create_openai_functions_extract_chain(
         function = get_openai_function(
             "information_extraction",
             "Extracts the relevant information from the passage.",
-            properties
+            output_schema
         )
         output_parser = JsonOutputFunctionsParser()
 

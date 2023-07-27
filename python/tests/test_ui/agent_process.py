@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from gpt.agents.process_generation_agent.process_generation_agent import create_process_generation_agent
 
-load_dotenv(dotenv_path='../../connector-secrets.txt')
+load_dotenv(dotenv_path='../../../connector-secrets.txt')
 
 import langchain
 from langchain.callbacks import StreamlitCallbackHandler
@@ -13,7 +13,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.cache import SQLiteCache
 
-langchain.llm_cache = SQLiteCache(database_path="../tests/manual_integration/.langchain-test.db")
+langchain.llm_cache = SQLiteCache(database_path="../manual_integration/.langchain-test.db")
 
 ##############################################################################################################
 

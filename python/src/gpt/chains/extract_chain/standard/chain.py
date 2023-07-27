@@ -16,12 +16,12 @@ from gpt.util.transform import transform_to_md_chain
 
 
 def create_standard_extract_chain(
-    properties: Dict[str, Union[str, dict]],
     llm: BaseLanguageModel,
+    output_schema: Dict[str, Union[str, dict]],
     repeated: bool = False
 ) -> Chain:
     # schema = _convert_schema(_create_schema(properties))
-    schema = schema_from_properties(properties)['properties']  # not full valid json schema but simpler for the dumber models
+    schema = schema_from_properties(output_schema)['properties']  # not full valid json schema but simpler for the dumber models
 
     if repeated:
         task = TASK_EXTRACT_REPEATED

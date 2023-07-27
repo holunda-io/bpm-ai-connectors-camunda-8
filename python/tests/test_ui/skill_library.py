@@ -1,7 +1,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path='../../connector-secrets.txt')
+load_dotenv(dotenv_path='../../../connector-secrets.txt')
 import langchain
 from langchain.cache import SQLiteCache
 

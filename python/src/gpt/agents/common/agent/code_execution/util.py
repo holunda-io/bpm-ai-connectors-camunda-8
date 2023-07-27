@@ -174,11 +174,13 @@ def generate_function_stub(inputs: Dict[str, Any], output_schema: Optional[Dict[
         if len(output_schema) > 1 or isinstance(list(output_schema.values())[0], dict):
             function_stub += "    return {\n"
             for key, value in output_schema.items():
-                function_stub += f'        "{key}":  # TODO: {key}\n'
+                desc = value if isinstance(value, str) else value["description"]
+                function_stub += f'        "{key}":  # TODO: {desc}\n'
             function_stub += "    }\n"
         else:
-            key = list(output_schema.keys())[0]
-            function_stub += f"    return # TODO: {key}\n"
+            key, value = list(output_schema.items())[0]
+            desc = value if isinstance(value, str) else value["description"]
+            function_stub += f"    return # TODO: {desc}\n"
     else:
         function_stub += "    return # TODO\n"
 

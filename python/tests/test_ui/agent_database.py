@@ -9,7 +9,7 @@ from gpt.agents.database_agent.code_exection.base import create_database_code_ex
 from gpt.chains.retrieval_chain.chain import get_vector_store
 from gpt.config import get_openai_chat_llm
 
-load_dotenv(dotenv_path='../../connector-secrets.txt')
+load_dotenv(dotenv_path='../../../connector-secrets.txt')
 
 import langchain
 from langchain.callbacks import StreamlitCallbackHandler
@@ -17,7 +17,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.cache import SQLiteCache
 
-langchain.llm_cache = SQLiteCache(database_path="../tests/manual_integration/.langchain-test.db")
+langchain.llm_cache = SQLiteCache(database_path="../manual_integration/.langchain-test.db")
 
 ##############################################################################################################
 
@@ -45,7 +45,7 @@ if prompt := st.chat_input():
             #skill_store=skill_store,
             enable_skill_creation=False,
             output_schema=json.loads(output_schema) if output_schema else None,
-            call_direct=False,
+            llm_call=True,
             agent_memory=memory()
         )
 

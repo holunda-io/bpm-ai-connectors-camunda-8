@@ -11,7 +11,7 @@ from langchain.load.serializable import Serializable
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
     MessagesPlaceholder
-from langchain.schema import BaseMessage, HumanMessage
+from langchain.schema import BaseMessage, HumanMessage, BaseLanguageModel
 from langchain.tools import BaseTool
 from pydantic import Field
 
@@ -21,6 +21,10 @@ from gpt.agents.common.agent.step import AgentStep
 from gpt.agents.common.agent.toolbox import Toolbox, AutoFinishTool
 
 logger = logging.getLogger(__name__)
+
+
+DEFAULT_MAX_STEPS = 50
+DEFAULT_OUTPUT_KEY = "output"
 
 
 class Agent(Chain):
@@ -36,17 +40,26 @@ class Agent(Chain):
     process of 1) generate thought, 2) choose tool, 3) generate input.
     """
 
-    llm: ChatOpenAI
+    llm: BaseLanguageModel
     prompt_parameters_resolver: AgentParameterResolver
     output_parser: AgentOutputParser
     toolbox: Toolbox = Toolbox()
 
+    system_prompt_template: SystemMessagePromptTemplate
     user_prompt_templates: List[BaseMessagePromptTemplate]
-    prompt_template: ChatPromptTemplate
+    few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]]
+
+    @property
+    def prompt_template(self):
+        return Agent.create_prompt(
+            self.system_prompt_template,
+            self.user_prompt_templates,
+            self.few_shot_prompt_messages
+        )
 
     stop_words: Optional[List[str]] = None
-    max_steps: int = 50
-    output_key: str = "output"
+    max_steps: int = DEFAULT_MAX_STEPS
+    output_key: str = DEFAULT_OUTPUT_KEY
 
     return_last_step = False
 
@@ -64,24 +77,19 @@ class Agent(Chain):
         prompt_parameters_resolver: AgentParameterResolver,
         output_parser: AgentOutputParser,
         toolbox: Toolbox,
-        system_prompt_template: Optional[SystemMessagePromptTemplate] = None,
-        user_prompt_templates: Optional[List[BaseMessagePromptTemplate]] = None,
+        system_prompt_template: Optional[SystemMessagePromptTemplate],
+        user_prompt_templates: Optional[List[BaseMessagePromptTemplate]],
         few_shot_prompt_messages: Optional[List[BaseMessagePromptTemplate]] = None,
-        output_key: str = "output",
+        output_key: str = DEFAULT_OUTPUT_KEY,
+        max_steps: int = DEFAULT_MAX_STEPS,
         stop_words: Optional[List[str]] = None,
-        max_steps: int = 50,
         agent_memory: Optional[AgentMemory] = None
     ):
-        system_prompt_template = system_prompt_template or SystemMessagePromptTemplate.from_template("You are a helpful assistant.")
-        user_prompt_templates = user_prompt_templates or [HumanMessagePromptTemplate.from_template("{input}")]
         return cls(
             llm=llm,
+            system_prompt_template=system_prompt_template,
             user_prompt_templates=user_prompt_templates,
-            prompt_template=Agent.create_prompt(
-                system_prompt_template,
-                user_prompt_templates,
-                few_shot_prompt_messages
-            ),
+            few_shot_prompt_messages=few_shot_prompt_messages,
             prompt_parameters_resolver=prompt_parameters_resolver,
             output_parser=output_parser,
             output_key=output_key,
@@ -125,6 +133,10 @@ class Agent(Chain):
         :param tool_name: The name of the tool for which you want to check whether the Agent has it.
         """
         return self.toolbox.has_tool(tool_name)
+
+    def run(self, **kwargs) -> dict[str, Any]:
+        """Overwrites default run method (that just returns a single string) to return a dict."""
+        return self.__call__(inputs=kwargs)
 
     def _call(
         self,
