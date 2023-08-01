@@ -139,11 +139,15 @@ def truncate_to_n_chars(obj: Any, n: int):
 
 def globals_from_function_defs(
     functions: Optional[Sequence[Callable]] = None,
-    function_strs: Optional[Sequence[str]] = None
+    function_strs: Optional[Sequence[str]] = None,
+    additional_defs: Optional[Sequence[str]] = None
 ) -> dict:
     functions = functions or []
     function_strs = function_strs or []
+    additional_defs = additional_defs or []
     _globals = globals()
+    for d in additional_defs:
+        exec(d, _globals)
     _globals.update({f.__name__: f for f in functions})
     for f in function_strs:
         exec(f, _globals)

@@ -48,8 +48,9 @@ class OpenApiTask(BaseModel):
     model: str
     task: str
     context: dict
-    outputSchema: dict
-    specUrl: str
+    output_schema: dict
+    spec_url: str
+    skill_store_url: Optional[str] = None
 
 
 class DatabaseTask(BaseModel):

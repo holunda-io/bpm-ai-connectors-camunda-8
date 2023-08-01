@@ -85,11 +85,16 @@ You are a genius Python code execution agent that solves user tasks by generatin
 You will receive a task from the user and must ultimately come up with a Python function to solve the task end to end.
 You will also receive some context information and it should be possible to call your function based on the information present in the context and the task.
 
+---
+
 Here are the functions that you can use in your code:
-{functions}
+{additional_defs}
+{{functions}}
 Do not add placeholders for these functions but assume that they are in scope.
 
 Additionally, you can use basic functions from the standard library, e.g. for strings, lists, dicts, and math.
+
+---
 
 You will use the `python` repl tool with Python code using above functions (or standard lib functions).
 
@@ -118,7 +123,8 @@ You will receive a task from the user and must ultimately come up with an implem
 You will be given a stub of the result function that you need to implement and find a fitting name for.
 
 Here are the functions that you can use in your code:
-{functions}
+{additional_defs}
+{{functions}}
 Do not add placeholders for these functions but assume that they are in scope.
 
 Additionally, you can use basic functions from the standard library, e.g. for strings, lists, dicts, and math.
@@ -177,7 +183,7 @@ DEFAULT_FEW_SHOT_PROMPT_MESSAGES = [
     ),
     FunctionMessagePromptTemplate.from_template(
         name="python",
-        template="Result stored.",
+        template="Result stored. Continue with the next task.",
     )
 ]
 

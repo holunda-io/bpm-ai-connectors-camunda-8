@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Any, Optional, Callable, List, Type
+from typing import Dict, Any, Optional, Callable, List, Type, Sequence
 
 from langchain.callbacks.manager import CallbackManagerForChainRun, AsyncCallbackManagerForToolRun, \
     CallbackManagerForToolRun
@@ -84,6 +84,7 @@ class CodeExecutionParameterResolver(AgentParameterResolver):
 class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
 
     base_functions: List[Callable] = []
+    additional_defs: Optional[Sequence[str]] = None
 
     output_schema: Optional[Dict[str, Any]] = None
     llm_call: bool = True
@@ -96,6 +97,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         cls,
         llm: BaseChatModel,
         python_functions: Optional[List[Callable]] = None,
+        additional_python_definitions: Optional[Sequence[str]] = None,
         llm_call: bool = True,
         output_schema: Optional[Dict[str, Any]] = None,
         enable_skill_creation: bool = False,
@@ -111,7 +113,10 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
 
         system_prompt_template = system_prompt_template or (
             # if we want to directly call the result function without LLM help or get a defined output schema, we need to predefine a function stub
-            SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB if (output_schema or not llm_call) else SYSTEM_MESSAGE_FUNCTIONS)
+            SystemMessagePromptTemplate.from_template(
+                (SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB if (output_schema or not llm_call) else SYSTEM_MESSAGE_FUNCTIONS)
+                .format(additional_defs=("\n" + "\n\n".join(additional_python_definitions) + "\n" if additional_python_definitions else ""))
+            )
         )
         user_prompt_templates = user_prompt_templates or (
             [HumanMessagePromptTemplate.from_template(HUMAN_MESSAGE_WITH_STUB if (output_schema or not llm_call) else HUMAN_MESSAGE)]
@@ -133,6 +138,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
             output_parser=OpenAIFunctionsOutputParser(no_function_call_means_final_answer=False),
             toolbox=Toolbox(),
             base_functions=python_functions,
+            additional_defs=additional_python_definitions,
             enable_skill_creation=enable_skill_creation,
             skill_store=skill_store,
             output_schema=output_schema,
@@ -142,7 +148,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
             **kwargs
         )
 
-        python_tool = PythonREPLTool.from_functions(python_functions)
+        python_tool = PythonREPLTool.from_functions(python_functions, additional_defs=additional_python_definitions)
         final_tool = StoreFinalResultWithCallTool(agent=agent) if llm_call else StoreFinalResultDefTool(agent=agent)
         agent.add_tools([python_tool, final_tool])
 

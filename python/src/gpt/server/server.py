@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from langchain.embeddings import OpenAIEmbeddings
 
 from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
+from gpt.agents.openapi_agent.code_execution.base import create_openapi_code_execution_agent
 from gpt.agents.plan_and_execute.executor.executor import create_executor
 from gpt.agents.plan_and_execute.planner.planner import create_planner
 from gpt.agents.process_generation_agent.process_generation_agent import create_process_generation_agent
@@ -89,16 +90,24 @@ async def post(task: GenericTask):
 
 @app.post("/openapi")
 async def post(task: OpenApiTask):
-    agent = create_openapi_agent(
-        task.specUrl,
-        llm=model_id_to_llm(task.model)
+    if task.skill_store_url:
+        skill_store = get_vector_store(
+            task.skill_store_url,
+            OpenAIEmbeddings(),
+            meta_attributes=['task', 'comment', 'function', 'example_call']
+        )
+    else:
+        skill_store = None
+
+    agent = create_openapi_code_execution_agent(
+        llm=model_id_to_llm(task.model),
+        api_spec_url=task.spec_url,
+        skill_store=skill_store,
+        enable_skill_creation=(skill_store is not None),
+        output_schema=task.output_schema,
+        llm_call=False
     )
-    res = agent.run(
-        query=task.task,
-        context=json.dumps(task.context, indent=2),
-        output_schema=json.dumps(task.outputSchema, indent=2)
-    )
-    return json.loads(res)
+    return agent.run(input=task.task, context=task.context)["output"]
 
 
 @app.post("/database")
