@@ -30,8 +30,9 @@ class PythonREPLTool(BaseTool):
         cls,
         functions: Optional[Sequence[Callable]] = None,
         functions_str: Optional[Sequence[str]] = None,
+        additional_defs: Optional[Sequence[str]] = None
     ) -> "PythonREPLTool":
-        return cls(globals=globals_from_function_defs(functions, functions_str))
+        return cls(globals=globals_from_function_defs(functions, functions_str, additional_defs))
 
     def _run(
         self,
