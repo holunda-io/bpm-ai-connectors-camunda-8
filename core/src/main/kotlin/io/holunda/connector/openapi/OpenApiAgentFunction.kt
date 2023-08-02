@@ -11,7 +11,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-openapi",
-  inputVariables = ["inputJson", "taskDescription", "specUrl", "outputSchema", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskDescription", "specUrl", "outputSchema", "skillStoreUrl", "model", "apiKey"],
   type = "gpt-openapi"
 )
 class OpenApiAgentFunction : OutboundConnectorFunction {
@@ -33,7 +33,8 @@ class OpenApiAgentFunction : OutboundConnectorFunction {
         request.query,
         request.inputJson,
         request.specUrl,
-        request.outputSchema
+        request.outputSchema,
+        request.skillStoreUrl
       )
     )
 
@@ -48,8 +49,9 @@ class OpenApiAgentFunction : OutboundConnectorFunction {
     val model: String,
     val task: String,
     val context: JsonNode,
-    val specUrl: String,
-    val outputSchema: JsonNode
+    val spec_url: String,
+    val output_schema: JsonNode,
+    val skill_store_url: String?,
   )
 
   companion object : KLogging()

@@ -9,6 +9,7 @@ data class OpenApiAgentRequest(
   val inputJson: JsonNode,
   val query: String,
   val specUrl: String,
+  val skillStoreUrl: String?,
   val outputSchema: JsonNode,
   val model: Model,
 
