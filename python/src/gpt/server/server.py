@@ -20,7 +20,6 @@ from gpt.server.types import RetrievalTask, ComposeTask, GenericTask, TranslateT
     DatabaseTask, OpenApiTask
 
 load_dotenv(dotenv_path='../../../../connector-secrets.txt')
-from gpt.agents.openapi_agent.agent import create_openapi_agent
 
 from fastapi import FastAPI
 
@@ -64,7 +63,8 @@ async def post(task: TranslateTask):
 async def post(task: ComposeTask):
     chain = create_compose_chain(
         llm=model_id_to_llm(task.model),
-        instructions=task.instructions,
+        instructions_or_template=task.instructions,
+        type=task.type,
         style=task.style,
         tone=task.tone,
         length=task.length,

@@ -88,6 +88,23 @@
       }
     },
     {
+      "id": "type",
+      "label": "Type",
+      "group": "write",
+      "type": "Dropdown",
+      "value": "letter",
+      "choices": [
+        { "name": "E-Mail/Letter", "value": "letter" },
+        { "name": "Chat Message", "value": "chat" },
+        { "name": "Social Media Post", "value": "social" },
+        { "name": "General Text", "value": "text" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "type"
+      }
+    },
+    {
       "label": "Style",
       "group": "write",
       "type": "Dropdown",
@@ -148,6 +165,25 @@
       }
     },
     {
+      "id": "template",
+      "label": "Template",
+      "group": "write",
+      "type": "Dropdown",
+      "value": "none",
+      "choices": [
+        { "name": "No Template", "value": "none" },
+        { "name": "Hybrid AI Template", "value": "template" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "template"
+      },
+      "condition": {
+        "property": "model",
+        "oneOf": ["GPT_3", "GPT_4"]
+      }
+    },
+    {
       "label": "Text Description",
       "description": "Description of the text to compose.",
       "group": "write",
@@ -160,6 +196,28 @@
       },
       "constraints": {
         "notEmpty": true
+      },
+      "condition": {
+        "property": "template",
+        "oneOf": ["none"]
+      }
+    },
+    {
+      "label": "Template",
+      "description": "Template variables found in input variables are replaced directly, text for other variables will be generated.",
+      "group": "write",
+      "type": "Text",
+      "value": "Hello {{ name }},\n\n{{ body : thank the customer for his purchase }}\n\nYours,\n{{ agentName }}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "description"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "template",
+        "oneOf": ["template"]
       }
     },
     {
@@ -174,6 +232,18 @@
       },
       "constraints": {
         "notEmpty": true
+      },
+      "condition": {
+        "allMatch": [
+          {
+            "property": "type",
+            "oneOf": ["letter"]
+          },
+          {
+            "property": "template",
+            "equals": "none"
+          }
+        ]
       }
     },
     {

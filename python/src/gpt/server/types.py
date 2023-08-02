@@ -29,11 +29,12 @@ class ComposeTask(BaseModel):
     model: str
     context: dict
     instructions: str
+    type: str
     style: str
     tone: str
     length: str
     language: str
-    sender: str
+    sender: Optional[str] = None
     constitutional_principle: Optional[str] = None
 
 
