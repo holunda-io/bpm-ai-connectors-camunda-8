@@ -12,6 +12,7 @@ data class ComposeRequest(
   val tone: String,
   val length: String,
   val language: String,
+  val temperature: Double = 0.0,
   val sender: String?,
   val template: String?,
   val constitutionalPrinciple: String?,

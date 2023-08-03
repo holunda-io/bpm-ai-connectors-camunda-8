@@ -77,12 +77,12 @@
       "group": "input",
       "description": "Map of input variables to consider for the text. Key should be the variable name. Value is the variable itself as FEEL expression.",
       "type": "Text",
-      "feel": "required",
+      "feel": "optional",
       "binding": {
         "type": "zeebe:input",
         "name": "inputJson"
       },
-      "value": "{ \"myVariable\": myVariable }",
+      "value": "={ \"myVariable\": myVariable }",
       "constraints": {
         "notEmpty": true
       }
@@ -165,6 +165,23 @@
       }
     },
     {
+      "label": "Variance",
+      "group": "write",
+      "description": "<code>High</code> results in more diverse and unpredictable text, <code>None</code> makes the output focused and deterministic.",
+      "type": "Dropdown",
+      "value": "0",
+      "choices": [
+        { "name": "None", "value": "0" },
+        { "name": "Low", "value": "0.2" },
+        { "name": "Medium", "value": "0.5" },
+        { "name": "High", "value": "0.7" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "temperature"
+      }
+    },
+    {
       "id": "template",
       "label": "Template",
       "group": "write",
@@ -207,7 +224,7 @@
       "description": "Template variables found in input variables are replaced directly, text for other variables will be generated.",
       "group": "write",
       "type": "Text",
-      "value": "Hello {{ name }},\n\n{{ body : thank the customer for his purchase }}\n\nYours,\n{{ agentName }}",
+      "value": "Hello {name},\n\n{{ body : thank the customer for his purchase }}\n\nYours,\n{agentName}",
       "binding": {
         "type": "zeebe:input",
         "name": "description"

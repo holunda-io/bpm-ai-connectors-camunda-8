@@ -79,12 +79,12 @@
       "group": "input",
       "description": "Map of input variables to provide context. Key should be the variable name. Value is the variable itself as FEEL expression.",
       "type": "Text",
-      "feel": "required",
+      "feel": "optional",
       "binding": {
         "type": "zeebe:input",
         "name": "inputJson"
       },
-      "value": "{ \"myVariable\": myVariable }",
+      "value": "={ \"myVariable\": myVariable }",
       "constraints": {
         "notEmpty": true
       }

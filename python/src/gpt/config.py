@@ -24,16 +24,16 @@ def supports_openai_functions(llm: BaseLanguageModel):
     return isinstance(llm, ChatOpenAI)
 
 
-def model_id_to_llm(model_id: str) -> Union[BaseLanguageModel, ChatOpenAI]:
+def model_id_to_llm(model_id: str, temperature: float = 0.0, cache: bool = True) -> Union[BaseLanguageModel, ChatOpenAI]:
     match model_id:
         case "gpt-3.5-turbo":
-            return get_openai_chat_llm(model_name=OPENAI_3_5_WITH_FUNCTIONS)
+            return ChatOpenAI(model_name=OPENAI_3_5_WITH_FUNCTIONS, temperature=temperature, cache=cache)
         case "gpt-4":
-            return get_openai_chat_llm(model_name=OPENAI_4_WITH_FUNCTIONS)
+            return ChatOpenAI(model_name=OPENAI_4_WITH_FUNCTIONS, temperature=temperature, cache=cache)
         case "luminous-supreme":
-            return AlephAlpha(model=LUMINOUS_SUPREME_CONTROL)
+            return AlephAlpha(model=LUMINOUS_SUPREME_CONTROL, temperature=temperature, cache=cache)
         case "cohere-command-xlarge":
-            return Cohere(model=COHERE_COMMAND_XLARGE, temperature=0.0)
+            return Cohere(model=COHERE_COMMAND_XLARGE, temperature=temperature, cache=cache)
 
 def llm_to_model_tag(llm: BaseLanguageModel) -> str:
     match llm:

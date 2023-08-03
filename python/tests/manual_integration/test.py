@@ -335,6 +335,7 @@ def test_retrieve():
     print(qa.run('when was trek founded?'))
 
 
+
 def test_flare_instruct():
     llm = get_openai_chat_llm(model_name='gpt-4')
 

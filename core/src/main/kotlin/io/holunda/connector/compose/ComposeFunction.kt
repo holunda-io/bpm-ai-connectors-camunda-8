@@ -10,7 +10,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-compose",
-  inputVariables = ["inputJson", "description", "type", "style", "tone", "length", "language", "sender", "customPrinciple", "constitutionalPrinciple", "model", "apiKey"],
+  inputVariables = ["inputJson", "description", "temperature", "type", "style", "tone", "length", "language", "sender", "customPrinciple", "constitutionalPrinciple", "model", "apiKey"],
   type = "gpt-compose"
 )
 class ComposeFunction : OutboundConnectorFunction {
@@ -42,6 +42,7 @@ class ComposeFunction : OutboundConnectorFunction {
         request.tone,
         request.length,
         request.language,
+        request.temperature,
         request.sender,
         constitutionalPrinciple
       )
@@ -61,6 +62,7 @@ class ComposeFunction : OutboundConnectorFunction {
     val tone: String,
     val length: String,
     val language: String,
+    val temperature: Double,
     val sender: String?,
     val constitutional_principle: String?,
   )

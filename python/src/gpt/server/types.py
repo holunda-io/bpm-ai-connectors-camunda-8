@@ -34,6 +34,7 @@ class ComposeTask(BaseModel):
     tone: str
     length: str
     language: str
+    temperature: float = 0.0
     sender: Optional[str] = None
     constitutional_principle: Optional[str] = None
 

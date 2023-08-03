@@ -1,6 +1,7 @@
 import json
 
 from dotenv import load_dotenv
+from langchain.chains import OpenAIModerationChain
 from langchain.embeddings import OpenAIEmbeddings
 
 from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
@@ -62,7 +63,7 @@ async def post(task: TranslateTask):
 @app.post("/compose")
 async def post(task: ComposeTask):
     chain = create_compose_chain(
-        llm=model_id_to_llm(task.model),
+        llm=model_id_to_llm(task.model, task.temperature, cache=(task.temperature == 0.0)),
         instructions_or_template=task.instructions,
         type=task.type,
         style=task.style,
