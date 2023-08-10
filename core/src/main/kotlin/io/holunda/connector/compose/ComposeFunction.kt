@@ -5,6 +5,7 @@ import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
 import io.holunda.connector.generic.*
+import org.apache.commons.text.*
 import org.slf4j.*
 import java.util.*
 
@@ -18,7 +19,8 @@ class ComposeFunction : OutboundConnectorFunction {
   @Throws(Exception::class)
   override fun execute(context: OutboundConnectorContext): Any {
     LOG.info("Executing ComposeFunction")
-    val connectorRequest = context.variables.readFromJson<ComposeRequest>()
+    val unescapedVariables = StringEscapeUtils.unescapeJson(context.variables) // TODO remove when Camunda fixes this in zeebe :P
+    val connectorRequest = unescapedVariables.readFromJson<ComposeRequest>()
     LOG.info("Request: {}", connectorRequest)
     context.validate(connectorRequest)
     context.replaceSecrets(connectorRequest)
