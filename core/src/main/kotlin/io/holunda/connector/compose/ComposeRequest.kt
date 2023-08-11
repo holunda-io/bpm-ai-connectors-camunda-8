@@ -1,7 +1,6 @@
 package io.holunda.connector.compose
 
 import com.fasterxml.jackson.databind.*
-import io.camunda.connector.api.annotation.*
 import io.holunda.connector.common.*
 
 data class ComposeRequest(
@@ -17,8 +16,5 @@ data class ComposeRequest(
   val template: String?,
   val constitutionalPrinciple: String?,
   val customPrinciple: String?,
-  val model: Model,
-
-  @Secret
-    var apiKey: String
+  val model: Model
 )

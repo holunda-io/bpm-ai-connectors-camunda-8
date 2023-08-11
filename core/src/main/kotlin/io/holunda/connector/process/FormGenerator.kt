@@ -1,6 +1,6 @@
 package io.holunda.connector.process
 
-import java.util.UUID
+import java.util.*
 
 object FormGenerator {
 

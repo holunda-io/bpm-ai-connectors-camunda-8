@@ -4,14 +4,16 @@ import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.compose.*
 import mu.*
+import org.apache.commons.text.*
 import org.slf4j.*
 import java.util.*
 
 
 @OutboundConnector(
   name = "gpt-executor",
-  inputVariables = ["inputJson", "taskObject", "result", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskObject", "result", "model"],
   type = "gpt-executor"
 )
 class ExecutorFunction : OutboundConnectorFunction {

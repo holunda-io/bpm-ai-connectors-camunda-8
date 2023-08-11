@@ -4,14 +4,16 @@ import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.compose.*
 import io.holunda.connector.planner.*
 import mu.*
+import org.apache.commons.text.*
 import org.slf4j.*
 import java.util.*
 
 @OutboundConnector(
   name = "gpt-openapi",
-  inputVariables = ["inputJson", "taskDescription", "specUrl", "outputSchema", "skillStoreUrl", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskDescription", "specUrl", "outputSchema", "skillStoreUrl", "model"],
   type = "gpt-openapi"
 )
 class OpenApiAgentFunction : OutboundConnectorFunction {

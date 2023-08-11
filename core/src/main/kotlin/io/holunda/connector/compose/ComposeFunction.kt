@@ -11,7 +11,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-compose",
-  inputVariables = ["inputJson", "description", "temperature", "type", "style", "tone", "length", "language", "sender", "customPrinciple", "constitutionalPrinciple", "model", "apiKey"],
+  inputVariables = ["inputJson", "description", "temperature", "type", "style", "tone", "length", "language", "sender", "customPrinciple", "constitutionalPrinciple", "model"],
   type = "gpt-compose"
 )
 class ComposeFunction : OutboundConnectorFunction {
@@ -19,7 +19,7 @@ class ComposeFunction : OutboundConnectorFunction {
   @Throws(Exception::class)
   override fun execute(context: OutboundConnectorContext): Any {
     LOG.info("Executing ComposeFunction")
-    val unescapedVariables = StringEscapeUtils.unescapeJson(context.variables) // TODO remove when Camunda fixes this in zeebe :P
+    val unescapedVariables = StringEscapeUtils.unescapeJson(context.variables) // TODO remove when Camunda fixes this in zeebe :P zeebe/issues/9859
     val connectorRequest = unescapedVariables.readFromJson<ComposeRequest>()
     LOG.info("Request: {}", connectorRequest)
     context.validate(connectorRequest)

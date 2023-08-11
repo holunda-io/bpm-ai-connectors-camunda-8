@@ -43,19 +43,6 @@
       }
     },
     {
-      "label": "OpenAI API Key",
-      "description": "The OpenAI API Key to use",
-      "type": "Hidden",
-      "value": "secrets.OPENAI_API_KEY",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "apiKey"
-      },
-      "constraints": {
-        "notEmpty": true
-      }
-    },
-    {
       "id": "model",
       "label": "LLM",
       "group": "general",
@@ -77,12 +64,12 @@
       "group": "input",
       "description": "Map of input variables to consider for the decision. Key should be the variable name. Value is the variable itself as FEEL expression.",
       "type": "Text",
-      "feel": "required",
+      "feel": "optional",
       "binding": {
         "type": "zeebe:input",
         "name": "inputJson"
       },
-      "value": "{ \"myVariable\": myVariable }",
+      "value": "={ \"myVariable\": myVariable }",
       "constraints": {
         "notEmpty": true
       }

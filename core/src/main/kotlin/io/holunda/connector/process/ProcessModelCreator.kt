@@ -1,6 +1,5 @@
 package io.holunda.connector.process
 
-import com.fasterxml.jackson.core.type.*
 import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.module.kotlin.*
 import io.camunda.zeebe.client.*

@@ -47,19 +47,6 @@
       }
     },
     {
-      "label": "OpenAI API Key",
-      "description": "The OpenAI API Key to use",
-      "type": "Hidden",
-      "value": "secrets.OPENAI_API_KEY",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "apiKey"
-      },
-      "constraints": {
-        "notEmpty": true
-      }
-    },
-    {
       "id": "model",
       "label": "LLM",
       "group": "general",

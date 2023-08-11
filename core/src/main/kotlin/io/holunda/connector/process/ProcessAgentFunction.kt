@@ -5,15 +5,17 @@ import com.fasterxml.jackson.module.kotlin.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.compose.*
 import io.holunda.connector.openapi.*
 import mu.*
+import org.apache.commons.text.*
 import org.slf4j.*
 import java.util.*
 
 
 @OutboundConnector(
   name = "gpt-process",
-  inputVariables = ["inputJson", "taskDescription", "activities", "model", "apiKey"],
+  inputVariables = ["inputJson", "taskDescription", "activities", "model"],
   type = "gpt-process"
 )
 class ProcessAgentFunction : OutboundConnectorFunction {

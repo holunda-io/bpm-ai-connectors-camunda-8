@@ -6,13 +6,15 @@ import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.compose.*
 import io.holunda.connector.extract.*
+import org.apache.commons.text.*
 import org.slf4j.*
 import java.util.*
 
 @OutboundConnector(
   name = "gpt-translate",
-  inputVariables = ["inputJson", "language", "model", "apiKey"],
+  inputVariables = ["inputJson", "language", "model"],
   type = "gpt-translate"
 )
 class TranslateFunction : OutboundConnectorFunction {

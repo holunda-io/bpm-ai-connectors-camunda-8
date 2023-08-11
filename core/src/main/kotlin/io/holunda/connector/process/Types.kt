@@ -1,6 +1,6 @@
 package io.holunda.connector.process
 
-import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.*
 
 data class ActivityDefinition(
   val task: String?,

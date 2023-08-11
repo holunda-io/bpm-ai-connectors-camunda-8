@@ -5,14 +5,16 @@ import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.compose.*
 import io.holunda.connector.decide.DecisionOutputType.*
 import io.holunda.connector.generic.*
+import org.apache.commons.text.*
 import org.slf4j.*
 import java.util.*
 
 @OutboundConnector(
   name = "gpt-decide",
-  inputVariables = ["inputJson", "instructions", "outputType", "possibleValues", "model", "apiKey"],
+  inputVariables = ["inputJson", "instructions", "outputType", "possibleValues", "model"],
   type = "gpt-decide"
 )
 class DecideFunction : OutboundConnectorFunction {
@@ -20,11 +22,11 @@ class DecideFunction : OutboundConnectorFunction {
   @Throws(Exception::class)
   override fun execute(context: OutboundConnectorContext): Any {
     LOG.info("Executing DecideFunction")
-    val request = context.variables.readFromJson<DecideRequest>()
-    LOG.info("Request: {}", request)
-    context.validate(request)
-    context.replaceSecrets(request)
-    return executeConnector(request)
+    val connectorRequest = context.variables.readFromJson<DecideRequest>()
+    LOG.info("Request: {}", connectorRequest)
+    context.validate(connectorRequest)
+    context.replaceSecrets(connectorRequest)
+    return executeConnector(connectorRequest)
   }
 
   private fun executeConnector(request: DecideRequest): DecideResult {
