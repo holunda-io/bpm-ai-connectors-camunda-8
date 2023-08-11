@@ -73,9 +73,8 @@ async def post(task: ComposeTask):
         sender=task.sender,
         constitutional_principle=task.constitutional_principle
     )
-    return chain(
-        inputs={"input": task.context},
-        return_only_outputs=True
+    return chain.run(
+        input=task.context,
     )
 
 
