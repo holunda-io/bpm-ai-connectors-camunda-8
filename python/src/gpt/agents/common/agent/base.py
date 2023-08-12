@@ -176,15 +176,19 @@ class Agent(Chain):
         # from the LLM response, create the next step
         next_step = current_step.create_next_step(llm_response)
 
+        tool = self.toolbox.get_tool(next_step.parsed_action.tool)
+
         # run the tool selected by the LLM
-        if not next_step.is_last():
+        if not next_step.is_last() and tool.return_direct:
+            next_step.manual_finish({self.output_key: next_step.parsed_action.tool_input}, None)
+
+        elif not next_step.is_last():
             if run_manager:
                 run_manager.on_agent_action(next_step.parsed_action, color="green")
 
             observation = self.toolbox.run_tool(next_step.parsed_action, run_manager.get_child() if run_manager else None)
             observation_message = self._create_observation_message(next_step.parsed_action, observation)
 
-            tool = self.toolbox.get_tool(next_step.parsed_action.tool)
             if isinstance(tool, AutoFinishTool) and tool.is_finish(observation):
                 if isinstance(observation, dict):
                     output = observation
