@@ -26,15 +26,18 @@ def functions_chain(
     )
 
 
-def schema_from_properties(properties: Dict[str, Union[str, dict]]):
+def json_schema_from_shorthand(schema: dict) -> dict:
     def type_or_default(x):
         if isinstance(x, str):
             return {"type": "string", "description": x}
         else:
             return x
+    return {k: type_or_default(v) for k, v in schema.items()}
 
+
+def schema_from_properties(properties: Dict[str, Union[str, dict]]):
     return {
-        "properties": {k: type_or_default(v) for k, v in properties.items()},
+        "properties": json_schema_from_shorthand(properties),
         "required": list(properties.keys()),
     }
 

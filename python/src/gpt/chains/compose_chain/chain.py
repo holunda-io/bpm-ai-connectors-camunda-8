@@ -21,7 +21,7 @@ def create_compose_chain(
     tone: str,
     length: str,
     language: str,
-    sender: str,
+    sender: Optional[str] = None,
     constitutional_principle: Optional[str] = None
 ) -> Chain:
     template = is_template(instructions_or_template)
