@@ -22,9 +22,8 @@ class ExecutorFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     logger.info("Executing ExecutorFunction")
     val connectorRequest = context.variables.readFromJson<ExecutorRequest>()
+    //val connectorRequest = context.bindVariables(ExecutorRequest::class.java)
     logger.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

@@ -22,9 +22,8 @@ class OpenApiAgentFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     logger.info("Executing OpenApiAgentFunction")
     val connectorRequest = context.variables.readFromJson<OpenApiAgentRequest>()
+    //val connectorRequest = context.bindVariables(OpenApiAgentRequest::class.java)
     logger.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

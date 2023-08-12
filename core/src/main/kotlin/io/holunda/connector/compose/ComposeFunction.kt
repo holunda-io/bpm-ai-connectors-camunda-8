@@ -21,9 +21,8 @@ class ComposeFunction : OutboundConnectorFunction {
     LOG.info("Executing ComposeFunction")
     val unescapedVariables = StringEscapeUtils.unescapeJson(context.variables) // TODO remove when Camunda fixes this in zeebe :P zeebe/issues/9859
     val connectorRequest = unescapedVariables.readFromJson<ComposeRequest>()
+    //val connectorRequest = context.bindVariables(ComposeRequest::class.java)
     LOG.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

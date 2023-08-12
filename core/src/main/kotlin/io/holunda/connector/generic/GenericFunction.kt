@@ -22,9 +22,8 @@ class GenericFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     LOG.info("Executing GenericFunction")
     val connectorRequest = context.variables.readFromJson<GenericRequest>()
+    //val connectorRequest = context.bindVariables(GenericRequest::class.java)
     LOG.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

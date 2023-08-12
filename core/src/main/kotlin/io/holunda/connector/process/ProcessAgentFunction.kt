@@ -24,9 +24,8 @@ class ProcessAgentFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     logger.info("Executing ProcessAgentFunction")
     val connectorRequest = context.variables.readFromJson<ProcessAgentRequest>()
+    //val connectorRequest = context.bindVariables(ProcessAgentRequest::class.java)
     logger.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

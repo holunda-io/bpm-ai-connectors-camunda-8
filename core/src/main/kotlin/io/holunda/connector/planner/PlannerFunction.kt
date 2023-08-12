@@ -23,9 +23,8 @@ class PlannerFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     logger.info("Executing PlannerFunction")
     val connectorRequest = context.variables.readFromJson<PlannerRequest>()
+    //val connectorRequest = context.bindVariables(PlannerRequest::class.java)
     logger.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

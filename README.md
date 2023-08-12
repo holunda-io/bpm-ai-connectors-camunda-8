@@ -1,4 +1,4 @@
-# Camunda 8 GPT AI Connectors 
+# Camunda 8 GPT AI Connectors 🤖
 
 *Task specific connectors for Camunda 8 powered by large language models (LLMs) like OpenAI GPT-4.*
 
@@ -11,7 +11,10 @@ These connectors can automatically perform activities that previously required u
 * ⚖  Informed **decision-making** before gateways
 * ✍🏼 Creative **content generation** (emails, letters, ...)
 * 🌍 **Translation**
-* 🕓 ...more exiting things to come!
+* 📄 **Answering questions** over documents, Wikis and other unstructured knowledge
+* 🗄 Querying **SQL Databases**
+* 🌐 Interacting with **REST APIs**
+* ...and more
 
 Just provide input and output variable mappings and configure what you want to achieve - the connectors will do the heavy lifting:
 1. Crafting tested, task- and model-specific prompts to get the most out of the LLM
@@ -22,11 +25,59 @@ Just provide input and output variable mappings and configure what you want to a
 
 ---
 
-> :warning: **Highly experimental**: As there are unsolved problems of data privacy and model bias when using LLM services, these connectors are not yet meant for production use as of today, but to evaluate the technology and pave the road for the future.
+> :warning: **Experimental**: This project is not meant for production use as of today, but to evaluate and demonstrate LLMs in BPM use-cases.
 
-## Demo Video
+## 🚀 How to Run
 
-[![Demo](https://img.youtube.com/vi/VphP9W9DKGQ/maxresdefault.jpg)](https://youtu.be/VphP9W9DKGQ)
+### Build
+
+Package the connectors by running the following command:
+
+```bash
+mvn clean package
+```
+
+### Run Using Docker
+
+Clone the `connector-secrets.txt.sample`:
+
+```bash
+cp connector-secrets.txt.sample connector-secrets.txt
+```
+
+In the newly created file, fill in your OpenAI API key and Zeebe cluster information for either Cloud or a local cluster:
+
+```bash
+OPENAI_API_KEY=<put your key here>
+
+ZEEBE_CLIENT_CLOUD_CLUSTER-ID=<cluster-id>
+ZEEBE_CLIENT_CLOUD_CLIENT-ID=<client-id>
+ZEEBE_CLIENT_CLOUD_CLIENT-SECRET=<client-secret>
+ZEEBE_CLIENT_CLOUD_REGION=<cluster-region>
+
+# OR
+
+ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
+ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
+```
+
+#### (Optional): Run local zeebe cluster
+
+If you are not using Camunda Cloud, start a local cluster:
+
+```bash 
+docker compose -f docker-compose.camunda-platform.yml up -d
+```
+
+#### Run connectors
+
+Start the connector runtime:
+
+```bash 
+docker compose -f docker-compose.yml up -d
+```
+
+
 
 ## Connectors
 
@@ -153,7 +204,7 @@ The element templates can be found under [element-templates](element-templates).
 
 
 
-## Project Setup
+## 🏗 Development & Project Setup
 
 ### Build
 
@@ -170,7 +221,7 @@ This will create the following artifacts:
 
 ### Configuration
 
-In order to run, the connectors will require some basic setup, including an API key to OpenAI and connection details to connect to Camunda 8 platform.
+In order to run, the connectors will require an API key to OpenAI and connection details to connect to Camunda 8 platform.
 All these settings should be performed using the file called `connector-secrets.txt` (check the sample file). 
 
 If your connector runs locally from your host machine (command line or IDE) and connects to locally running Zeebe Cluster:
@@ -198,30 +249,11 @@ ZEEBE_CLIENT_CLOUD_CLIENT-SECRET=<client-secret>
 ZEEBE_CLIENT_CLOUD_REGION=bru-2
 ```
 
-### Test with local runtime
+### Run from IDE
 
-The [Camunda Connector Runtime](https://github.com/camunda-community-hub/spring-zeebe/tree/master/connector-runtime#building-connector-runtime-bundles) 
-is included in `camunda-7-connector-gpt-runtime` artifact on run your function as a local Java application.
-
-In your IDE you can also simply navigate to the `LocalContainerRuntime` class in run it via your IDE.
+In your IDE you can also simply navigate to the `LocalContainerRuntime` class in the `runtime` module and run it via your IDE.
 Please include the values from the configuration block as environment variables of your runtime either by copying the
 values manually or using the [EnvFile Plugin for IntelliJ](https://plugins.jetbrains.com/plugin/7861-envfile).
-
-### Run Zeebe Cluster locally
-
-In order to start a local Zeebe cluster please run:
-
-```bash 
-docker compose up -d
-```
-
-### Run Connector locally
-
-In order to start a local connector runtime please run:
-
-```bash 
-docker compose --profile connector up -d
-```
 
 ## License
 

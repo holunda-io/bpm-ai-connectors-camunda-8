@@ -23,9 +23,8 @@ class ExtractFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     LOG.info("Executing ExtractDataFunction")
     val connectorRequest = context.variables.readFromJson<ExtractDataRequest>()
+    //val connectorRequest = context.bindVariables(ExtractDataRequest::class.java)
     LOG.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

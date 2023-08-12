@@ -24,9 +24,8 @@ class RetrievalFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     logger.info("Executing RetrievalFunction")
     val connectorRequest = context.variables.readFromJson<RetrievalRequest>()
+    //val connectorRequest = context.bindVariables(RetrievalRequest::class.java)
     logger.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

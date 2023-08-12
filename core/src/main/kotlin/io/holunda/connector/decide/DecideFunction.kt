@@ -23,9 +23,8 @@ class DecideFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     LOG.info("Executing DecideFunction")
     val connectorRequest = context.variables.readFromJson<DecideRequest>()
+    //val connectorRequest = context.bindVariables(DecideRequest::class.java)
     LOG.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

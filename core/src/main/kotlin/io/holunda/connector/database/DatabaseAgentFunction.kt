@@ -23,9 +23,8 @@ class DatabaseAgentFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     logger.info("Executing DatabaseAgentFunction")
     val connectorRequest = context.variables.readFromJson<DatabaseAgentRequest>()
+    //val connectorRequest = context.bindVariables(DatabaseAgentRequest::class.java)
     logger.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 

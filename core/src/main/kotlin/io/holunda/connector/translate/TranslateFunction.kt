@@ -23,9 +23,8 @@ class TranslateFunction : OutboundConnectorFunction {
   override fun execute(context: OutboundConnectorContext): Any {
     LOG.info("Executing TranslateFunction")
     val connectorRequest = context.variables.readFromJson<TranslateRequest>()
+    //val connectorRequest = context.bindVariables(TranslateRequest::class.java)
     LOG.info("Request: {}", connectorRequest)
-    context.validate(connectorRequest)
-    context.replaceSecrets(connectorRequest)
     return executeConnector(connectorRequest)
   }
 
