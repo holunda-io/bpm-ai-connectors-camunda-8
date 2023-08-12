@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Union
 
 from langchain.base_language import BaseLanguageModel
 from langchain.chains import RetrievalQA
@@ -39,7 +39,7 @@ def get_embeddings(embedding_provider: str, embedding_model: str) -> Embeddings:
             raise Exception(f'Unsupported embedding provider: {embedding_provider}')
 
 
-def create_retrieval_chain(
+def create_legacy_retrieval_chain(
     llm: BaseLanguageModel,
     database_url: str,
     embedding_provider: str,
@@ -67,7 +67,7 @@ def create_retrieval_chain(
     retrieval_qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
-        retriever=sub_query_retriever,
+        retriever=multi_retriever,
     )
 
     if mode == 'standard':
