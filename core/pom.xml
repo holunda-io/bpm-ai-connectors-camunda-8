@@ -5,17 +5,17 @@
   <parent>
     <groupId>io.holunda.connector</groupId>
     <artifactId>camunda-8-connector-gpt</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>camunda-8-connector-gpt-core</artifactId>
   <packaging>jar</packaging>
 
   <properties>
-    <!-- connector SDK version -->
-    <connector-core.version>0.10.0</connector-core.version>
+    <connector-core.version>0.22.1</connector-core.version>
+    <zeebe.version>8.2.11</zeebe.version>
     <ktor.version>2.3.2</ktor.version>
-    <jackson.version>2.13.5</jackson.version>
+    <jackson.version>2.15.2</jackson.version>
     <kotlinx-coroutines-core-jvm.version>1.6.4</kotlinx-coroutines-core-jvm.version>
   </properties>
 
@@ -61,13 +61,13 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>zeebe-bpmn-model</artifactId>
-      <version>8.2.8</version>
+      <version>${zeebe.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>zeebe-client-java</artifactId>
-      <version>8.2.8</version>
+      <version>${zeebe.version}</version>
     </dependency>
 
     <dependency>

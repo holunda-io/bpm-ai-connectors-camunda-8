@@ -5,15 +5,14 @@
   <parent>
     <groupId>io.holunda.connector</groupId>
     <artifactId>camunda-8-connector-gpt</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>camunda-8-connector-gpt-runtime</artifactId>
   <packaging>jar</packaging>
 
   <properties>
-    <spring-boot-starter-camunda-connectors.version>0.20.2</spring-boot-starter-camunda-connectors.version>
-    <camunda-operate-client-java.version>8.1.8.1</camunda-operate-client-java.version>
+    <spring-boot-starter-camunda-connectors.version>0.22.1</spring-boot-starter-camunda-connectors.version>
   </properties>
 
   <dependencies>
@@ -39,15 +38,15 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>6.0.23.Final</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

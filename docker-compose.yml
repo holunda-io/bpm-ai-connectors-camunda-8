@@ -2,15 +2,22 @@ version: "3.9"
 
 services:
 
+  gpt-connectors:
+    build:
+      dockerfile: Dockerfile
+    networks:
+      - connector-network
+    env_file: ./connector-secrets.txt
+
+
   connector-runtime:
-    image: camunda/connectors:0.10.0
+    image: docker.io/library/camunda-8-connector-gpt-runtime:0.1.2-SNAPSHOT
     networks:
       - connector-network
     env_file: ./connector-secrets.txt
     environment:
       LLM_SERVICE_URL: http://llm-service:9999
-    volumes:
-      - ./core/target/camunda-8-connector-gpt-core-0.1.1-SNAPSHOT-with-dependencies.jar:/opt/app/connector.jar
+
 
   llm-service:
     build:
