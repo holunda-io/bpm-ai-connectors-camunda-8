@@ -45,7 +45,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-database",
+      "value": "io.holunda.connector.database:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
@@ -81,7 +81,7 @@
       }
     },
     {
-      "label": "Database URL",
+      "label": "Database Connection String",
       "group": "database",
       "type": "String",
       "feel": "optional",
@@ -112,9 +112,9 @@
     {
       "label": "Skill Store URL",
       "group": "advanced",
-      "type": "String",
-      "feel": "optional",
+      "type": "Hidden",
       "value": "",
+      "optional": true,
       "binding": {
         "type": "zeebe:input",
         "name": "skillStoreUrl"

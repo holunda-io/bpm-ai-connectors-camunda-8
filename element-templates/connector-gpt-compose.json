@@ -37,7 +37,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-compose",
+      "value": "io.holunda.connector.compose:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
@@ -281,6 +281,7 @@
       "group": "write",
       "type": "Text",
       "feel": "optional",
+      "optional": true,
       "value": "The text must not contain any offensive or rude language. It should always be polite and professional.",
       "binding": {
         "type": "zeebe:input",

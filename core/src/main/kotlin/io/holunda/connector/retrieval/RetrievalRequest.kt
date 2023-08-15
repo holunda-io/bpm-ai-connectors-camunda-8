@@ -1,5 +1,6 @@
 package io.holunda.connector.retrieval
 
+import com.fasterxml.jackson.databind.JsonNode
 import io.holunda.connector.common.*
 
 data class RetrievalRequest(
@@ -9,5 +10,6 @@ data class RetrievalRequest(
   val embeddingProvider: String,
   val embeddingModel: String,
   val mode: String,
+  val outputSchema: JsonNode?,
   val model: Model
 )

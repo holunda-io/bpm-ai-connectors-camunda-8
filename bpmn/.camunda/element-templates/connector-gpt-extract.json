@@ -83,6 +83,7 @@
       "description": "(Optional) Additional instructions/context if the output schema is not enough.",
       "group": "extract",
       "type": "Text",
+      "optional": true,
       "binding": {
         "type": "zeebe:input",
         "name": "instructions"
@@ -125,6 +126,7 @@
       "group": "extract",
       "type": "String",
       "feel": "optional",
+      "optional": true,
       "binding": {
         "type": "zeebe:input",
         "name": "entitiesDescription"

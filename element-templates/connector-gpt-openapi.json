@@ -45,7 +45,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-openapi",
+      "value": "io.holunda.connector.openapi:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
@@ -81,8 +81,7 @@
       }
     },
     {
-      "label": "OpenAPI Spec URL",
-      "description": "URL to an OpenAPI 2/3 JSON spec",
+      "label": "OpenAPI 3 Spec URL",
       "group": "service",
       "type": "String",
       "feel": "optional",
@@ -113,9 +112,9 @@
     {
       "label": "Skill Store URL",
       "group": "advanced",
-      "type": "String",
-      "feel": "optional",
+      "type": "Hidden",
       "value": "",
+      "optional": true,
       "binding": {
         "type": "zeebe:input",
         "name": "skillStoreUrl"

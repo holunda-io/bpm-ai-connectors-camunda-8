@@ -133,9 +133,40 @@
       }
     },
     {
-      "label": "Answer Synthesis Strategy",
+      "id": "output_type",
+      "label": "Output Type",
       "group": "query",
       "type": "Dropdown",
+      "value": "natural",
+      "choices": [
+        { "name": "Natural Language Answer", "value": "natural" },
+        { "name": "JSON", "value": "json" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "outputType"
+      }
+    },
+    {
+      "label": "Output Schema",
+      "description": "JSON schema for the output",
+      "group": "query",
+      "type": "Text",
+      "feel": "required",
+      "value": "={\n  name: \"full name\",\n  birthdate: \"birthday in ISO format\"\n}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "outputSchema"
+      },
+      "condition": {
+        "property": "output_type",
+        "equals": "json"
+      }
+    },
+    {
+      "label": "Answer Synthesis Strategy",
+      "group": "query",
+      "type": "Hidden",
       "value": "standard",
       "choices": [
         { "name": "Standard", "value": "standard" },

@@ -114,6 +114,7 @@
       "group": "advanced",
       "type": "Hidden",
       "value": "",
+      "optional": true,
       "binding": {
         "type": "zeebe:input",
         "name": "skillStoreUrl"
