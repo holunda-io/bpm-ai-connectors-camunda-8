@@ -15,7 +15,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-database",
   inputVariables = ["inputJson", "taskDescription", "databaseUrl", "outputSchema", "skillStoreUrl", "model"],
-  type = "gpt-database"
+  type = "io.holunda.connector.database:1"
 )
 class DatabaseAgentFunction : OutboundConnectorFunction {
 

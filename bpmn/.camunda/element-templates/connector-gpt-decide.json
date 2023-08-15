@@ -37,7 +37,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-decide",
+      "value": "io.holunda.connector.decide:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }

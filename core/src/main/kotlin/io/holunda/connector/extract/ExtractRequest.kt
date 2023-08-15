@@ -5,6 +5,7 @@ import io.holunda.connector.common.*
 
 data class ExtractDataRequest(
   val inputJson: JsonNode,
+  val instruction: String?,
   val extractionJson: JsonNode,
   val mode: Mode,
   val entitiesDescription: String?,

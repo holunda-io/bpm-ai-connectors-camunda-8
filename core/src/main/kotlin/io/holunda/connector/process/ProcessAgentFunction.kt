@@ -16,7 +16,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-process",
   inputVariables = ["inputJson", "taskDescription", "activities", "model"],
-  type = "gpt-process"
+  type = "io.holunda.connector.process:1"
 )
 class ProcessAgentFunction : OutboundConnectorFunction {
 

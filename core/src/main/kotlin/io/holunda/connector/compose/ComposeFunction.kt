@@ -12,7 +12,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-compose",
   inputVariables = ["inputJson", "description", "temperature", "type", "style", "tone", "length", "language", "sender", "customPrinciple", "constitutionalPrinciple", "model"],
-  type = "gpt-compose"
+  type = "io.holunda.connector.compose:1"
 )
 class ComposeFunction : OutboundConnectorFunction {
 

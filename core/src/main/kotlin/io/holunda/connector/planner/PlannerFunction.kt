@@ -15,7 +15,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-planner",
   inputVariables = ["inputJson", "taskDescription", "tools", "model"],
-  type = "gpt-planner"
+  type = "io.holunda.connector.planner:1"
 )
 class PlannerFunction : OutboundConnectorFunction {
 

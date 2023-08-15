@@ -41,7 +41,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-retrieval",
+      "value": "io.holunda.connector.retrieval:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
@@ -62,11 +62,27 @@
       }
     },
     {
+      "label": "Vector Database",
+      "group": "database",
+      "type": "Dropdown",
+      "value": "weaviate",
+      "choices": [
+        { "name": "Weaviate", "value": "weaviate" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "database"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
       "label": "Vector Database URL",
       "group": "database",
       "type": "String",
       "feel": "optional",
-      "value": "weaviate://http://localhost:8080/Test_index",
+      "value": "http://localhost:8080/testIndex",
       "binding": {
         "type": "zeebe:input",
         "name": "databaseUrl"

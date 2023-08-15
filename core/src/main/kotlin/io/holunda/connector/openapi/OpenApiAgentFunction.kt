@@ -14,7 +14,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-openapi",
   inputVariables = ["inputJson", "taskDescription", "specUrl", "outputSchema", "skillStoreUrl", "model"],
-  type = "gpt-openapi"
+  type = "io.holunda.connector.openapi:1"
 )
 class OpenApiAgentFunction : OutboundConnectorFunction {
 

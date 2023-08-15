@@ -15,7 +15,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-decide",
   inputVariables = ["inputJson", "instructions", "outputType", "possibleValues", "model"],
-  type = "gpt-decide"
+  type = "io.holunda.connector.decide:1"
 )
 class DecideFunction : OutboundConnectorFunction {
 

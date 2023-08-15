@@ -14,7 +14,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-executor",
   inputVariables = ["inputJson", "taskObject", "result", "model"],
-  type = "gpt-executor"
+  type = "io.holunda.connector.executor:1"
 )
 class ExecutorFunction : OutboundConnectorFunction {
 

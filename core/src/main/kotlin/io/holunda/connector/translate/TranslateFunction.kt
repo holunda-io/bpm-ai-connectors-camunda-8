@@ -15,7 +15,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-translate",
   inputVariables = ["inputJson", "language", "model"],
-  type = "gpt-translate"
+  type = "io.holunda.connector.translate:1"
 )
 class TranslateFunction : OutboundConnectorFunction {
 

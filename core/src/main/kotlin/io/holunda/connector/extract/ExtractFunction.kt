@@ -14,8 +14,8 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-extract",
-  inputVariables = ["inputJson", "extractionJson", "missingDataBehavior", "mode", "entitiesDescription", "model"],
-  type = "gpt-extract"
+  inputVariables = ["inputJson", "instructions", "extractionJson", "missingDataBehavior", "mode", "entitiesDescription", "model"],
+  type = "io.holunda.connector.extract:1"
 )
 class ExtractFunction : OutboundConnectorFunction {
 
@@ -34,6 +34,7 @@ class ExtractFunction : OutboundConnectorFunction {
         ExtractTask(
           request.model.modelId,
           request.inputJson,
+          request.instruction,
           request.extractionJson,
           request.mode == Mode.REPEATED,
           request.entitiesDescription
@@ -60,6 +61,7 @@ class ExtractFunction : OutboundConnectorFunction {
   data class ExtractTask(
     val model: String,
     val context: JsonNode,
+    val instruction: String?,
     val extraction_schema: JsonNode,
     val repeated: Boolean,
     val repeated_description: String?,

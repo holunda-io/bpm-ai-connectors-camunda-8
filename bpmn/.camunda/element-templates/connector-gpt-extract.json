@@ -41,7 +41,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-extract",
+      "value": "io.holunda.connector.extract:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
@@ -76,6 +76,16 @@
       "value": "={ \"myVariable\": myVariable }",
       "constraints": {
         "notEmpty": true
+      }
+    },
+    {
+      "label": "Instructions",
+      "description": "(Optional) Additional instructions/context if the output schema is not enough.",
+      "group": "extract",
+      "type": "Text",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "instructions"
       }
     },
     {

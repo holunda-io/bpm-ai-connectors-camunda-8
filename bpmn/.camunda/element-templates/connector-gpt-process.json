@@ -41,7 +41,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-process",
+      "value": "io.holunda.connector.process:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }

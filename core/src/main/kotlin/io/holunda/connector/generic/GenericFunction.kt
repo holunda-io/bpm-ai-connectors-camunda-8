@@ -14,7 +14,7 @@ import java.util.*
 @OutboundConnector(
   name = "gpt-generic",
   inputVariables = ["inputJson", "taskDescription", "outputFormat", "model"],
-  type = "gpt-generic"
+  type = "io.holunda.connector.generic:1"
 )
 class GenericFunction : OutboundConnectorFunction {
 
