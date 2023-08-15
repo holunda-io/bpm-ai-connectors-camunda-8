@@ -6,6 +6,7 @@ from langchain.tools import Tool, StructuredTool
 from pydantic import BaseModel, Field
 from pydantic.fields import FieldInfo
 
+from gpt.agents.common.agent.base import Agent
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
 from gpt.chains.retrieval_chain.chain import get_embeddings, get_vector_store
 from gpt.chains.retrieval_chain.prompt import MULTI_QUERY_PROMPT
@@ -42,17 +43,18 @@ def json_schema_to_pydantic_model(name: str, schema: Dict[str, Any]) -> Any:
 
 def create_retrieval_agent(
     llm: BaseChatModel,
+    database: str,
     database_url: str,
     embedding_provider: str,
     embedding_model: str,
     output_schema: Optional[Dict[str, Union[str, dict]]] = None,
-) -> Chain:
+) -> Agent:
     agent = OpenAIFunctionsAgent.create(
         llm=llm,
     )
 
     embeddings = get_embeddings(embedding_provider, embedding_model)
-    vector_store = get_vector_store(database_url, embeddings)
+    vector_store = get_vector_store(database, database_url, embeddings)
 
     # rephrase query multiple times and get union of docs
     # multi_retriever = MultiQueryRetriever.from_llm(
@@ -60,6 +62,7 @@ def create_retrieval_agent(
     #     llm=llm,
     #     prompt=MULTI_QUERY_PROMPT
     # )
+
     # answer synthesizer
     retrieval_qa = RetrievalQA.from_chain_type(
         llm=llm,

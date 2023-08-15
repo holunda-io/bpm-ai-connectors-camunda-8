@@ -14,11 +14,10 @@ from gpt.chains.support.flare_instruct.base import FLAREInstructChain
 from gpt.chains.support.sub_query_retriever.chain import SubQueryRetriever
 
 
-def get_vector_store(database_url: str, embeddings: Embeddings, meta_attributes: Optional[List[str]] = None):
-    db, url = database_url.split('://', 1)
-    match db:
+def get_vector_store(database: str, database_url: str, embeddings: Embeddings, meta_attributes: Optional[List[str]] = None):
+    match database:
         case 'weaviate':
-            base_url, index = url.rsplit('/', 1)
+            base_url, index = database_url.rsplit('/', 1)
             return Weaviate(
                 client=_create_weaviate_client(weaviate_url=base_url),
                 index_name=index,
@@ -28,7 +27,7 @@ def get_vector_store(database_url: str, embeddings: Embeddings, meta_attributes:
                 by_text=False
             )
         case _:
-            raise Exception(f'Unsupported vector database {db} in url {database_url}')
+            raise Exception(f'Unsupported vector database {database}.')
 
 
 def get_embeddings(embedding_provider: str, embedding_model: str) -> Embeddings:
@@ -41,6 +40,7 @@ def get_embeddings(embedding_provider: str, embedding_model: str) -> Embeddings:
 
 def create_legacy_retrieval_chain(
     llm: BaseLanguageModel,
+    database: str,
     database_url: str,
     embedding_provider: str,
     embedding_model: str,
@@ -48,7 +48,7 @@ def create_legacy_retrieval_chain(
 ) -> Chain:
 
     embeddings = get_embeddings(embedding_provider, embedding_model)
-    vector_store = get_vector_store(database_url, embeddings)
+    vector_store = get_vector_store(database, database_url, embeddings)
 
     # rephrase query multiple times and get union of docs
     multi_retriever = MultiQueryRetriever.from_llm(

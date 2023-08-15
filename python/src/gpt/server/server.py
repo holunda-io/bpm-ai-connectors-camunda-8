@@ -9,11 +9,12 @@ from gpt.agents.openapi_agent.code_execution.base import create_openapi_code_exe
 from gpt.agents.plan_and_execute.executor.executor import create_executor
 from gpt.agents.plan_and_execute.planner.planner import create_planner
 from gpt.agents.process_generation_agent.process_generation_agent import create_process_generation_agent
+from gpt.agents.retrieval_agent.retrieval_agent import create_retrieval_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
-from gpt.chains.retrieval_chain.chain import create_retrieval_chain, get_vector_store
+from gpt.chains.retrieval_chain.chain import get_vector_store
 from gpt.chains.translate_chain.chain import create_translate_chain
 from gpt.config import model_id_to_llm
 from gpt.server.types import RetrievalTask, ComposeTask, GenericTask, TranslateTask, DecideTask, ExtractTask, \
@@ -91,11 +92,12 @@ async def post(task: GenericTask):
 @app.post("/openapi")
 async def post(task: OpenApiTask):
     if task.skill_store_url:
-        skill_store = get_vector_store(
-            task.skill_store_url,
-            OpenAIEmbeddings(),
-            meta_attributes=['task', 'comment', 'function', 'example_call']
-        )
+        # skill_store = get_vector_store(
+        #     task.skill_store_url,
+        #     OpenAIEmbeddings(),
+        #     meta_attributes=['task', 'comment', 'function', 'example_call']
+        # )
+        skill_store = None
     else:
         skill_store = None
 
@@ -113,11 +115,12 @@ async def post(task: OpenApiTask):
 @app.post("/database")
 async def post(task: DatabaseTask):
     if task.skill_store_url:
-        skill_store = get_vector_store(
-            task.skill_store_url,
-            OpenAIEmbeddings(),
-            meta_attributes=['task', 'comment', 'function', 'example_call']
-        )
+        # skill_store = get_vector_store(
+        #     task.skill_store_url,
+        #     OpenAIEmbeddings(),
+        #     meta_attributes=['task', 'comment', 'function', 'example_call']
+        # )
+        skill_store = None
     else:
         skill_store = None
 
@@ -134,14 +137,19 @@ async def post(task: DatabaseTask):
 
 @app.post("/retrieval")
 async def post(task: RetrievalTask):
-    chain = create_retrieval_chain(
+    agent = create_retrieval_agent(
         llm=model_id_to_llm(task.model),
+        database=task.database,
         database_url=task.database_url,
         embedding_provider=task.embedding_provider,
         embedding_model=task.embedding_model,
-        mode=task.mode
+        output_schema=task.output_schema
     )
-    return chain.run(query=task.query)
+    result = agent.run(input=task.query, context="")
+    if task.output_schema:
+        return result["output"]
+    else:
+        return result["output"]["answer"]
 
 
 @app.post("/process")

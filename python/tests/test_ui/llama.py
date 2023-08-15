@@ -68,7 +68,8 @@ if prompt := st.chat_input():
         llm = llama()
 
         vs = get_vector_store(
-            'weaviate://http://localhost:8080/Test_index',
+            'weaviate',
+            'http://localhost:8080/Test_index',
             OpenAIEmbeddings(),
         )
 

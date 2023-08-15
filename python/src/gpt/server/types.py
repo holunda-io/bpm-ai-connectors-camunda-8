@@ -66,11 +66,13 @@ class DatabaseTask(BaseModel):
 
 class RetrievalTask(BaseModel):
     model: str
+    database: str
     database_url: str
     embedding_provider: str
     embedding_model: str
     mode: str
     query: str
+    output_schema: Optional[dict] = None
 
 
 class ProcessTask(BaseModel):

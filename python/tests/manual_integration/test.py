@@ -287,7 +287,8 @@ def test_index_test_docs():
 
 def test_create_skill_index():
     vs = get_vector_store(
-        'weaviate://http://localhost:8080/SkillLibrary',
+        'weaviate',
+        'http://localhost:8080/SkillLibrary',
         OpenAIEmbeddings(),
     )
     vs._client.schema.create_class({
@@ -318,7 +319,8 @@ def test_create_skill_index():
 
 def test_clear_skills():
     vs = get_vector_store(
-        'weaviate://http://localhost:8080/SkillLibrary',
+        'weaviate',
+        'http://localhost:8080/SkillLibrary',
         OpenAIEmbeddings(),
         meta_attributes=['task', 'comment', 'function', 'example_call']
     )
@@ -328,7 +330,8 @@ def test_clear_skills():
 def test_retrieve():
     qa = create_legacy_retrieval_chain(
         llm=get_openai_chat_llm(),
-        database_url='weaviate://http://localhost:8080/Test_index',
+        database='weaviate',
+        database_url='http://localhost:8080/Test_index',
         embedding_provider="openai",
         embedding_model="text-embedding-ada-002"
     )
@@ -341,7 +344,8 @@ def test_flare_instruct():
     llm = get_openai_chat_llm(model_name='gpt-4')
 
     retriever = get_vector_store(
-        'weaviate://http://localhost:8080/Test_index',
+        'weaviate',
+        'http://localhost:8080/Test_index',
         OpenAIEmbeddings()
     ).as_retriever()
 
