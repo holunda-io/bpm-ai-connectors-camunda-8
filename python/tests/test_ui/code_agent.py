@@ -57,7 +57,8 @@ def get_accounts():
     ]
 
 skill_store = get_vector_store(
-    'weaviate://http://localhost:8080/SkillLibrary',
+    'weaviate',
+    'http://localhost:8080/SkillLibrary',
     OpenAIEmbeddings(),
     meta_attributes=['task', 'comment', 'function', 'example_call']
 )

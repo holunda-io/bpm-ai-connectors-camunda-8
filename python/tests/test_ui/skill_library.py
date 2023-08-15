@@ -12,7 +12,8 @@ from gpt.chains.retrieval_chain.chain import get_vector_store
 st.title('📚 Skill Library')
 
 vector_store = get_vector_store(
-    'weaviate://http://localhost:8080/SkillLibrary',
+    'weaviate',
+    'http://localhost:8080/SkillLibrary',
     OpenAIEmbeddings(),
     meta_attributes=['task', 'comment', 'function', 'example_call']
 )

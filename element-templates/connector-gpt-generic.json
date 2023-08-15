@@ -37,7 +37,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-generic",
+      "value": "io.holunda.connector.generic:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }

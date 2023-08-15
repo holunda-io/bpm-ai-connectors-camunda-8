@@ -111,6 +111,7 @@
       "group": "decision",
       "type": "Text",
       "feel": "optional",
+      "optional": true,
       "value": "=[\n  \"CANCEL_SUBSCRIPTION\",\n  \"CHANGE_SUBSCRIPTION\",\n  \"COMPLAINT\",\n  \"OTHER\"\n]",
       "binding": {
         "type": "zeebe:input",

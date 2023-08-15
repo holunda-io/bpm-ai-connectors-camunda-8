@@ -34,7 +34,7 @@ class ExtractFunction : OutboundConnectorFunction {
         ExtractTask(
           request.model.modelId,
           request.inputJson,
-          request.instruction,
+          request.instructions,
           request.extractionJson,
           request.mode == Mode.REPEATED,
           request.entitiesDescription
@@ -61,7 +61,7 @@ class ExtractFunction : OutboundConnectorFunction {
   data class ExtractTask(
     val model: String,
     val context: JsonNode,
-    val instruction: String?,
+    val instructions: String?,
     val extraction_schema: JsonNode,
     val repeated: Boolean,
     val repeated_description: String?,

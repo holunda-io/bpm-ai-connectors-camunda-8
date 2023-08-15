@@ -15,7 +15,7 @@ import java.util.*
 
 @OutboundConnector(
   name = "gpt-retrieval",
-  inputVariables = ["query", "database", "databaseUrl", "embeddingProvider", "embeddingModel", "mode", "model"],
+  inputVariables = ["query", "outputSchema", "database", "databaseUrl", "embeddingProvider", "embeddingModel", "mode", "model"],
   type = "io.holunda.connector.retrieval:1"
 )
 class RetrievalFunction : OutboundConnectorFunction {
@@ -38,7 +38,8 @@ class RetrievalFunction : OutboundConnectorFunction {
         request.databaseUrl,
         request.embeddingProvider,
         request.embeddingModel,
-        request.mode
+        request.mode,
+        request.outputSchema
       )
     )
 
@@ -55,6 +56,7 @@ class RetrievalFunction : OutboundConnectorFunction {
     val embedding_provider: String,
     val embedding_model: String,
     val mode: String,
+    val output_schema: JsonNode?,
   )
 
   companion object : KLogging()

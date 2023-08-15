@@ -41,7 +41,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "gpt-executor",
+      "value": "io.holunda.connector.executor:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
