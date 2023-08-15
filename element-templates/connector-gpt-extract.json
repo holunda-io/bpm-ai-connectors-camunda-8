@@ -82,7 +82,7 @@
       "label": "Instructions",
       "description": "(Optional) Additional instructions/context if the output schema is not enough.",
       "group": "extract",
-      "type": "Text",
+      "type": "Hidden",
       "optional": true,
       "binding": {
         "type": "zeebe:input",
