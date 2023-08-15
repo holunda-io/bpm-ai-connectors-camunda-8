@@ -11,7 +11,7 @@ These connectors can automatically perform activities that previously required u
 * ⚖  Informed **decision-making** before gateways
 * ✍🏼 Creative **content generation** (emails, letters, ...)
 * 🌍 **Translation**
-* 📄 **Answering questions** over documents, Wikis and other unstructured knowledge
+* 📄 **Answering questions** over documents, wikis and other unstructured knowledge
 * 🗄 Querying **SQL Databases**
 * 🌐 Interacting with **REST APIs**
 * ...and more
@@ -27,19 +27,9 @@ Just provide input and output variable mappings and configure what you want to a
 
 > :warning: **Experimental**: This project is not meant for production use as of today, but to evaluate and demonstrate LLMs in BPM use-cases.
 
-## 🚀 How to Run
+## 🚀 How to Run Using Docker
 
-### Build
-
-Package the connectors by running the following command:
-
-```bash
-mvn clean package
-```
-
-### Run Using Docker
-
-Clone the `connector-secrets.txt.sample`:
+Clone the `connector-secrets.txt.sample` template file:
 
 ```bash
 cp connector-secrets.txt.sample connector-secrets.txt
@@ -61,7 +51,7 @@ ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
 ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
 ```
 
-#### (Optional): Run local zeebe cluster
+### (Optional): Run local zeebe cluster
 
 If you are not using Camunda Cloud, start a local cluster:
 
@@ -69,155 +59,66 @@ If you are not using Camunda Cloud, start a local cluster:
 docker compose -f docker-compose.camunda-platform.yml up -d
 ```
 
-#### Run connectors
+### ▶️ Run connectors
 
-Start the connector runtime:
+Build and start the connector runtime:
 
 ```bash 
-docker compose -f docker-compose.yml up -d
+docker compose up -d
 ```
 
+## 📚 Connectors Documentation
 
-
-## Connectors
-
-### General Configuration
-
-#### Input Variables
-
-All connectors base their work on a map of input variables given as a FEEL map, e.g.:
-```
-{ "myVariable": myVariable }
-```
-The keys of the map should be the name of the variable or another fitting label for the variable content, as this will give the model context. 
-For example, if you input a variable containing the subject of an e-mail, the label should make that clear: `"emailSubject":`. Otherwise, (if you name it `"var3"` for example) it might be hard to interpret the data.
-
-#### Model
-
-By default, all connectors will use the `Standard precision, fast, cheap` model, which translates to GPT-3.5-turbo. This model is fine for most tasks and pretty cost-effective. 
-If you see undesired behavior for a complex task you can try `Highest precision, slow, expensive`, which translates to GPT-4 (if you have access to it). 
-
-For using custom or open-source models, see [here](docs/custom-models.md).
-
----
-
-### 🔍 Extract Connector
- 
-Can extract or deduce information from multiple input variables, potentially do simple conversions along the way, and store the result in one or more output variables.
-
-#### Configuration
-
-Provide a map of new variables to extract from the input, with descriptions of what they should contain:
-```
-{
-  firstname: "first name",
-  lastname: "last name",
-  language: "the language that the email body is written in, as ISO code"
-}
-```
-
-#### Result
-A temporary variable `result` that contains a result JSON object of the same form as configured above. Can be mapped to one or more process variables using the result expression.
-
----
-
-### ⚖ Decide Connector
-
-Can make decisions based on multiple input variables and store the result decision and the reasoning behind it in output variables.
-
-#### Configuration
-
-Provide a natural language description of what the connector should decide, e.g.:
-```
-Decide what the intention of the customer's mail is.
-```
-Next, determine an output type (`Boolean`, `Integer` or `String`).
-If not `Boolean`, you may restrict the connector to a classification on a finite set of options, instead of letting it freely choose the values:
-```
-[
-  "CANCEL_SUBSCRIPTION",
-  "CHANGE_SUBSCRIPTION",
-  "COMPLAINT",
-  "OTHER"
-]
-```
-
-#### Result
-A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
-
----
-
-### ✍🏼 Compose Connector
-
-Can compose text like e-mails or letters based on multiple input variables and store the result text in an output variable.
-
-#### Configuration
-
-Configure a desired style, tone and language for the text and describe what it should cover. Give a sender name (e.g. company name) that will be used in the complimentary close. The recipient should be obvious from the contents of the input variables.
-
-#### Result
-A temporary variable `result` that directly contains the result text. Can be mapped to a process variables using the result expression.
-
----
-
-### 🌍 Translate Connector
-
-Can translate multiple input variables to any given language and store the result in one or more output variables
-
-#### Configuration
-
-Enter the target language (e.g. `English`).
-
-#### Result
-A temporary variable `result` that contains a result JSON object with a field for every input field, containing the translation. Can be mapped to one or more process variables using the result expression.
-
----
-
-### 🪄 Generic Connector
-
-Can execute custom tasks not covered by the specialized connectors.
-
-#### Configuration
-
-Describe the task:
-
-```
-Perform task X and store the result in the result field. Also describe the reasoning behind your result.
-```
-
-Specify the output schema:
-
-```
-{
-  result: "the result of the task",
-  reasoning: "the reasoning behind the task result"
-}
-```
-#### Result
-A temporary variable `result` that contains a result JSON object as specified in the output schema. Can be mapped to one or more process variables using the result expression.
-
----
-
-#### Element Templates
-
-The element templates can be found under [element-templates](element-templates).
-
-
+* [Getting Started](docs/getting-started.md)
+* [Foundational Connectors](docs/foundational-connectors.md)
+* [Agentic Connectors](docs/agentic-connectors.md)
+* [Custom LLMs](docs/custom-models.md)
 
 ## 🏗 Development & Project Setup
 
-### Build
+The connectors currently use the Java Connector API (implemented in Kotlin) for the connector workers (`core` module). 
+All LLM specific code (LLM model interfaces, chains, agents, prompts, ...) are implemented in Python using the Langchain framework (`python` folder). 
+The Python app serves a REST API for the core to use.
 
+For convenience, both apps can be packaged into a single Docker image using the top-level Dockerfile or docker-compose.yml.
+
+Alternatively, the Python app has its own Dockerfile (or the main.py can be run directly) and the `runtime` module can be dockerized using `spring-boot:build-image` (or run via the IDE, see below).
+
+### Build
+#### Connectors
 You can package the Connectors by running the following command:
 
 ```bash
 mvn clean package
 ```
 
-This will create the following artifacts:
+This will create JAR-artifacts for the two modules:
 
-- A thin JAR without dependencies.
-- An uber JAR containing all dependencies, potentially shaded to avoid classpath conflicts. This will not include the SDK artifacts since those are in scope `provided` and will be brought along by the respective Connector Runtime executing the Connectors.
+- `camunda-8-connector-gpt-core-x.x.x-with-dependencies.jar`
+  - The connector worker implementations
+- `camunda-8-connector-gpt-runtime-x.x.x.jar`
+  - A Spring Boot connector runtime using the core module
+
+#### Python LLM Service
+
+Python 3.10 is required. A virtual environment is advised.
+
+Install the Python dependencies using the following command:
+
+```bash
+python -m pip install --upgrade -r python/requirements.txt
+```
+
+Install the Python app:
+```bash
+python -m pip install -e python/src
+```
+
+Start the Python service with:
+
+```bash
+python python/src/gpt/main.py
+```
 
 ### Configuration
 
@@ -240,7 +141,7 @@ ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
 ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
 ```
 
-If you want to connect to Camunda 8 Cloud, please use the following configuration (independently from run mode); 
+If you want to connect to Camunda 8 Cloud, please use the following configuration (independently of run mode); 
 ```
 OPENAI_API_KEY=<put your key here>
 ZEEBE_CLIENT_CLOUD_CLUSTER-ID=<cluster-id>
