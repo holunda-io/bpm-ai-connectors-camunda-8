@@ -4,9 +4,9 @@ import java.util.*
 
 object FormGenerator {
 
-  fun generate(task: String, variables: List<String>): String {
+    fun generate(task: String, variables: List<String>): String {
 
-    fun getField(name: String) = """
+        fun getField(name: String) = """
       {
           "text": "=\"$name: \" + string($name)",
           "type": "text",
@@ -14,7 +14,7 @@ object FormGenerator {
       }
     """.trimIndent()
 
-    return """
+        return """
     {
       "components": [
         {
@@ -51,6 +51,6 @@ object FormGenerator {
       "schemaVersion": 7
     }
   """.trimIndent()
-  }
+    }
 
 }

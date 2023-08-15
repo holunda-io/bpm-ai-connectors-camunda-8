@@ -41,7 +41,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "io.holunda.connector.extract:1",
+      "value": "io.holunda:connector-extract:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }

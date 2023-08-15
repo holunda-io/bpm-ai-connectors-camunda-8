@@ -14,34 +14,34 @@ import kotlinx.coroutines.*
 
 object LLMServiceClient {
 
-  val llmServiceUrl = System.getenv("LLM_SERVICE_URL") ?: "http://localhost:9999"
+    val llmServiceUrl = System.getenv("LLM_SERVICE_URL") ?: "http://localhost:9999"
 
-  val client = HttpClient {
-    install(ContentNegotiation) {
-      jackson {
-        configure(SerializationFeature.INDENT_OUTPUT, true)
-        setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
-          indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
-          indentObjectsWith(DefaultIndenter("  ", "\n"))
-        })
-      }
-      expectSuccess = true
+    val client = HttpClient {
+        install(ContentNegotiation) {
+            jackson {
+                configure(SerializationFeature.INDENT_OUTPUT, true)
+                setDefaultPrettyPrinter(DefaultPrettyPrinter().apply {
+                    indentArraysWith(DefaultPrettyPrinter.FixedSpaceIndenter.instance)
+                    indentObjectsWith(DefaultIndenter("  ", "\n"))
+                })
+            }
+            expectSuccess = true
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
+            connectTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
+            socketTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
+        }
     }
-    install(HttpTimeout) {
-      requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
-      connectTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
-      socketTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
+
+    val jsonMapper = jacksonObjectMapper()
+
+    inline fun <reified T : Any> run(task: String, request: T): JsonNode = runBlocking {
+        val response: String = client.post("${llmServiceUrl}/$task") {
+            contentType(ContentType.Application.Json)
+            setBody(jsonMapper.writeValueAsString(request))
+        }.body()
+        jsonMapper.readTree(response)
     }
-  }
-
-  val jsonMapper = jacksonObjectMapper()
-
-  inline fun <reified T: Any> run(task: String, request: T): JsonNode = runBlocking {
-    val response: String = client.post("${llmServiceUrl}/$task") {
-      contentType(ContentType.Application.Json)
-      setBody(jsonMapper.writeValueAsString(request))
-    }.body()
-    jsonMapper.readTree(response)
-  }
 
 }

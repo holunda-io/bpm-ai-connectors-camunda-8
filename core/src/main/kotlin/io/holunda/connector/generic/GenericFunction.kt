@@ -1,55 +1,34 @@
 package io.holunda.connector.generic
 
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.module.kotlin.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
-import io.holunda.connector.compose.*
-import io.holunda.connector.translate.*
-import org.apache.commons.text.*
-import org.slf4j.*
-import java.util.*
+import mu.*
 
 @OutboundConnector(
-  name = "gpt-generic",
-  inputVariables = ["inputJson", "taskDescription", "outputFormat", "model"],
-  type = "io.holunda.connector.generic:1"
+    name = "gpt-generic",
+    inputVariables = [
+        "inputJson",
+        "taskDescription",
+        "outputFormat",
+        "model"
+    ],
+    type = "io.holunda:connector-generic:1"
 )
 class GenericFunction : OutboundConnectorFunction {
 
-  @Throws(Exception::class)
-  override fun execute(context: OutboundConnectorContext): Any {
-    LOG.info("Executing GenericFunction")
-    val connectorRequest = context.variables.readFromJson<GenericRequest>()
-    //val connectorRequest = context.bindVariables(GenericRequest::class.java)
-    LOG.info("Request: {}", connectorRequest)
-    return executeConnector(connectorRequest)
-  }
+    override fun execute(context: OutboundConnectorContext): Any {
+        logger.info("Executing GenericFunction")
+        val connectorRequest = context.variables.readFromJson<GenericRequest>()
+        logger.info("GenericFunction request $connectorRequest")
+        return executeRequest(connectorRequest)
+    }
 
-  private fun executeConnector(request: GenericRequest): GenericResult {
-    val result = LLMServiceClient.run("generic",
-      GenericTask(
-        request.model.modelId,
-        request.inputJson,
-        request.taskDescription,
-        request.outputFormat
-      )
-    )
+    private fun executeRequest(request: GenericRequest): GenericResult {
+        val result = LLMServiceClient.run("generic", GenericTask.fromRequest(request))
+        logger.info("GenericFunction result: $result")
+        return GenericResult(result)
+    }
 
-    LOG.info("GenericFunction result: $result")
-
-    return GenericResult(result)
-  }
-
-  data class GenericTask(
-    val model: String,
-    val context: JsonNode,
-    val instructions: String,
-    val output_schema: JsonNode,
-  )
-
-  companion object {
-    private val LOG = LoggerFactory.getLogger(GenericFunction::class.java)
-  }
+    companion object : KLogging()
 }

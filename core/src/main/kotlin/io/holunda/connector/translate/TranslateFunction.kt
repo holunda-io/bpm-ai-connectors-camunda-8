@@ -1,54 +1,33 @@
 package io.holunda.connector.translate
 
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.module.kotlin.*
 import io.camunda.connector.api.annotation.*
-import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
-import io.holunda.connector.compose.*
-import io.holunda.connector.extract.*
-import org.apache.commons.text.*
-import org.slf4j.*
-import java.util.*
+import mu.*
 
 @OutboundConnector(
-  name = "gpt-translate",
-  inputVariables = ["inputJson", "language", "model"],
-  type = "io.holunda.connector.translate:1"
+    name = "gpt-translate",
+    inputVariables = [
+        "inputJson",
+        "language",
+        "model"
+    ],
+    type = "io.holunda.connector.translate:1"
 )
 class TranslateFunction : OutboundConnectorFunction {
 
-  @Throws(Exception::class)
-  override fun execute(context: OutboundConnectorContext): Any {
-    LOG.info("Executing TranslateFunction")
-    val connectorRequest = context.variables.readFromJson<TranslateRequest>()
-    //val connectorRequest = context.bindVariables(TranslateRequest::class.java)
-    LOG.info("Request: {}", connectorRequest)
-    return executeConnector(connectorRequest)
-  }
+    override fun execute(context: OutboundConnectorContext): Any {
+        logger.info("Executing TranslateFunction")
+        val connectorRequest = context.variables.readFromJson<TranslateRequest>()
+        logger.info("TranslateFunction request: $connectorRequest")
+        return executeRequest(connectorRequest)
+    }
 
-  private fun executeConnector(request: TranslateRequest): TranslateResult {
-    val result = LLMServiceClient.run("translate",
-        TranslateTask(
-          request.model.modelId,
-          request.inputJson,
-          request.language
-        )
-    )
+    private fun executeRequest(request: TranslateRequest): TranslateResult {
+        val result = LLMServiceClient.run("translate", TranslateTask.fromRequest(request))
+        logger.info("TranslateFunction result: $result")
+        return TranslateResult(result)
+    }
 
-    LOG.info("TranslateFunction result: $result")
-
-    return TranslateResult(result)
-  }
-
-  data class TranslateTask(
-    val model: String,
-    val input: JsonNode,
-    val target_language: String,
-  )
-
-  companion object {
-    private val LOG = LoggerFactory.getLogger(TranslateFunction::class.java)
-  }
+    companion object : KLogging()
 }

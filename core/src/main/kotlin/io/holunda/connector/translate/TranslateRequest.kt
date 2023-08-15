@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.*
 import io.holunda.connector.common.*
 
 data class TranslateRequest(
-  val inputJson: JsonNode,
-  val language: String,
-  val model: Model
+    val inputJson: JsonNode,
+    val language: String,
+    val model: Model
 )

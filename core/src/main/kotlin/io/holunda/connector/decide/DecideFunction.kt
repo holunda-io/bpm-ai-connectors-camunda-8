@@ -1,58 +1,35 @@
 package io.holunda.connector.decide
 
-import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
-import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
-import io.holunda.connector.compose.*
-import io.holunda.connector.decide.DecisionOutputType.*
-import io.holunda.connector.generic.*
-import org.apache.commons.text.*
-import org.slf4j.*
-import java.util.*
+import mu.*
 
 @OutboundConnector(
-  name = "gpt-decide",
-  inputVariables = ["inputJson", "instructions", "outputType", "possibleValues", "model"],
-  type = "io.holunda.connector.decide:1"
+    name = "gpt-decide",
+    inputVariables = [
+        "inputJson",
+        "instructions",
+        "outputType",
+        "possibleValues",
+        "model"
+    ],
+    type = "io.holunda:connector-decide:1"
 )
 class DecideFunction : OutboundConnectorFunction {
 
-  @Throws(Exception::class)
-  override fun execute(context: OutboundConnectorContext): Any {
-    LOG.info("Executing DecideFunction")
-    val connectorRequest = context.variables.readFromJson<DecideRequest>()
-    //val connectorRequest = context.bindVariables(DecideRequest::class.java)
-    LOG.info("Request: {}", connectorRequest)
-    return executeConnector(connectorRequest)
-  }
+    override fun execute(context: OutboundConnectorContext): Any {
+        logger.info("Executing DecideFunction")
+        val connectorRequest = context.variables.readFromJson<DecideRequest>()
+        logger.info("DecideFunction request: $connectorRequest")
+        return executeRequest(DecideTask.fromRequest(connectorRequest))
+    }
 
-  private fun executeConnector(request: DecideRequest): DecideResult {
-    val result = LLMServiceClient.run("decide",
-      DecideTask(
-        request.model.modelId,
-        request.inputJson,
-        request.instructions,
-        request.outputType.name.lowercase(),
-        request.possibleValues
-      )
-    )
+    private fun executeRequest(decideTask: DecideTask): DecideResult {
+        val result = LLMServiceClient.run("decide", decideTask)
+        logger.info("DecideFunction result: $result")
+        return DecideResult(result)
+    }
 
-    LOG.info("DecideFunction result: $result")
-
-    return DecideResult(result)
-  }
-
-  data class DecideTask(
-    val model: String,
-    val context: JsonNode,
-    val instructions: String,
-    val output_type: String,
-    val possible_values: List<Any>?
-  )
-
-  companion object {
-    private val LOG = LoggerFactory.getLogger(DecideFunction::class.java)
-  }
+    companion object : KLogging()
 }

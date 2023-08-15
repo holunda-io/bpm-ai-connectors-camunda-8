@@ -1,61 +1,41 @@
 package io.holunda.connector.planner
 
-import com.fasterxml.jackson.databind.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
-import io.holunda.connector.compose.*
-import io.holunda.connector.openapi.*
-import io.holunda.connector.planner.*
 import mu.*
-import org.apache.commons.text.*
-import org.slf4j.*
-import java.util.*
 
 @OutboundConnector(
-  name = "gpt-planner",
-  inputVariables = ["inputJson", "taskDescription", "tools", "model"],
-  type = "io.holunda.connector.planner:1"
+    name = "gpt-planner",
+    inputVariables = [
+        "inputJson",
+        "taskDescription",
+        "tools",
+        "model"
+    ],
+    type = "io.holunda:connector-planner:1"
 )
 class PlannerFunction : OutboundConnectorFunction {
 
-  @Throws(Exception::class)
-  override fun execute(context: OutboundConnectorContext): Any {
-    logger.info("Executing PlannerFunction")
-    val connectorRequest = context.variables.readFromJson<PlannerRequest>()
-    //val connectorRequest = context.bindVariables(PlannerRequest::class.java)
-    logger.info("Request: {}", connectorRequest)
-    return executeConnector(connectorRequest)
-  }
+    override fun execute(context: OutboundConnectorContext): Any {
+        logger.info("Executing PlannerFunction")
+        val connectorRequest = context.variables.readFromJson<PlannerRequest>()
+        logger.info("PlannerFunction request: $connectorRequest")
+        return executeRequest(connectorRequest)
+    }
 
-  private fun executeConnector(request: PlannerRequest): PlannerResult {
-    val result = LLMServiceClient.run("planner", PlannerTask(
-        request.model.modelId,
-        request.taskDescription,
-        request.inputJson,
-        request.tools.toStringMap(),
-      )
-    )
+    private fun executeRequest(request: PlannerRequest): PlannerResult {
+        val result = LLMServiceClient.run("planner", PlannerTask.fromRequest(request))
+        val plan = result.toStringList()
+        logger.info("PlannerFunction result: $plan")
+        return PlannerResult(
+            Task(
+                task = request.taskDescription,
+                tools = request.tools.toStringMap(),
+                plan = plan,
+            )
+        )
+    }
 
-    val plan = result.toStringList()
-
-    logger.info("PlannerFunction result: $plan")
-
-    return PlannerResult(
-      Task(
-        task = request.taskDescription,
-        tools = request.tools.toStringMap(),
-        plan = plan,
-      )
-    )
-  }
-
-  data class PlannerTask(
-    val model: String,
-    val task: String,
-    val context: JsonNode,
-    val tools: Map<String,String>
-  )
-
-  companion object : KLogging()
+    companion object : KLogging()
 }

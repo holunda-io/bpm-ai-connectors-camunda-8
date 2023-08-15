@@ -37,7 +37,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "io.holunda.connector.compose:1",
+      "value": "io.holunda:connector-compose:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }

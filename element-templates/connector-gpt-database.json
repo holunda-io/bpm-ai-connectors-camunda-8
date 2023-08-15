@@ -45,7 +45,7 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "io.holunda.connector.database:1",
+      "value": "io.holunda:connector-database:1",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }

@@ -1,73 +1,53 @@
 package io.holunda.connector.extract
 
 import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.module.kotlin.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
-import io.holunda.connector.compose.*
-import io.holunda.connector.database.*
-import org.apache.commons.text.*
-import org.slf4j.*
-import java.util.*
+import mu.*
 
 @OutboundConnector(
-  name = "gpt-extract",
-  inputVariables = ["inputJson", "instructions", "extractionJson", "missingDataBehavior", "mode", "entitiesDescription", "model"],
-  type = "io.holunda.connector.extract:1"
+    name = "gpt-extract",
+    inputVariables = [
+        "inputJson",
+        "instructions",
+        "extractionJson",
+        "missingDataBehavior",
+        "mode",
+        "entitiesDescription",
+        "model"
+    ],
+    type = "io.holunda:connector-extract:1"
 )
 class ExtractFunction : OutboundConnectorFunction {
 
-  @Throws(Exception::class)
-  override fun execute(context: OutboundConnectorContext): Any {
-    LOG.info("Executing ExtractDataFunction")
-    val connectorRequest = context.variables.readFromJson<ExtractDataRequest>()
-    //val connectorRequest = context.bindVariables(ExtractDataRequest::class.java)
-    LOG.info("Request: {}", connectorRequest)
-    return executeConnector(connectorRequest)
-  }
-
-  private fun executeConnector(request: ExtractDataRequest): ExtractResult {
-    val result = LLMServiceClient.run(
-      "extract",
-        ExtractTask(
-          request.model.modelId,
-          request.inputJson,
-          request.instructions,
-          request.extractionJson,
-          request.mode == Mode.REPEATED,
-          request.entitiesDescription
-        )
-    )
-
-    fun checkNode(node: JsonNode) {
-      if (request.missingDataBehavior == MissingDataBehavior.ERROR && node.toMap().values.any { it == null }) {
-        throw ConnectorException("MISSING_DATA", "One or more result values are null")
-      }
+    override fun execute(context: OutboundConnectorContext): Any {
+        logger.info("Executing ExtractFunction")
+        val connectorRequest = context.variables.readFromJson<ExtractRequest>()
+        logger.info("ExtractFunction request: $connectorRequest")
+        return executeRequest(connectorRequest)
     }
 
-    when {
-      result.isArray -> result.forEach(::checkNode)
-      result.isObject -> checkNode(result)
-      else -> throw IllegalArgumentException("The result must be a JSON object or a JSON array")
+    private fun executeRequest(request: ExtractRequest): ExtractResult {
+        val result = LLMServiceClient.run("extract", ExtractTask.fromRequest(request))
+
+        fun checkNode(node: JsonNode) {
+            if (request.missingDataBehavior == MissingDataBehavior.ERROR && node.toMap().values.any { it == null }) {
+                throw ConnectorException("MISSING_DATA", "One or more result values are null")
+            }
+        }
+
+        when {
+            result.isArray -> result.forEach(::checkNode)
+            result.isObject -> checkNode(result)
+            else -> throw IllegalArgumentException("The result must be a JSON object or a JSON array")
+        }
+
+        logger.info("ExtractFunction result: $result")
+
+        return ExtractResult(result)
     }
 
-    LOG.info("ExtractDataFunction result: $result")
-
-    return ExtractResult(result)
-  }
-
-  data class ExtractTask(
-    val model: String,
-    val context: JsonNode,
-    val instructions: String?,
-    val extraction_schema: JsonNode,
-    val repeated: Boolean,
-    val repeated_description: String?,
-  )
-
-  companion object {
-    private val LOG = LoggerFactory.getLogger(ExtractFunction::class.java)
-  }
+    companion object : KLogging()
 }
