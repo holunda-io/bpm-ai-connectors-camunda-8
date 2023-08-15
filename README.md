@@ -27,19 +27,9 @@ Just provide input and output variable mappings and configure what you want to a
 
 > :warning: **Experimental**: This project is not meant for production use as of today, but to evaluate and demonstrate LLMs in BPM use-cases.
 
-## 🚀 How to Run
+## 🚀 How to Run Using Docker
 
-### Build
-
-Package the connectors by running the following command:
-
-```bash
-mvn clean package
-```
-
-### Run Using Docker
-
-Clone the `connector-secrets.txt.sample`:
+Clone the `connector-secrets.txt.sample` template file:
 
 ```bash
 cp connector-secrets.txt.sample connector-secrets.txt
@@ -61,7 +51,7 @@ ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
 ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
 ```
 
-#### (Optional): Run local zeebe cluster
+### (Optional): Run local zeebe cluster
 
 If you are not using Camunda Cloud, start a local cluster:
 
@@ -69,15 +59,13 @@ If you are not using Camunda Cloud, start a local cluster:
 docker compose -f docker-compose.camunda-platform.yml up -d
 ```
 
-#### Run connectors
+### ▶️ Run connectors
 
-Start the connector runtime:
+Build and start the connector runtime:
 
 ```bash 
-docker compose -f docker-compose.yml up -d
+docker compose up -d
 ```
-
-
 
 ## Connectors
 
@@ -206,18 +194,49 @@ The element templates can be found under [element-templates](element-templates).
 
 ## 🏗 Development & Project Setup
 
-### Build
+The connectors currently use the Java Connector API (implemented in Kotlin) for the connector workers (`core` module). 
+All LLM specific code (LLM model interfaces, chains, agents, prompts, ...) are implemented in Python using the Langchain framework (`python` folder). 
+The Python app serves a REST API for the core to use.
 
+For convenience, both apps can be packaged into a single Docker image using the top-level Dockerfile or docker-compose.yml.
+
+Alternatively, the Python app has its own Dockerfile (or the main.py can be run directly) and the `runtime` module can be dockerized using `spring-boot:build-image` (or run via the IDE, see below).
+
+### Build
+#### Connectors
 You can package the Connectors by running the following command:
 
 ```bash
 mvn clean package
 ```
 
-This will create the following artifacts:
+This will create JAR-artifacts for the two modules:
 
-- A thin JAR without dependencies.
-- An uber JAR containing all dependencies, potentially shaded to avoid classpath conflicts. This will not include the SDK artifacts since those are in scope `provided` and will be brought along by the respective Connector Runtime executing the Connectors.
+- `camunda-8-connector-gpt-core-x.x.x-with-dependencies.jar`
+  - The connector worker implementations
+- `camunda-8-connector-gpt-runtime-x.x.x.jar`
+  - A Spring Boot connector runtime using the core module
+
+#### Python LLM Service
+
+Python 3.10 is required. A virtual environment is advised.
+
+Install the Python dependencies using the following command:
+
+```bash
+python -m pip install --upgrade -r python/requirements.txt
+```
+
+Install the Python app:
+```bash
+python -m pip install -e python/src
+```
+
+Start the Python service with:
+
+```bash
+python python/src/gpt/main.py
+```
 
 ### Configuration
 
@@ -240,7 +259,7 @@ ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
 ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
 ```
 
-If you want to connect to Camunda 8 Cloud, please use the following configuration (independently from run mode); 
+If you want to connect to Camunda 8 Cloud, please use the following configuration (independently of run mode); 
 ```
 OPENAI_API_KEY=<put your key here>
 ZEEBE_CLIENT_CLOUD_CLUSTER-ID=<cluster-id>
