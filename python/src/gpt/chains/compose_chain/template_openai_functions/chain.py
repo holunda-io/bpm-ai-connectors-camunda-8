@@ -1,5 +1,5 @@
 import re
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Callable
 
 from langchain import LLMChain
 from langchain.callbacks.manager import AsyncCallbackManagerForChainRun, CallbackManagerForChainRun
@@ -14,8 +14,9 @@ from gpt.chains.compose_chain.common import type_to_prompt_type_str
 from gpt.chains.compose_chain.template_openai_functions.prompt import SYSTEM_MESSAGE_TEMPLATE, USER_MESSAGE_TEMPLATE
 from gpt.util.functions import get_openai_function
 from gpt.util.json import json_to_md
+from gpt.util.text import remove_stop_words
 
-TEMPLATE_VAR_PATTERN = r'{\s*(\w+)(?:\s*:\s*([^\n}]+))?\s*}'
+TEMPLATE_VAR_PATTERN = r'\{\s*([^{}\s]+(?:\s*[^{}\s]+)*)\s*\}'
 
 
 class TemplateComposeChain(Chain):
@@ -43,25 +44,32 @@ class TemplateComposeChain(Chain):
         inputs: Dict[str, Any],
         run_manager: Optional[CallbackManagerForChainRun] = None,
     ) -> Dict[str, Any]:
+        def desc_to_var_name(desc: str):
+            return remove_stop_words(desc, separator='_')
 
-        template = self.template.format(**inputs['input'])
+        def format_vars(template: str, f: Callable[[str], str]):
+            return re.sub(TEMPLATE_VAR_PATTERN, lambda m: f(m.group(1)), template)
 
-        template_vars = {var: desc for var, desc in re.findall(TEMPLATE_VAR_PATTERN, template)}
+        # input variable map
+        input_dict = inputs['input']
+        # all variables found in the template
+        template_vars = re.findall(TEMPLATE_VAR_PATTERN, self.template)
+        # map of template variables that are not already in the input and need to be generated
+        template_vars_to_generate_dict = {desc_to_var_name(desc): desc for desc in template_vars if desc not in input_dict.keys()}
+        # input variables that are not present in the template
+        non_template_input_var_dict = {k: v for k, v in input_dict.items() if k not in template_vars}
 
         function = get_openai_function(
             "store_text",
             "Stores composed text parts for template variables.",
-            template_vars
+            template_vars_to_generate_dict
         )
         output_parser = JsonOutputFunctionsParser()
-
-        context_md = json_to_md(inputs["input"])
-        type_str = type_to_prompt_type_str(self.type)
 
         prompt = ChatPromptTemplate.from_messages([
             SystemMessagePromptTemplate.from_template(
                 SYSTEM_MESSAGE_TEMPLATE.format(
-                    type=type_str,
+                    type=type_to_prompt_type_str(self.type),
                     style=self.style,
                     tone=self.tone,
                     length=self.length,
@@ -70,9 +78,13 @@ class TemplateComposeChain(Chain):
             ),
             HumanMessagePromptTemplate.from_template(
                 USER_MESSAGE_TEMPLATE.format(
-                    template=escape_format_placeholders(template),
+                    template=escape_format_placeholders(
+                        # remove template braces from variables that are already present in the input to not confuse the model what to generate
+                        # we do not resolve these variables here to avoid sending that data to the API
+                        format_vars(self.template, lambda v: v if v in input_dict.keys() else '{' + v + '}')
+                    ),
                     lang=self.language,
-                    context_md=context_md
+                    context_md=json_to_md(non_template_input_var_dict)
                 )
             )
         ])
@@ -84,9 +96,11 @@ class TemplateComposeChain(Chain):
             output_parser=output_parser,
         )
 
-        vars = llm_chain.run({})
+        generated_vars = llm_chain.run({})
+        all_vars = generated_vars | input_dict
 
-        result = re.sub(TEMPLATE_VAR_PATTERN, lambda m: vars[m.group(1)], template)
+        # resolve all template variables using either input or generated values
+        result = format_vars(self.template, lambda v: all_vars[desc_to_var_name(v)])
 
         return {"text": result}
 

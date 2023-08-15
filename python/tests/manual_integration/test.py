@@ -223,7 +223,7 @@ def test_compose():
         #    max_tokens=1024
         #),
         type="email",
-        instructions_or_template="Hey Jim,\n{{ apology }}\nThank you, bye.",
+        instructions_or_template="Hey { firstname} you little { nickname },\n{ thank the customer for his genius question and apologize}\nThank you, bye.",
         language="English",
         style="informal",
         tone="friendly",

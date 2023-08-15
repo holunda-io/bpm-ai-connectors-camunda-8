@@ -208,10 +208,10 @@
     },
     {
       "label": "Template",
-      "description": "Template variables found in input variables are replaced directly, text for other variables will be generated.",
+      "description": "Template variables found in input variables are replaced directly (but not sent to the model), text for other variables will be generated.",
       "group": "write",
       "type": "Text",
-      "value": "Hello {name},\n\n{{ body : thank the customer for his purchase }}\n\nYours,\n{agentName}",
+      "value": "Hello {name},\n\n{ thank the customer for his purchase }\n\nYours,\n{agentName}",
       "binding": {
         "type": "zeebe:input",
         "name": "description"
