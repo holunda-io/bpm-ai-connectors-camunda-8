@@ -11,7 +11,7 @@ These connectors can automatically perform activities that previously required u
 * ⚖  Informed **decision-making** before gateways
 * ✍🏼 Creative **content generation** (emails, letters, ...)
 * 🌍 **Translation**
-* 📄 **Answering questions** over documents, wikis and other unstructured knowledge
+* 📄 **Answering questions** over documents, wikis and other unstructured knowledge-bases
 * 🗄 Querying **SQL Databases**
 * 🌐 Interacting with **REST APIs**
 * ...and more
@@ -29,13 +29,7 @@ Just provide input and output variable mappings and configure what you want to a
 
 ## 🚀 How to Run Using Docker
 
-Clone the `connector-secrets.txt.sample` template file:
-
-```bash
-cp connector-secrets.txt.sample connector-secrets.txt
-```
-
-In the newly created file, fill in your OpenAI API key and Zeebe cluster information for either Cloud or a local cluster:
+Create a `connector-secrets.txt` file (use `connector-secrets.txt.sample` as a template) and fill in your OpenAI API key and Zeebe cluster information for either Cloud or a local cluster:
 
 ```bash
 OPENAI_API_KEY=<put your key here>
@@ -61,10 +55,10 @@ docker compose -f docker-compose.camunda-platform.yml up -d
 
 ### ▶️ Run connectors
 
-Build and start the connector runtime:
+Run the connector runtime using a pre-built image from DockerHub:
 
 ```bash 
-docker compose up -d
+docker run --env-file connector-secrets.txt holisticon/camunda-8-connector-gpt:develop
 ```
 
 ## 📚 Connectors Documentation

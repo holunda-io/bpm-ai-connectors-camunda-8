@@ -31,4 +31,4 @@ As the variable is local, you need to define which parts of the result you want 
 { "result": result }
 ```
 
-The resulting JSON object is then merged into the current process variables (so beware variable naming to not overwrite anything).
+The resulting JSON object is then *merged* into the current process variables (so in this example there will be a new or overwritten process variable `result`).
