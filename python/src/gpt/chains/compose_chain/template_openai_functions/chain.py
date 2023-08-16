@@ -45,7 +45,8 @@ class TemplateComposeChain(Chain):
         run_manager: Optional[CallbackManagerForChainRun] = None,
     ) -> Dict[str, Any]:
         def desc_to_var_name(desc: str):
-            return remove_stop_words(desc, separator='_')
+            v = remove_stop_words(desc, separator='_')
+            return re.sub(r'[^A-Za-z0-9_\'äöüÄÖÜß]+', '', v).lower()
 
         def format_vars(template: str, f: Callable[[str], str]):
             return re.sub(TEMPLATE_VAR_PATTERN, lambda m: f(m.group(1)), template)
