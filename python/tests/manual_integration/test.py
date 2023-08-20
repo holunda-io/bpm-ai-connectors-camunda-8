@@ -207,7 +207,7 @@ def test_generic_standard():
     print(chain.run(json.dumps(input)))
 
 
-#@pytest.mark.skip(reason="only on demand, uses real LLM")
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_compose():
     input = {
         "firstname": "Jim",
@@ -239,6 +239,7 @@ def test_openapi():
     print(chain.run("list some email addresses of customers (start at page 0)"))
 
 
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_flare():
     loader = WebBaseLoader([
         "https://help.netflix.com/en/node/24926?ui_action=kb-article-popular-categories",
@@ -265,6 +266,7 @@ def test_flare():
     print(flare.run("what happens if an account is canceled that still has gift card balance?"))
 
 
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_index_test_docs():
     loader = WebBaseLoader([
         "https://en.wikipedia.org/wiki/Trek_Bicycle_Corporation",
@@ -285,6 +287,7 @@ def test_index_test_docs():
         by_text=False
     )
 
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_create_skill_index():
     vs = get_vector_store(
         'weaviate',
@@ -317,6 +320,8 @@ def test_create_skill_index():
         ],
     })
 
+
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_clear_skills():
     vs = get_vector_store(
         'weaviate',
@@ -327,6 +332,7 @@ def test_clear_skills():
     vs._client.schema.delete_class('SkillLibrary')
 
 
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_retrieve():
     qa = create_legacy_retrieval_chain(
         llm=get_openai_chat_llm(),
@@ -339,7 +345,7 @@ def test_retrieve():
     print(qa.run('when was trek founded?'))
 
 
-
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_flare_instruct():
     llm = get_openai_chat_llm(model_name='gpt-4')
 
@@ -359,6 +365,7 @@ def test_flare_instruct():
     print(chain.run('What is the cancel policy? Specifically for the pro plan?'))
 
 
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_code_eval():
     def get_accounts() -> List[Tuple[int, str, float]]:
         """Returns all accounts as a tuple (id, full name, balance)"""
@@ -384,6 +391,7 @@ sum_account_balances()
     ))
 
 
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_code_comment():
     chain = create_code_comment_chain(
         llm=get_openai_chat_llm(model_name='gpt-3.5-turbo')
@@ -437,6 +445,8 @@ sum_account_balances()
 #         input="Find the phone number of the customer"
 #     ))
 
+
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_openapi_functions():
     spec = get_test_api_spec_str_for_url("http://localhost:8090")
     if isinstance(spec, str):
