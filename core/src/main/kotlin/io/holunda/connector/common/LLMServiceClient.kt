@@ -25,8 +25,10 @@ object LLMServiceClient {
                     indentObjectsWith(DefaultIndenter("  ", "\n"))
                 })
             }
-            expectSuccess = true
         }
+
+        expectSuccess = true
+
         install(HttpTimeout) {
             requestTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
             connectTimeoutMillis = HttpTimeout.INFINITE_TIMEOUT_MS
@@ -37,11 +39,18 @@ object LLMServiceClient {
     val jsonMapper = jacksonObjectMapper()
 
     inline fun <reified T : Any> run(task: String, request: T): JsonNode = runBlocking {
-        val response: String = client.post("${llmServiceUrl}/$task") {
-            contentType(ContentType.Application.Json)
-            setBody(jsonMapper.writeValueAsString(request))
-        }.body()
+        val response: String = try {
+            client.post("${llmServiceUrl}/$task") {
+                contentType(ContentType.Application.Json)
+                setBody(jsonMapper.writeValueAsString(request))
+            }.body()
+        } catch (e: Exception) {
+            throw LLMClientException()
+        }
+
         jsonMapper.readTree(response)
     }
+
+    class LLMClientException: RuntimeException("LLM request failed")
 
 }
