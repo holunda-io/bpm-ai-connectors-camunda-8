@@ -50,7 +50,7 @@ class OpenApiTask(BaseModel):
     model: str
     task: str
     context: dict
-    output_schema: dict
+    output_schema: Optional[dict] = None
     spec_url: str
     skill_store_url: Optional[str] = None
 
@@ -59,7 +59,7 @@ class DatabaseTask(BaseModel):
     model: str
     task: str
     context: dict
-    output_schema: dict
+    output_schema: Optional[dict] = None
     database_url: str
     skill_store_url: Optional[str] = None
 

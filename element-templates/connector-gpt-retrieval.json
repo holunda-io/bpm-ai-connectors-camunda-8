@@ -18,8 +18,8 @@
   },
   "groups": [
     {
-      "id": "general",
-      "label": "General"
+      "id": "model",
+      "label": "Model"
     },
     {
       "id": "input",
@@ -36,6 +36,10 @@
     {
       "id": "output",
       "label": "Output Mapping"
+    },
+    {
+      "id": "errors",
+      "label": "Errors"
     }
   ],
   "properties": [
@@ -49,7 +53,7 @@
     {
       "id": "model",
       "label": "LLM",
-      "group": "general",
+      "group": "model",
       "type": "Dropdown",
       "value": "GPT_3",
       "choices": [
@@ -187,6 +191,17 @@
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"
+      }
+    },
+    {
+      "label": "Error Expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
+      "group": "errors",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "errorExpression"
       }
     }
   ]

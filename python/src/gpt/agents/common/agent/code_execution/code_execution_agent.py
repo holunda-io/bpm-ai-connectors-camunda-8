@@ -11,6 +11,7 @@ from langchain.vectorstores import VectorStore
 from pydantic import Field, BaseModel
 
 from gpt.agents.common.agent.base import AgentParameterResolver, Agent
+from gpt.agents.common.agent.code_execution.natural_lang_answer_chain import create_natural_lang_answer_chain
 from gpt.agents.common.agent.code_execution.prompt import SYSTEM_MESSAGE_FUNCTIONS, DEFAULT_FEW_SHOT_PROMPT_MESSAGES, \
     HUMAN_MESSAGE, \
     SYSTEM_MESSAGE_FUNCTIONS_WITH_STUB, HUMAN_MESSAGE_WITH_STUB, DEFAULT_FEW_SHOT_PROMPT_MESSAGES_WITH_STUB
@@ -201,6 +202,15 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         # if output schema has just one field, the result function returns a simple value, and we need to wrap it
         if self.output_schema and len(self.output_schema.items()) == 1 and not isinstance(return_vals['output'], dict):
             return_vals['output'] = {list(self.output_schema.keys())[0]: return_vals['output']}
+
+        if not self.output_schema:
+            answer = create_natural_lang_answer_chain(self.llm).run(
+                query=inputs["input"],
+                context=inputs["context"],
+                function=return_vals['function_def'] + '\n\n' + return_vals['function_call'],
+                result=return_vals['output']
+            )
+            return_vals['output'] = answer
 
         return {
             **return_vals,

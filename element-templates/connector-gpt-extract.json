@@ -18,8 +18,8 @@
   },
   "groups": [
     {
-      "id": "general",
-      "label": "General"
+      "id": "model",
+      "label": "Model"
     },
     {
       "id": "input",
@@ -49,7 +49,7 @@
     {
       "id": "model",
       "label": "LLM",
-      "group": "general",
+      "group": "model",
       "type": "Dropdown",
       "value": "GPT_3",
       "choices": [
@@ -138,21 +138,6 @@
       }
     },
     {
-      "label": "Missing Data Behavior",
-      "description": "What to do if requested data is not present in the input",
-      "group": "extract",
-      "type": "Dropdown",
-      "value": "NULL",
-      "choices": [
-        { "name": "Null", "value": "NULL" },
-        { "name": "Throw Error", "value": "ERROR" }
-      ],
-      "binding": {
-        "type": "zeebe:input",
-        "name": "missingDataBehavior"
-      }
-    },
-    {
       "label": "Result Expression",
       "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>, with fields for every extracted field as specified in Extraction Fields.",
       "group": "output",
@@ -169,7 +154,6 @@
       "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
       "group": "errors",
       "type": "Text",
-      "value": "=if error.code = \"MISSING_DATA\" then\n  bpmnError(\"MISSING_DATA\", \"One or more values are null.\")\nelse null",
       "feel": "required",
       "binding": {
         "type": "zeebe:taskHeader",

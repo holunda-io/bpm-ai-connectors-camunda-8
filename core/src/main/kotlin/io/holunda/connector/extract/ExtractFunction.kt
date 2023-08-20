@@ -13,7 +13,6 @@ import mu.*
         "inputJson",
         "instructions",
         "extractionJson",
-        "missingDataBehavior",
         "mode",
         "entitiesDescription",
         "model"
@@ -31,21 +30,7 @@ class ExtractFunction : OutboundConnectorFunction {
 
     private fun executeRequest(request: ExtractRequest): ExtractResult {
         val result = LLMServiceClient.run("extract", ExtractTask.fromRequest(request))
-
-        fun checkNode(node: JsonNode) {
-            if (request.missingDataBehavior == MissingDataBehavior.ERROR && node.toMap().values.any { it == null }) {
-                throw ConnectorException("MISSING_DATA", "One or more result values are null")
-            }
-        }
-
-        when {
-            result.isArray -> result.forEach(::checkNode)
-            result.isObject -> checkNode(result)
-            else -> throw IllegalArgumentException("The result must be a JSON object or a JSON array")
-        }
-
         logger.info("ExtractFunction result: $result")
-
         return ExtractResult(result)
     }
 

@@ -9,14 +9,9 @@ data class ExtractRequest(
     val extractionJson: JsonNode,
     val mode: Mode,
     val entitiesDescription: String?,
-    val missingDataBehavior: MissingDataBehavior,
     val model: Model
 )
 
 enum class Mode {
     SINGLE, REPEATED
-}
-
-enum class MissingDataBehavior {
-    NULL, ERROR
 }

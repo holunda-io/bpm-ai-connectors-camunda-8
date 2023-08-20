@@ -18,8 +18,8 @@
   },
   "groups": [
     {
-      "id": "general",
-      "label": "General"
+      "id": "model",
+      "label": "Model"
     },
     {
       "id": "input",
@@ -49,7 +49,7 @@
     {
       "id": "model",
       "label": "LLM",
-      "group": "general",
+      "group": "model",
       "type": "Dropdown",
       "value": "GPT_3",
       "choices": [

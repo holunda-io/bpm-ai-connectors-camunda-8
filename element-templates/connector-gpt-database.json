@@ -18,8 +18,8 @@
   },
   "groups": [
     {
-      "id": "general",
-      "label": "General"
+      "id": "model",
+      "label": "Model"
     },
     {
       "id": "input",
@@ -40,6 +40,10 @@
     {
       "id": "output",
       "label": "Output Mapping"
+    },
+    {
+      "id": "errors",
+      "label": "Errors"
     }
   ],
   "properties": [
@@ -53,7 +57,7 @@
     {
       "id": "model",
       "label": "LLM",
-      "group": "general",
+      "group": "model",
       "type": "Dropdown",
       "value": "GPT_3",
       "choices": [
@@ -121,6 +125,21 @@
       }
     },
     {
+      "id": "output_type",
+      "label": "Output Type",
+      "group": "task",
+      "type": "Dropdown",
+      "value": "natural",
+      "choices": [
+        { "name": "Natural Language Answer", "value": "natural" },
+        { "name": "JSON", "value": "json" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "outputType"
+      }
+    },
+    {
       "label": "Output Schema",
       "description": "JSON schema for the output",
       "group": "task",
@@ -131,8 +150,9 @@
         "type": "zeebe:input",
         "name": "outputSchema"
       },
-      "constraints": {
-        "notEmpty": true
+      "condition": {
+        "property": "output_type",
+        "equals": "json"
       }
     },
     {
@@ -145,6 +165,17 @@
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"
+      }
+    },
+    {
+      "label": "Error Expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
+      "group": "errors",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "errorExpression"
       }
     }
   ]

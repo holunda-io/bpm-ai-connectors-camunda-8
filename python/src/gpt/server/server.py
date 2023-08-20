@@ -107,7 +107,7 @@ async def post(task: OpenApiTask):
         skill_store=skill_store,
         enable_skill_creation=(skill_store is not None),
         output_schema=task.output_schema,
-        llm_call=False
+        llm_call=True
     )
     return agent.run(input=task.task, context=task.context)["output"]
 
@@ -130,7 +130,7 @@ async def post(task: DatabaseTask):
         skill_store=skill_store,
         enable_skill_creation=(skill_store is not None),
         output_schema=task.output_schema,
-        llm_call=False
+        llm_call=True
     )
     return agent.run(input=task.task, context=task.context)["output"]
 
