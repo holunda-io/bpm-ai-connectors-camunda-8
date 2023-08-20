@@ -1,0 +1,84 @@
+# Agentic Connectors
+
+* [📄 Q&A Retrieval Connector](#-qa-retrieval-connector)
+* [🗄 Database Connector](#-decide-connector)
+* [🌐 OpenAPI REST Connector](#-compose-connector)
+* [👷 Process Generation Connector](#-translate-connector)
+* [✅ Plan & Execute Connectors](#-generic-connector)
+
+## What does "agentic" mean?
+
+"Agentic" in the context of this project refers to a special kind of connectors that are not "single-pass" and don't work following a fixed, pre-defined procedure. Instead, in these connectors, the LLM:
+- has access to a set of tools (or actions) that it can use to solve the task
+- dynamically uses the tools as it sees fit
+- decides for itself when the task is complete or if it needs additional steps
+
+Tools in these connectors usually give the model a way to interact with another system (like a database or API). 
+And it gives the model the freedom to act on these tools as necessary to solve the task, without many restrictions.
+
+This makes these connectors very dynamic and adaptive in the kinds of tasks they can solve, basically simulating a human worker.
+
+On the flip-side, this approach is challenging for even the most capable models today (this is why we limit model selection to OpenAI models and strongly recommend GPT-4). **Mileage will vary depending on the given task.** Some results surprise, but others may disappoint. **In no way is this mode of operation reliable or predictable!**
+
+## 📄 Q&A Retrieval Connector
+
+
+
+### Configuration
+
+#### Vector Database
+
+| Property              | Description                                                    | Example                       |
+|-----------------------|----------------------------------------------------------------|-------------------------------|
+| `Vector Database`     | The type of Vector Database to use                             | `Weaviate`                    |
+| `Vector Database URL` | Database connection string                                     | `http://localhost:8080/index` |
+| `Embedding Provider`  | Provider of the text embedding model used for indexed data     | `OpenAI`                      |
+| `Embedding Model`     | Text embedding model from above provider used for indexed data | `text-embedding-ada-002`      |
+
+#### Query
+
+Provide a natural language query or question as a fully formed sentence.
+
+Select Output Type `Natural Language Answer` to get back a natural language text that answers the given query. 
+Select `JSON` to provide a JSON-schema and receive back a JSON response (see Extract Connector in [Foundational Connectors](docs/foundational-connectors.md) for more details)
+
+### Result
+A temporary variable `result` that contains the answer text or a result JSON object. Can be mapped to process variables using the result expression.
+
+---
+
+## 🗄 Database Connector
+
+### Configuration
+
+### Result
+A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+
+---
+
+## 🌐 OpenAPI REST Connector
+
+### Configuration
+
+### Result
+A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+
+---
+
+## 👷 Process Generation Connector
+
+### Configuration
+
+### Result
+A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+
+---
+
+## ✅ Plan & Execute Connectors
+
+### Configuration
+
+### Result
+A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+
+---
