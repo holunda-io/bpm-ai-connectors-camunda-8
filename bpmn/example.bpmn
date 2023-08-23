@@ -271,7 +271,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
         <zeebe:ioMapping>
-          <zeebe:input source="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" target="apiKey" />
+          <zeebe:input source="secrets.SENDGRID_API_KEY" target="apiKey" />
           <zeebe:input source="Bike Store" target="from.name" />
           <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
           <zeebe:input source="=customerInfo.lastname" target="to.name" />
@@ -315,7 +315,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
         <zeebe:ioMapping>
-          <zeebe:input source="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" target="apiKey" />
+          <zeebe:input source="secrets.SENDGRID_API_KEY" target="apiKey" />
           <zeebe:input source="Bike Store" target="from.name" />
           <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
           <zeebe:input source="=customerInfo.lastname" target="to.name" />
@@ -338,7 +338,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
         <zeebe:ioMapping>
-          <zeebe:input source="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" target="apiKey" />
+          <zeebe:input source="secrets.SENDGRID_API_KEY" target="apiKey" />
           <zeebe:input source="Bike Store" target="from.name" />
           <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
           <zeebe:input source="=customerInfo.lastname" target="to.name" />
