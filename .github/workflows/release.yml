@@ -10,7 +10,7 @@ env:
   REGISTRY_IMAGE: holisticon/camunda-8-connector-gpt
 
 jobs:
-  build:
+  build-java:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -46,7 +46,33 @@ jobs:
           OSS_CENTRAL_USERNAME: "${{ secrets.SONATYPE_USERNAME }}"
           OSS_CENTRAL_PASSWORD: "${{ secrets.SONATYPE_PASSWORD }}"
 
+  build-python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pytest
+          pip install -r python/requirements.txt
+      - name: Install package
+        run: |
+          pip install -e python/src
+      - name: Lint with ruff
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          ruff --format=github --select=E9,F63,F7,F82 --target-version=py310 .
+      - name: Test with pytest
+        run: |
+          pytest
+
   build-image:
+    needs: [build-java, build-python]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
