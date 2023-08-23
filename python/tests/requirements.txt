@@ -1,0 +1,5 @@
+pytest==7.4.0
+pytest-mock~=3.11.1
+pytest-dotenv~=0.5.2
+pytest-manual-marker~=2.0.0.0
+pytest-httpserver~=1.0.8

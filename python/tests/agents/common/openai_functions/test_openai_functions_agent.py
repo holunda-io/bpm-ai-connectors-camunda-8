@@ -35,7 +35,7 @@ def test_openai_functions_agent_with_plain_answer():
         no_function_call_means_final_answer=True
     )
 
-    result = agent.run(input="test", context={})
+    result = agent.run(input="test", context={})["output"]
 
     assert "bar" in result
 
@@ -54,7 +54,7 @@ def test_openai_functions_agent_with_final_answer_function():
         ]),
     )
 
-    result = agent.run(input="test", context={})
+    result = agent.run(input="test", context={})["output"]
 
     assert "bar" in result
 
@@ -85,6 +85,6 @@ def test_max_steps_success():
         max_steps=max_steps
     )
 
-    result = agent.run(input="test", context={})
+    result = agent.run(input="test", context={})["output"]
 
     assert "bar" in result

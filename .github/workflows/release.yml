@@ -58,8 +58,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff pytest
+          pip install ruff
           pip install -r python/requirements.txt
+          pip install -r python/tests/requirements.txt
       - name: Install package
         run: |
           pip install -e python/src
