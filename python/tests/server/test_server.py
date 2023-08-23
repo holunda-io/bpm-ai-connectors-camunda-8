@@ -22,7 +22,7 @@ def test_extract(chain_function_mock):
     assert response.json() == 'test_result'
 
     chain_function_mock.assert_called_with(
-        properties={"output": "the output"},
+        output_schema={"output": "the output"},
         repeated=False,
         repeated_description=None,
         llm=None
