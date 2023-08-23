@@ -22,7 +22,16 @@ On the flip-side, this approach is challenging for even the most capable models 
 
 ## 📄 Q&A Retrieval Connector
 
+Answers questions over documents indexed in a vector database.
 
+Given a vector database with an index of document chunks (e.g. from PDFs, websites, Wikis, Confluence, ...), this connector first retrieves relevant chunks using semantic search based on a specified text embedding model (must match the embedding used for indexing).
+The retrieved documents are then used as context to answer the given question.
+
+Since the retrieval is an agent tool, the connector can perform multiple successive queries
+
+Example scenarios are:
+- automatic customer service question answering
+- adding background information to user tasks based on company knowledge bases
 
 ### Configuration
 
@@ -48,6 +57,10 @@ A temporary variable `result` that contains the answer text or a result JSON obj
 ---
 
 ## 🗄 Database Connector
+
+Answers questions and natural language queries over SQL databases. 
+
+Given just a database connection string and a query, this connector automatically explores the relevant tables and table schemas of a SQL database and performs one or more database queries to answer the given question.
 
 ### Configuration
 
