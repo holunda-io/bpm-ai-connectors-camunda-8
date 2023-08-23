@@ -187,7 +187,7 @@
       "group": "output",
       "type": "Text",
       "feel": "required",
-      "value": "={\"result\": result}",
+      "value": "={answer: result}",
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"

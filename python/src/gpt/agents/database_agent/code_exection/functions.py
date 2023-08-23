@@ -14,7 +14,9 @@ def get_database_functions(llm: BaseLanguageModel, db: SQLDatabase) -> List[Call
         If the query is not correct, an error message will be returned. If an error is returned, rewrite the query, check the query, and try again.
         If you encounter an issue with Unknown column 'xxxx' in 'field list', use sql_table_info to query the correct table fields.
         """
-        return eval(QuerySQLDataBaseTool(db=db).run(query))
+        _globals = {}
+        exec("from decimal import Decimal", _globals)  # todo not so clean
+        return eval(QuerySQLDataBaseTool(db=db).run(query), _globals)
 
     def sql_table_info(tables: List[str]):
         """

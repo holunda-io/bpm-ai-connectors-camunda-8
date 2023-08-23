@@ -80,7 +80,7 @@
       "group": "decision",
       "type": "Text",
       "feel": "optional",
-      "value": "Decide what the intention of the customer's mail is.",
+      "value": "Decide ...",
       "binding": {
         "type": "zeebe:input",
         "name": "instructions"
@@ -112,7 +112,7 @@
       "type": "Text",
       "feel": "optional",
       "optional": true,
-      "value": "=[\n  \"CANCEL_SUBSCRIPTION\",\n  \"CHANGE_SUBSCRIPTION\",\n  \"COMPLAINT\",\n  \"OTHER\"\n]",
+      "value": "=[\n  \"OPTION_1\",\n  \"OPTION_2\",\n  \"OPTION_3\",\n  \"OTHER\"\n]",
       "binding": {
         "type": "zeebe:input",
         "name": "possibleValues"
@@ -128,7 +128,7 @@
       "group": "output",
       "type": "Text",
       "feel": "required",
-      "value": "={\"decision\": result}",
+      "value": "={\n  decision: result.decision,\n  reasoning: result.reasoning\n}",
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"

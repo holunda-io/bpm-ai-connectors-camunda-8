@@ -28,8 +28,8 @@ class ComposeFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing ComposeFunction")
-        val unescapedVariables = StringEscapeUtils.unescapeJson(context.variables) // TODO remove when Camunda fixes this in zeebe :P zeebe/issues/9859
-        val connectorRequest = unescapedVariables.readFromJson<ComposeRequest>()
+        val connectorRequest = context.variables.readFromJson<ComposeRequest>()
+        connectorRequest.description = StringEscapeUtils.unescapeJson(connectorRequest.description) // TODO remove when Camunda fixes this in zeebe :P zeebe/issues/9859
         logger.info("ComposeFunction request: $connectorRequest")
         return executeRequest(ComposeTask.fromRequest(connectorRequest))
     }

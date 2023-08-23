@@ -74,9 +74,9 @@ async def post(task: ComposeTask):
         sender=task.sender,
         constitutional_principle=task.constitutional_principle
     )
-    return chain.run(
-        input=task.context,
-    )
+    return chain(
+        inputs={"input": task.context}
+    )["text"]
 
 
 @app.post("/generic")

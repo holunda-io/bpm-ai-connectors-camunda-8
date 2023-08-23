@@ -1,6 +1,7 @@
 from langchain.chains import RetrievalQA
 from langchain.chains.base import Chain
 from langchain.chat_models.base import BaseChatModel
+from langchain.prompts import SystemMessagePromptTemplate
 from langchain.retrievers import MultiQueryRetriever
 from langchain.tools import Tool, StructuredTool
 from pydantic import BaseModel, Field
@@ -50,6 +51,7 @@ def create_retrieval_agent(
     output_schema: Optional[Dict[str, Union[str, dict]]] = None,
 ) -> Agent:
     agent = OpenAIFunctionsAgent.create(
+        system_prompt_template=SystemMessagePromptTemplate.from_template("Assistant is a helpful assistant that answers user questions and queries by calling functions to retrieve information from a document Q&A system."),
         llm=llm,
     )
 

@@ -7,7 +7,7 @@ data class OpenApiAgentTask(
     val task: String,
     val context: JsonNode,
     val spec_url: String,
-    val output_schema: JsonNode,
+    val output_schema: JsonNode?,
     val skill_store_url: String?,
 ) {
     companion object {

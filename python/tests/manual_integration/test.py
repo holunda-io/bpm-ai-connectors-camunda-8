@@ -3,10 +3,11 @@ from typing import List, Tuple
 
 import langchain
 import pytest
-from langchain import Cohere
+from langchain import Cohere, SQLDatabase
 from langchain.cache import SQLiteCache
 from langchain.chains import RetrievalQA, FlareChain
-from langchain.document_loaders import WebBaseLoader
+from langchain.chat_models import ChatOpenAI
+from langchain.document_loaders import WebBaseLoader, PyPDFLoader, OnlinePDFLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import AlephAlpha
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -17,6 +18,7 @@ from gpt.agents.common.agent.code_execution.skill_creation.comment_chain import 
 from gpt.agents.common.agent.code_execution.skill_creation.eval_chain import create_code_eval_chain
 from gpt.agents.common.agent.code_execution.util import get_python_functions_descriptions
 from gpt.agents.database_agent.agent import create_database_agent
+from gpt.agents.retrieval_agent.retrieval_agent import create_retrieval_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
@@ -287,6 +289,25 @@ def test_index_test_docs():
         by_text=False
     )
 
+#@pytest.mark.skip(reason="only on demand, uses real LLM")
+def test_index_bike_docs():
+    loader = OnlinePDFLoader("https://retailerassetsprd.blob.core.windows.net/techassets/5270512_MY22_Ebike_Owner's_Manual_%20Hyena_GEN2_EN_EN.pdf?sv=2018-03-28&ss=bfqt&srt=sco&sp=r&se=2062-03-20T02:32:45Z&st=2019-03-19T18:32:45Z&spr=https&sig=UogJIteiFltPX66np2M0a3esSu1uZzABYHTFInUlT%2Fo%3D")
+    documents = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=20)
+    docs = text_splitter.split_documents(documents)
+
+    print(docs)
+
+    embeddings = OpenAIEmbeddings()
+
+    Weaviate.from_documents(
+        docs,
+        embeddings,
+        weaviate_url='http://localhost:8080/',
+        index_name='BicycleManuals',
+        by_text=False
+    )
+
 @pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_create_skill_index():
     vs = get_vector_store(
@@ -332,17 +353,24 @@ def test_clear_skills():
     vs._client.schema.delete_class('SkillLibrary')
 
 
-@pytest.mark.skip(reason="only on demand, uses real LLM")
+#@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_retrieve():
-    qa = create_legacy_retrieval_chain(
-        llm=get_openai_chat_llm(),
+    qa = create_retrieval_agent(
+        llm=ChatOpenAI(
+        model_name="gpt-4",
+        temperature=0,
+    ),
         database='weaviate',
-        database_url='http://localhost:8080/Test_index',
+        database_url='http://localhost:8080/BicycleManuals',
         embedding_provider="openai",
         embedding_model="text-embedding-ada-002"
     )
     #print(qa.run('what happens if an account is canceled that still has gift card balance?'))
-    print(qa.run('when was trek founded?'))
+    print(qa(
+            inputs={
+                "input": 'why is there no riding support when riding the bike, even though I set the correct mode?',
+                "context": ""
+            })["output"]["answer"])
 
 
 @pytest.mark.skip(reason="only on demand, uses real LLM")

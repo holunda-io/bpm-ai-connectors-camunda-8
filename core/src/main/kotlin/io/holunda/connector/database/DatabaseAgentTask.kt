@@ -7,7 +7,7 @@ data class DatabaseAgentTask(
     val task: String,
     val context: JsonNode,
     val database_url: String,
-    val output_schema: JsonNode,
+    val output_schema: JsonNode?,
     val skill_store_url: String?,
 ) {
     companion object {

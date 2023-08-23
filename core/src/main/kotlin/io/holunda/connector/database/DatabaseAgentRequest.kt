@@ -8,6 +8,6 @@ data class DatabaseAgentRequest(
     val query: String,
     val databaseUrl: String,
     val skillStoreUrl: String?,
-    val outputSchema: JsonNode,
+    val outputSchema: JsonNode?,
     val model: Model
 )

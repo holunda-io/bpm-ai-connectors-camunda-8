@@ -30,8 +30,8 @@
       "label": "Database"
     },
     {
-      "id": "task",
-      "label": "Task"
+      "id": "query",
+      "label": "Query"
     },
     {
       "id": "advanced",
@@ -99,9 +99,9 @@
       }
     },
     {
-      "label": "Task Description",
-      "description": "Describe what should be queried.",
-      "group": "task",
+      "label": "Natural Language Query",
+      "description": "The query or question to be answered.",
+      "group": "query",
       "type": "Text",
       "feel": "optional",
       "value": "",
@@ -127,7 +127,7 @@
     {
       "id": "output_type",
       "label": "Output Type",
-      "group": "task",
+      "group": "query",
       "type": "Dropdown",
       "value": "natural",
       "choices": [
@@ -161,7 +161,7 @@
       "group": "output",
       "type": "Text",
       "feel": "required",
-      "value": "={\"result\": result}",
+      "value": "={answer: result}",
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"

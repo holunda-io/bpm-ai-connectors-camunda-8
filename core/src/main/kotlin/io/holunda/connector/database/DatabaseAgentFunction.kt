@@ -9,7 +9,7 @@ import mu.*
     name = "gpt-database",
     inputVariables = [
         "inputJson",
-        "taskDescription",
+        "query",
         "databaseUrl",
         "outputSchema",
         "skillStoreUrl",

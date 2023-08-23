@@ -98,7 +98,8 @@ class TemplateComposeChain(Chain):
         )
 
         generated_vars = llm_chain.run({})
-        all_vars = generated_vars | input_dict
+        input_vars = {desc_to_var_name(k): v for k, v in inputs['input'].items()}
+        all_vars = generated_vars | input_vars
 
         # resolve all template variables using either input or generated values
         result = format_vars(self.template, lambda v: all_vars[desc_to_var_name(v)])

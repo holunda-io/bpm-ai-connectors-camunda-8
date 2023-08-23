@@ -206,6 +206,7 @@ def named_parameters_snake_case(input_dict):
 
 def python_exec(code: str, _globals: Optional[dict] = None, sanitize: bool = True, truncate: bool = False) -> Any:
     _globals = _globals or {}
+    exec("from decimal import Decimal", _globals)
     try:
         if sanitize:
             code = sanitize_input(code)
