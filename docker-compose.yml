@@ -5,6 +5,8 @@ services:
   gpt-connectors:
     container_name: camunda-8-gpt-connectors
     image: holisticon/camunda-8-connector-gpt:develop
+    build:
+      dockerfile: Dockerfile
     networks:
       - connector-network
     env_file: ./connector-secrets.txt
