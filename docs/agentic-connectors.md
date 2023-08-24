@@ -68,8 +68,22 @@ Example scenarios are:
 
 ### Configuration
 
+#### SQL Database
+
+| Property                     | Description                                 | Example                       |
+|------------------------------|---------------------------------------------|-------------------------------|
+| `Database Connection String` | The full connection string to a SQL databse | `postgresql://postgres:postgres@localhost:5438/postgres`                    |
+
+#### Query
+
+Provide a natural language query or question as a fully formed sentence.
+
+Select Output Type `Natural Language Answer` to get back a natural language text that answers the given query.
+Select `JSON` to provide a JSON-schema and receive back a JSON response (see Extract Connector in [Foundational Connectors](docs/foundational-connectors.md) for more details)
+
+
 ### Result
-A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+A temporary variable `result` that contains the answer text or a result JSON object. Can be mapped to process variables using the result expression.
 
 ---
 
@@ -79,8 +93,20 @@ Performs tasks and answers questions using a REST API.
 
 ### Configuration
 
+#### OpenAPI Spec
+
+| Property             | Description                          | Example                              |
+|----------------------|--------------------------------------|--------------------------------------|
+| `OpenAPI 3 Spec URL` | URL to a OpenAPI version 3 JSON spec | `http://localhost:8080/openapi.json` |
+
+#### Task
+
+Provide a natural language task or query as a fully formed sentence.
+
+Provide a JSON-schema for the output (see Extract Connector in [Foundational Connectors](docs/foundational-connectors.md) for more details)
+
 ### Result
-A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+A temporary variable `result` that contains a result JSON object. Can be mapped to process variables using the result expression.
 
 ---
 
