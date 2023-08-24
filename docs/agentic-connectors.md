@@ -27,7 +27,7 @@ Answers questions over documents indexed in a vector database.
 Given a vector database with an index of document chunks (e.g. from PDFs, websites, Wikis, Confluence, ...), this connector first retrieves relevant chunks using semantic search based on a specified text embedding model (must match the embedding used for indexing).
 The retrieved documents are then used as context to answer the given question.
 
-Since the retrieval is an agent tool, the connector can perform multiple successive queries
+Since the retrieval step is an agent tool, the connector can perform multiple successive queries e.g. to answer complex questions with multiple aspects or comparisons.
 
 Example scenarios are:
 - automatic customer service question answering
@@ -62,6 +62,10 @@ Answers questions and natural language queries over SQL databases.
 
 Given just a database connection string and a query, this connector automatically explores the relevant tables and table schemas of a SQL database and performs one or more database queries to answer the given question.
 
+Example scenarios are:
+- rapid process prototyping (implement a traditional worker later)
+- adding background information to user tasks
+
 ### Configuration
 
 ### Result
@@ -70,6 +74,8 @@ A temporary variable `result` that contains a result JSON object with a field `d
 ---
 
 ## 🌐 OpenAPI REST Connector
+
+Performs tasks and answers questions using a REST API.
 
 ### Configuration
 
@@ -80,18 +86,14 @@ A temporary variable `result` that contains a result JSON object with a field `d
 
 ## 👷 Process Generation Connector
 
-### Configuration
+Generates and deploys a fully executable BPMN process to solve the given task using a set of given activities (e.g. our Database/OpenAPI/Retrieval connectors or User Tasks).
 
-### Result
-A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+Automatically configures input and output variable mappings, task instructions/queries, and output schemas.
 
 ---
 
 ## ✅ Plan & Execute Connectors
 
-### Configuration
-
-### Result
-A temporary variable `result` that contains a result JSON object with a field `decision` containing the final decision and a field `reasoning` containing an explanation of the reasoning behind the decision. Can be mapped to one or more process variables using the result expression.
+The Planner Connector outputs a high level step-by-step plan for a given task. The Execute Connector takes the plan, the current step and previous results to output a new current step that can be used in a gateway to execute the next activity in a process.
 
 ---
