@@ -3,9 +3,9 @@ from typing import List, Optional, Type
 from langchain import SQLDatabase
 from langchain.agents.agent_toolkits.base import BaseToolkit
 from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
-from langchain.schema import BaseLanguageModel
+from langchain.schema.language_model import BaseLanguageModel
 from langchain.tools import BaseTool, BaseSQLDatabaseTool
-from pydantic import Field, BaseModel
+from langchain.pydantic_v1 import Field, BaseModel
 
 
 class QuerySQLDataBaseToolSchema(BaseModel):

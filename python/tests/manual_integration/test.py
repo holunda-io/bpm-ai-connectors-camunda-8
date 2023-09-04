@@ -10,6 +10,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader, PyPDFLoader, OnlinePDFLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import AlephAlpha
+from langchain.retrievers import ParentDocumentRetriever
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.utilities.openapi import OpenAPISpec
 from langchain.vectorstores import Chroma, Weaviate
@@ -289,24 +290,6 @@ def test_index_test_docs():
         by_text=False
     )
 
-#@pytest.mark.skip(reason="only on demand, uses real LLM")
-def test_index_bike_docs():
-    loader = OnlinePDFLoader("https://retailerassetsprd.blob.core.windows.net/techassets/5270512_MY22_Ebike_Owner's_Manual_%20Hyena_GEN2_EN_EN.pdf?sv=2018-03-28&ss=bfqt&srt=sco&sp=r&se=2062-03-20T02:32:45Z&st=2019-03-19T18:32:45Z&spr=https&sig=UogJIteiFltPX66np2M0a3esSu1uZzABYHTFInUlT%2Fo%3D")
-    documents = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=20)
-    docs = text_splitter.split_documents(documents)
-
-    print(docs)
-
-    embeddings = OpenAIEmbeddings()
-
-    Weaviate.from_documents(
-        docs,
-        embeddings,
-        weaviate_url='http://localhost:8080/',
-        index_name='BicycleManuals',
-        by_text=False
-    )
 
 @pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_create_skill_index():
@@ -353,22 +336,39 @@ def test_clear_skills():
     vs._client.schema.delete_class('SkillLibrary')
 
 
-#@pytest.mark.skip(reason="only on demand, uses real LLM")
+@pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_retrieve():
     qa = create_retrieval_agent(
-        llm=ChatOpenAI(
-        model_name="gpt-4",
-        temperature=0,
-    ),
-        database='weaviate',
-        database_url='http://localhost:8080/BicycleManuals',
+        llm=ChatOpenAI(model_name="gpt-4", temperature=0),
+        database='azure_cognitive_search',
+        database_url='https://congnitive-search-test.search.windows.net/bikestore-demo',
+        database_password="",
         embedding_provider="openai",
-        embedding_model="text-embedding-ada-002"
+        embedding_model="text-embedding-ada-002",
+        multi_query_expansion=False,
+        metadata_field_info=[
+            {
+                "name": "bike_make",
+                "description": "The bike make.",
+                "type": "string",
+                "enum": ["Sun Bicycles", "Cowboy"]
+            },
+            {
+                "name": "bike_model",
+                "description": "The bike model.",
+                "type": "string",
+                "enum": ["Electrolite", "3"]
+            },
+        ],
+        parent_document_store="azure_cosmos_nosql",
+        parent_document_store_url="https://bennetkrause.documents.azure.com:443/",
+        parent_document_store_namespace="bikestore",
+        parent_document_store_password="",
     )
     #print(qa.run('what happens if an account is canceled that still has gift card balance?'))
     print(qa(
             inputs={
-                "input": 'why is there no riding support when riding the bike, even though I set the correct mode?',
+                "input": 'How far can I ride the Sun Bicycles Electrolite with assist on?',
                 "context": ""
             })["output"]["answer"])
 

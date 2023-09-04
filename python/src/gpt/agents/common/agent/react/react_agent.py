@@ -4,7 +4,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chat_models.base import BaseChatModel
 from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate, HumanMessagePromptTemplate
-from langchain.schema import BaseMessage, HumanMessage, BaseLanguageModel
+from langchain.schema import BaseMessage, HumanMessage
 
 from gpt.agents.common.agent.base import Agent, AgentParameterResolver, DEFAULT_OUTPUT_KEY
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction

@@ -6,7 +6,7 @@ from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.tools import tool
-from pydantic import BaseModel, Field
+from langchain.pydantic_v1 import BaseModel, Field
 
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
 from gpt.agents.common.agent.toolbox import AutoFinishTool

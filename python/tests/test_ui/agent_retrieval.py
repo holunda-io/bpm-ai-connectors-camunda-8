@@ -31,7 +31,7 @@ if prompt := st.chat_input():
         agent = create_retrieval_agent(
             llm=ChatOpenAI(model="gpt-4", streaming=True),
             database='weaviate',
-            database_url='http://localhost:8080/Test_index',
+            database_url='http://localhost:8080/BicycleManuals',
             embedding_provider="openai",
             embedding_model="text-embedding-ada-002",
             output_schema=json.loads(output_schema) if output_schema else None,

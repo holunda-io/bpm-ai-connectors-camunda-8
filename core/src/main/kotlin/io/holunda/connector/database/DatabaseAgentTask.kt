@@ -8,7 +8,11 @@ data class DatabaseAgentTask(
     val context: JsonNode,
     val database_url: String,
     val output_schema: JsonNode?,
+    val skill_mode: String,
+    val skill_store: String?,
     val skill_store_url: String?,
+    val skill_store_password: String?,
+
 ) {
     companion object {
         fun fromRequest(request: DatabaseAgentRequest) =
@@ -18,7 +22,10 @@ data class DatabaseAgentTask(
                 request.inputJson,
                 request.databaseUrl,
                 request.outputSchema,
-                request.skillStoreUrl
+                request.advanced.skillMode,
+                request.advanced.skillDatabase?.type,
+                request.advanced.skillDatabase?.url,
+                request.advanced.skillDatabase?.password
             )
     }
 }

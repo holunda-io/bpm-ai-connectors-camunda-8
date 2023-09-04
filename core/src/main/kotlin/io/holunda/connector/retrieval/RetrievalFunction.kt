@@ -8,14 +8,10 @@ import mu.*
 @OutboundConnector(
     name = "gpt-retrieval",
     inputVariables = [
-        "query",
-        "outputSchema",
+        "model",
         "database",
-        "databaseUrl",
-        "embeddingProvider",
-        "embeddingModel",
-        "mode",
-        "model"
+        "query",
+        "advanced",
     ],
     type = "io.holunda:connector-retrieval:1"
 )
@@ -23,7 +19,7 @@ class RetrievalFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing RetrievalFunction")
-        val connectorRequest = context.variables.readFromJson<RetrievalRequest>()
+        val connectorRequest = context.bindVariables(RetrievalRequest::class.java)
         logger.info("RetrievalFunction request: $connectorRequest")
         return executeRequest(connectorRequest)
     }

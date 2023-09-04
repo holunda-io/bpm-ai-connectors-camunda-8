@@ -1,7 +1,8 @@
 uvicorn~=0.22.0
-fastapi==0.98.0
+fastapi==0.103.0
 python-dotenv~=1.0.0
-langchain==0.0.232
+langchain==0.0.276
+langchain-experimental==0.0.12
 pydantic~=1.10.7
 requests==2.31.0
 PyYAML~=6.0
@@ -13,8 +14,15 @@ cohere~=4.11.2
 beautifulsoup4~=4.12.2
 chromadb~=0.3.26
 tiktoken~=0.4.0
-llama-index~=0.6.35
+llama-index==0.8.11.post3
 weaviate-client~=3.21.0
 astunparse~=1.6.3
 httpx~=0.24.1
 nltk~=3.8.1
+azure-search-documents==11.4.0b8
+azure-identity~=1.14.0
+pytest~=7.4.0
+streamlit==1.26.0
+lark~=1.1.7
+redis~=5.0.0
+azure-cosmos~=4.5.0

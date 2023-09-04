@@ -186,3 +186,5 @@ fabric.properties
 
 **/*.langchain.db
 **/*.langchain-test.db
+
+**/*.private.py

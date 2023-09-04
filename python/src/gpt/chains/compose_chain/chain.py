@@ -2,7 +2,7 @@ import re
 from typing import Optional
 
 from langchain.chains.base import Chain
-from langchain.schema import BaseLanguageModel
+from langchain.schema.language_model import BaseLanguageModel
 
 from gpt.chains.compose_chain.standard.chain import create_standard_compose_chain
 from gpt.chains.compose_chain.template_openai_functions.chain import TemplateComposeChain, TEMPLATE_VAR_PATTERN

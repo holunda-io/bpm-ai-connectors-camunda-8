@@ -114,14 +114,86 @@
       }
     },
     {
-      "label": "Skill Store URL",
+      "id": "skill_mode",
+      "label": "Skill Mode",
       "group": "advanced",
-      "type": "Hidden",
-      "value": "",
-      "optional": true,
+      "type": "Dropdown",
+      "value": "none",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "Usage Only", "value": "use" },
+        { "name": "Usage & Creation", "value": "use_create" }
+      ],
       "binding": {
         "type": "zeebe:input",
-        "name": "skillStoreUrl"
+        "name": "advanced.skillMode"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "skill_database_type",
+      "label": "Skill Vector Database",
+      "group": "advanced",
+      "type": "Dropdown",
+      "value": "weaviate",
+      "choices": [
+        { "name": "Azure Cognitive Search", "value": "azure_cognitive_search" },
+        { "name": "Weaviate", "value": "weaviate" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.skillDatabase.type"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "skill_mode",
+        "oneOf": ["use", "use_create"]
+      }
+    },
+    {
+      "label": "Skill Vector Database URL",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "http://localhost:8080/testIndex",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.skillDatabase.url"
+      },
+      "constraints": {
+        "notEmpty": true
+      },
+      "condition": {
+        "property": "skill_mode",
+        "oneOf": ["use", "use_create"]
+      }
+    },
+    {
+      "label": "Skill Vector Database Password / Key",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.skillDatabase.password"
+      },
+      "condition": {
+        "allMatch": [
+          {
+            "property": "skill_database_type",
+            "oneOf": [
+              "azure_cognitive_search"
+            ]
+          },
+          {
+            "property": "skill_mode",
+            "oneOf": ["use", "use_create"]
+          }
+        ]
       }
     },
     {

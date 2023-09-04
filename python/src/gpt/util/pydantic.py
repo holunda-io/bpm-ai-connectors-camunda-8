@@ -1,7 +1,7 @@
 import json
 from typing import Type
 
-from pydantic import BaseModel
+from langchain.pydantic_v1 import BaseModel
 
 
 def get_example_value(field: dict) -> any:

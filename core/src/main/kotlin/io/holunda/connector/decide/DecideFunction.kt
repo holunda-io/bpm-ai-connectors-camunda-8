@@ -3,6 +3,7 @@ package io.holunda.connector.decide
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -20,7 +21,7 @@ class DecideFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing DecideFunction")
-        val connectorRequest = context.variables.readFromJson<DecideRequest>()
+        val connectorRequest = context.bindVariables(DecideRequest::class.java)
         logger.info("DecideFunction request: $connectorRequest")
         return executeRequest(DecideTask.fromRequest(connectorRequest))
     }

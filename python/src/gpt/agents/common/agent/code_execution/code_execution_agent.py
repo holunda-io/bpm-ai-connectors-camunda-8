@@ -8,7 +8,7 @@ from langchain.chat_models.base import BaseChatModel
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate
 from langchain.vectorstores import VectorStore
-from pydantic import Field, BaseModel
+from langchain.pydantic_v1 import Field, BaseModel
 
 from gpt.agents.common.agent.base import AgentParameterResolver, Agent
 from gpt.agents.common.agent.code_execution.natural_lang_answer_chain import create_natural_lang_answer_chain

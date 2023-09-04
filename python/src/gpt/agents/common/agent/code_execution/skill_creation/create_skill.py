@@ -2,10 +2,10 @@ from typing import Type, Optional, Any
 
 from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun, \
     CallbackManagerForChainRun
-from langchain.schema import BaseLanguageModel
+from langchain.schema.language_model import BaseLanguageModel
 from langchain.tools import BaseTool
 from langchain.vectorstores import VectorStore
-from pydantic import BaseModel, Field
+from langchain.pydantic_v1 import BaseModel, Field
 
 from gpt.agents.common.agent.code_execution.skill_creation.comment_chain import create_code_comment_chain
 from gpt.agents.common.agent.code_execution.util import extract_functions, extract_imports

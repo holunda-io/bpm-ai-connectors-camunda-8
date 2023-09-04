@@ -21,17 +21,17 @@ data class ComposeTask(
                 request.model.modelId,
                 request.inputJson,
                 request.description,
-                request.type,
-                request.style,
-                request.tone,
-                request.length,
-                request.language,
-                request.temperature,
+                request.properties.type,
+                request.properties.style,
+                request.properties.tone,
+                request.properties.length,
+                request.properties.language,
+                request.properties.temperature,
                 request.sender,
-                when (request.constitutionalPrinciple) {
+                when (request.alignment.constitutionalPrinciple) {
                     null, "none" -> null
-                    "custom" -> request.customPrinciple
-                    else -> request.constitutionalPrinciple
+                    "custom" -> request.alignment.customPrinciple
+                    else -> request.alignment.constitutionalPrinciple
                 }
             )
     }

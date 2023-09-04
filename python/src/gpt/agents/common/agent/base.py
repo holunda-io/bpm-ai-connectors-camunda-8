@@ -11,9 +11,10 @@ from langchain.load.serializable import Serializable
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts.chat import BaseMessagePromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate, \
     MessagesPlaceholder
-from langchain.schema import BaseMessage, HumanMessage, BaseLanguageModel
+from langchain.schema import BaseMessage, HumanMessage
+from langchain.schema.language_model import BaseLanguageModel
 from langchain.tools import BaseTool
-from pydantic import Field
+from langchain.pydantic_v1 import Field
 
 from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.common.agent.output_parser import AgentOutputParser, AgentAction

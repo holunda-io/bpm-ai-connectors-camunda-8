@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.*
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -20,7 +21,7 @@ class ProcessAgentFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing ProcessAgentFunction")
-        val connectorRequest = context.variables.readFromJson<ProcessAgentRequest>()
+        val connectorRequest = context.bindVariables(ProcessAgentRequest::class.java)
         logger.info("ProcessAgentFunction request: $connectorRequest")
         return executeRequest(connectorRequest)
     }

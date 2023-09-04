@@ -3,6 +3,7 @@ package io.holunda.connector.generic
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -19,7 +20,7 @@ class GenericFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing GenericFunction")
-        val connectorRequest = context.variables.readFromJson<GenericRequest>()
+        val connectorRequest = context.bindVariables(GenericRequest::class.java)
         logger.info("GenericFunction request $connectorRequest")
         return executeRequest(connectorRequest)
     }

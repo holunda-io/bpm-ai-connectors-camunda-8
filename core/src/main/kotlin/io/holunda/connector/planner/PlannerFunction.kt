@@ -3,6 +3,7 @@ package io.holunda.connector.planner
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -19,7 +20,7 @@ class PlannerFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing PlannerFunction")
-        val connectorRequest = context.variables.readFromJson<PlannerRequest>()
+        val connectorRequest = context.bindVariables(PlannerRequest::class.java)
         logger.info("PlannerFunction request: $connectorRequest")
         return executeRequest(connectorRequest)
     }

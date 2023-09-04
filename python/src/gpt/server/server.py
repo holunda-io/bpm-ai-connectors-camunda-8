@@ -1,8 +1,10 @@
 import json
+from unittest.mock import patch
 
 from dotenv import load_dotenv
 from langchain.chains import OpenAIModerationChain
 from langchain.embeddings import OpenAIEmbeddings
+from openai.error import RateLimitError
 
 from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
 from gpt.agents.openapi_agent.code_execution.base import create_openapi_code_execution_agent
@@ -53,12 +55,14 @@ async def post(task: DecideTask):
 
 @app.post("/translate")
 async def post(task: TranslateTask):
-    chain = create_translate_chain(
-        llm=model_id_to_llm(task.model),
-        input_keys=list(task.input.keys()),
-        target_language=task.target_language
-    )
-    return chain.run(input=task.input)
+    with patch('openai.ChatCompletion.create', side_effect=RateLimitError()):
+
+        chain = create_translate_chain(
+             llm=model_id_to_llm(task.model),
+             input_keys=list(task.input.keys()),
+             target_language=task.target_language
+        )
+        return chain.run(input=task.input)
 
 
 @app.post("/compose")
@@ -91,13 +95,14 @@ async def post(task: GenericTask):
 
 @app.post("/openapi")
 async def post(task: OpenApiTask):
-    if task.skill_store_url:
-        # skill_store = get_vector_store(
-        #     task.skill_store_url,
-        #     OpenAIEmbeddings(),
-        #     meta_attributes=['task', 'comment', 'function', 'example_call']
-        # )
-        skill_store = None
+    if task.skill_mode and task.skill_mode != "none":
+        skill_store = get_vector_store(
+            task.skill_store,
+            task.skill_store_url,
+            OpenAIEmbeddings(),
+            password=task.skill_store_password,
+            meta_attributes=['task', 'comment', 'function', 'example_call']
+        )
     else:
         skill_store = None
 
@@ -105,7 +110,7 @@ async def post(task: OpenApiTask):
         llm=model_id_to_llm(task.model),
         api_spec_url=task.spec_url,
         skill_store=skill_store,
-        enable_skill_creation=(skill_store is not None),
+        enable_skill_creation=task.skill_mode == "use_create",
         output_schema=task.output_schema,
         llm_call=True
     )
@@ -114,13 +119,14 @@ async def post(task: OpenApiTask):
 
 @app.post("/database")
 async def post(task: DatabaseTask):
-    if task.skill_store_url:
-        # skill_store = get_vector_store(
-        #     task.skill_store_url,
-        #     OpenAIEmbeddings(),
-        #     meta_attributes=['task', 'comment', 'function', 'example_call']
-        # )
-        skill_store = None
+    if task.skill_mode and task.skill_mode != "none":
+        skill_store = get_vector_store(
+            task.skill_store,
+            task.skill_store_url,
+            OpenAIEmbeddings(),
+            password=task.skill_store_password,
+            meta_attributes=['task', 'comment', 'function', 'example_call']
+        )
     else:
         skill_store = None
 
@@ -128,7 +134,7 @@ async def post(task: DatabaseTask):
         llm=model_id_to_llm(task.model),
         database_url=task.database_url,
         skill_store=skill_store,
-        enable_skill_creation=(skill_store is not None),
+        enable_skill_creation=task.skill_mode == "use_create",
         output_schema=task.output_schema,
         llm_call=True
     )
@@ -141,15 +147,20 @@ async def post(task: RetrievalTask):
         llm=model_id_to_llm(task.model),
         database=task.database,
         database_url=task.database_url,
+        database_password=task.password,
         embedding_provider=task.embedding_provider,
         embedding_model=task.embedding_model,
-        output_schema=task.output_schema
+        output_schema=task.output_schema,
+        document_content_description=task.document_content_description,
+        metadata_field_info=task.metadata_field_info,
+        parent_document_store=task.parent_document_store,
+        parent_document_store_url=task.parent_document_store_url,
+        parent_document_store_password=task.parent_document_store_password,
+        parent_document_store_namespace=task.parent_document_store_namespace,
+        parent_document_id_key=task.parent_document_id_key
     )
     result = agent.run(input=task.query, context="")
-    if task.output_schema:
-        return result["output"]
-    else:
-        return result["output"]["answer"]
+    return result["output"]
 
 
 @app.post("/process")

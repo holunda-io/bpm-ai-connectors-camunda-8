@@ -1,21 +1,23 @@
 from langchain.chains import RetrievalQA
-from langchain.chains.base import Chain
 from langchain.chat_models.base import BaseChatModel
 from langchain.prompts import SystemMessagePromptTemplate
-from langchain.retrievers import MultiQueryRetriever
+from langchain.retrievers import SelfQueryRetriever, MultiVectorRetriever
 from langchain.tools import Tool, StructuredTool
-from pydantic import BaseModel, Field
+from langchain.vectorstores import AzureSearch
 from pydantic.fields import FieldInfo
 
 from gpt.agents.common.agent.base import Agent
 from gpt.agents.common.agent.openai_functions.openai_functions_agent import OpenAIFunctionsAgent
-from gpt.chains.retrieval_chain.chain import get_embeddings, get_vector_store
-from gpt.chains.retrieval_chain.prompt import MULTI_QUERY_PROMPT
 
-from pydantic import create_model
-from typing import Dict, Any, Optional, Union
+from langchain.pydantic_v1 import create_model
+from typing import Dict, Any, Optional, Union, List
 
+from gpt.chains.retrieval_chain.config import get_embeddings, get_vector_store, get_document_store
+from gpt.chains.retrieval_chain.metadata_filter.filter_chain import MetadataFilterRetriever
+from gpt.chains.retrieval_chain.multiquery_retriever.retriever import create_multi_query_retriever
+from gpt.chains.retrieval_chain.parent_document_retriever.retriever import ParentDocumentRetriever
 from gpt.util.functions import json_schema_from_shorthand
+from gpt.util.query_constructor.azure_search_translator import AzureCognitiveSearchTranslator
 
 
 def json_schema_to_pydantic_model(name: str, schema: Dict[str, Any]) -> Any:
@@ -41,6 +43,14 @@ def json_schema_to_pydantic_model(name: str, schema: Dict[str, Any]) -> Any:
 
     return create_model(name, **fields)
 
+SYSTEM_MESSAGE = """\
+Assistant is a helpful assistant that answers user questions and queries by calling functions to retrieve information from a document Q&A system.
+The document Q&A system will answer given questions using available documents. 
+
+Split up questions into multiple function calls where appropriate and combine the results.
+
+If you can't find enough information to compile a meaningful and helpful answer for the user, don't say that the document or text does not provide enough information but just set the fields in store_final_result to null."""
+
 
 def create_retrieval_agent(
     llm: BaseChatModel,
@@ -48,28 +58,65 @@ def create_retrieval_agent(
     database_url: str,
     embedding_provider: str,
     embedding_model: str,
+    database_password: Optional[str] = None,
     output_schema: Optional[Dict[str, Union[str, dict]]] = None,
+    multi_query_expansion: bool = False,
+    metadata_field_info: Optional[List[dict]] = None,
+    document_content_description: Optional[str] = None,
+    parent_document_store: Optional[str] = None,
+    parent_document_store_url: Optional[str] = None,
+    parent_document_store_password: Optional[str] = None,
+    parent_document_store_namespace: Optional[str] = None,
+    parent_document_id_key: str = "parent_id",
 ) -> Agent:
     agent = OpenAIFunctionsAgent.create(
-        system_prompt_template=SystemMessagePromptTemplate.from_template("Assistant is a helpful assistant that answers user questions and queries by calling functions to retrieve information from a document Q&A system."),
+        system_prompt_template=SystemMessagePromptTemplate.from_template(SYSTEM_MESSAGE),
         llm=llm,
     )
 
     embeddings = get_embeddings(embedding_provider, embedding_model)
-    vector_store = get_vector_store(database, database_url, embeddings)
+    vector_store = get_vector_store(database, database_url, embeddings, password=database_password)
+
+    # self-query on given metadata fields
+    if metadata_field_info:
+        # others are built-in
+        query_translator = AzureCognitiveSearchTranslator() if isinstance(vector_store, AzureSearch) else None
+        retriever = MetadataFilterRetriever.from_llm(
+            llm,
+            vector_store,
+            document_content_description or "document",
+            metadata_field_info,
+            k=15,
+            structured_query_translator=query_translator,
+            use_original_query=False,
+            verbose=True
+        )
+    else:
+        retriever = vector_store.as_retriever()
 
     # rephrase query multiple times and get union of docs
-    # multi_retriever = MultiQueryRetriever.from_llm(
-    #     retriever=vector_store.as_retriever(),
-    #     llm=llm,
-    #     prompt=MULTI_QUERY_PROMPT
-    # )
+    if multi_query_expansion:
+        retriever = create_multi_query_retriever(retriever=retriever, llm=llm)
+
+    # resolve parent documents/larger chunks from embedded chunks
+    if parent_document_store_url:
+        store = get_document_store(
+            parent_document_store,
+            parent_document_store_url,
+            parent_document_store_namespace,
+            password=parent_document_store_password
+        )
+        retriever = ParentDocumentRetriever(
+            child_retriever=retriever,
+            docstore=store,
+            id_key=parent_document_id_key,
+        )
 
     # answer synthesizer
     retrieval_qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
-        retriever=vector_store.as_retriever(),
+        retriever=retriever
     )
 
     def query_docs(question: str) -> str:

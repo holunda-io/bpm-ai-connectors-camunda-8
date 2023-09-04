@@ -3,7 +3,7 @@ from typing import Sequence, Callable
 
 from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain.tools.base import BaseTool
-from pydantic import Field, BaseModel
+from langchain.pydantic_v1 import Field, BaseModel
 
 from gpt.agents.common.agent.code_execution.util import python_exec, globals_from_function_defs
 

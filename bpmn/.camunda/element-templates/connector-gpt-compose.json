@@ -88,7 +88,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "type"
+        "name": "properties.type"
       }
     },
     {
@@ -102,7 +102,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "style"
+        "name": "properties.style"
       }
     },
     {
@@ -118,7 +118,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "tone"
+        "name": "properties.tone"
       }
     },
     {
@@ -129,7 +129,7 @@
       "value": "English",
       "binding": {
         "type": "zeebe:input",
-        "name": "language"
+        "name": "properties.language"
       },
       "constraints": {
         "notEmpty": true
@@ -148,7 +148,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "length"
+        "name": "properties.length"
       }
     },
     {
@@ -165,7 +165,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "temperature"
+        "name": "properties.temperature"
       }
     },
     {
@@ -269,11 +269,21 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "constitutionalPrinciple"
+        "name": "alignment.constitutionalPrinciple"
       },
       "condition": {
-        "property": "model",
-        "oneOf": ["GPT_3", "GPT_4"]
+        "allMatch": [
+          {
+            "property": "model",
+            "oneOf": [
+              "GPT_3", "GPT_4"
+            ]
+          },
+          {
+            "property": "template",
+            "equals": "none"
+          }
+        ]
       }
     },
     {
@@ -285,7 +295,7 @@
       "value": "The text must not contain any offensive or rude language. It should always be polite and professional.",
       "binding": {
         "type": "zeebe:input",
-        "name": "customPrinciple"
+        "name": "alignment.customPrinciple"
       },
       "condition": {
         "property": "alignment",

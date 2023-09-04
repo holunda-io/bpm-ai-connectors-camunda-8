@@ -7,7 +7,7 @@ from langchain.chains.base import Chain
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain.tools import format_tool_to_openai_function, StructuredTool
-from pydantic import Field, BaseModel
+from langchain.pydantic_v1 import Field, BaseModel
 
 from gpt.agents.plan_and_execute.executor.prompt import EXECUTOR_SYSTEM_MESSAGE, EXECUTOR_USER_MESSAGE, \
     EXECUTOR_USER_MESSAGE_FUNCTIONS, \

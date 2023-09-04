@@ -20,6 +20,7 @@
     <!-- eco system -->
     <spring-boot.version>3.1.1</spring-boot.version>
     <kotlin.version>1.8.22</kotlin.version>
+    <jackson.version>2.15.2</jackson.version>
   </properties>
 
   <modules>

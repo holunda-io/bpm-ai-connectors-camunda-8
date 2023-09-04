@@ -4,10 +4,11 @@ from langchain import Cohere
 from langchain.base_language import BaseLanguageModel
 from langchain.chat_models import ChatOpenAI
 from langchain.llms import AlephAlpha
+from langchain.schema.runnable import RunnableWithFallbacks
 
-OPENAI_3_5_WITH_FUNCTIONS = "gpt-3.5-turbo"
-OPENAI_4_WITH_FUNCTIONS = "gpt-4"
-DEFAULT_OPENAI_MODEL = OPENAI_3_5_WITH_FUNCTIONS
+OPENAI_3_5 = "gpt-3.5-turbo"
+OPENAI_4 = "gpt-4"
+DEFAULT_OPENAI_MODEL = OPENAI_3_5
 
 LUMINOUS_SUPREME_CONTROL = "luminous-supreme-control"
 COHERE_COMMAND_XLARGE = "command-xlarge-beta"
@@ -24,16 +25,20 @@ def supports_openai_functions(llm: BaseLanguageModel):
     return isinstance(llm, ChatOpenAI)
 
 
-def model_id_to_llm(model_id: str, temperature: float = 0.0, cache: bool = True) -> Union[BaseLanguageModel, ChatOpenAI]:
+def model_id_to_llm(model_id: str, temperature: float = 0.0, cache: bool = True) -> Union[BaseLanguageModel, ChatOpenAI, RunnableWithFallbacks]:
     match model_id:
         case "gpt-3.5-turbo":
-            return ChatOpenAI(model_name=OPENAI_3_5_WITH_FUNCTIONS, temperature=temperature, cache=cache)
+            return ChatOpenAI(model_name=OPENAI_3_5, temperature=temperature, cache=cache)
         case "gpt-4":
-            return ChatOpenAI(model_name=OPENAI_4_WITH_FUNCTIONS, temperature=temperature, cache=cache)
+            return ChatOpenAI(model_name=OPENAI_4, temperature=temperature, cache=cache)
+            # .with_fallbacks(
+            #     [ChatOpenAI(model_name=OPENAI_3_5, temperature=temperature, cache=cache)]
+            # ))
         case "luminous-supreme":
             return AlephAlpha(model=LUMINOUS_SUPREME_CONTROL, temperature=temperature, cache=cache)
         case "cohere-command-xlarge":
             return Cohere(model=COHERE_COMMAND_XLARGE, temperature=temperature, cache=cache)
+
 
 def llm_to_model_tag(llm: BaseLanguageModel) -> str:
     match llm:

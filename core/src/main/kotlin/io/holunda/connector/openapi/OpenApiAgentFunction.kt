@@ -3,6 +3,7 @@ package io.holunda.connector.openapi
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -12,7 +13,7 @@ import mu.*
         "taskDescription",
         "specUrl",
         "outputSchema",
-        "skillStoreUrl",
+        "advanced",
         "model"
     ],
     type = "io.holunda:connector-openapi:1"
@@ -21,7 +22,7 @@ class OpenApiAgentFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing OpenApiAgentFunction")
-        val connectorRequest = context.variables.readFromJson<OpenApiAgentRequest>()
+        val connectorRequest = context.bindVariables(OpenApiAgentRequest::class.java)
         logger.info("OpenApiAgentFunction request: $connectorRequest")
         return executeRequest(connectorRequest)
     }

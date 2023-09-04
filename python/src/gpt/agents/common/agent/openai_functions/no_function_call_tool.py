@@ -2,7 +2,7 @@ from typing import Type, Optional
 
 from langchain.callbacks.manager import CallbackManagerForToolRun, AsyncCallbackManagerForToolRun
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
+from langchain.pydantic_v1 import BaseModel, Field
 
 
 class NoFunctionCallToolSchema(BaseModel):

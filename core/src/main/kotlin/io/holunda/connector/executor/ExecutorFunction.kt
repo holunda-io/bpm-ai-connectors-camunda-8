@@ -3,6 +3,7 @@ package io.holunda.connector.executor
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -19,7 +20,7 @@ class ExecutorFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing ExecutorFunction")
-        val connectorRequest = context.variables.readFromJson<ExecutorRequest>()
+        val connectorRequest = context.bindVariables(ExecutorRequest::class.java)
         logger.info("ExecutorFunction request: $connectorRequest")
         return executeRequest(connectorRequest)
     }

@@ -5,6 +5,7 @@ import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.error.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -23,7 +24,7 @@ class ExtractFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing ExtractFunction")
-        val connectorRequest = context.variables.readFromJson<ExtractRequest>()
+        val connectorRequest = context.bindVariables(ExtractRequest::class.java)
         logger.info("ExtractFunction request: $connectorRequest")
         return executeRequest(connectorRequest)
     }

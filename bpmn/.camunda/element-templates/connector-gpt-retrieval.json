@@ -34,6 +34,10 @@
       "label": "Query"
     },
     {
+      "id": "advanced",
+      "label": "Advanced"
+    },
+    {
       "id": "output",
       "label": "Output Mapping"
     },
@@ -66,16 +70,18 @@
       }
     },
     {
+      "id": "database_type",
       "label": "Vector Database",
       "group": "database",
       "type": "Dropdown",
       "value": "weaviate",
       "choices": [
+        { "name": "Azure Cognitive Search", "value": "azure_cognitive_search" },
         { "name": "Weaviate", "value": "weaviate" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "database"
+        "name": "database.type"
       },
       "constraints": {
         "notEmpty": true
@@ -89,10 +95,24 @@
       "value": "http://localhost:8080/testIndex",
       "binding": {
         "type": "zeebe:input",
-        "name": "databaseUrl"
+        "name": "database.url"
       },
       "constraints": {
         "notEmpty": true
+      }
+    },
+    {
+      "label": "Vector Database Password / Key",
+      "group": "database",
+      "type": "String",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "database.password"
+      },
+      "condition": {
+        "property": "database_type",
+        "equals": "azure_cognitive_search"
       }
     },
     {
@@ -105,7 +125,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "embeddingProvider"
+        "name": "database.embedding.provider"
       }
     },
     {
@@ -115,7 +135,7 @@
       "value": "text-embedding-ada-002",
       "binding": {
         "type": "zeebe:input",
-        "name": "embeddingModel"
+        "name": "database.embedding.model"
       },
       "constraints": {
         "notEmpty": true
@@ -130,10 +150,109 @@
       "value": "",
       "binding": {
         "type": "zeebe:input",
-        "name": "query"
+        "name": "query.query"
       },
       "constraints": {
         "notEmpty": true
+      }
+    },
+    {
+      "label": "Document Content Description",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.documentDescription"
+      }
+    },
+    {
+      "label": "Metadata Filtering",
+      "description": "Schema of filterable metadata fields to automatically perform structured filtering.",
+      "group": "advanced",
+      "type": "Text",
+      "feel": "optional",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.fieldMetadata"
+      }
+    },
+    {
+      "id": "parent_store",
+      "label": "Parent Document Store",
+      "group": "advanced",
+      "type": "Dropdown",
+      "value": "none",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "Azure Cosmos DB NoSQL", "value": "azure_cosmos_nosql" },
+        { "name": "Redis", "value": "redis" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.parentDocumentStore.type"
+      }
+    },
+    {
+      "label": "Document Store URL",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.parentDocumentStore.url"
+      },
+      "condition": {
+        "property": "parent_store",
+        "oneOf": ["redis", "azure_cosmos_nosql"]
+      }
+    },
+    {
+      "label": "Document Store Password",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.parentDocumentStore.password"
+      },
+      "condition": {
+        "property": "parent_store",
+        "oneOf": ["azure_cosmos_nosql"]
+      }
+    },
+    {
+      "label": "Document Store Namespace",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.parentDocumentStore.namespace"
+      },
+      "condition": {
+        "property": "parent_store",
+        "oneOf": ["redis", "azure_cosmos_nosql"]
+      }
+    },
+    {
+      "label": "Parent Document ID Field",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "parent_id",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.parentDocumentStore.parentDocumentId"
+      },
+      "condition": {
+        "property": "parent_store",
+        "oneOf": ["redis", "azure_cosmos_nosql"]
       }
     },
     {
@@ -148,7 +267,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "outputType"
+        "name": "query.outputType"
       }
     },
     {
@@ -160,7 +279,7 @@
       "value": "={\n  name: \"full name\",\n  birthdate: \"birthday in ISO format\"\n}",
       "binding": {
         "type": "zeebe:input",
-        "name": "outputSchema"
+        "name": "query.outputSchema"
       },
       "condition": {
         "property": "output_type",
@@ -178,12 +297,12 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "mode"
+        "name": "query.mode"
       }
     },
     {
       "label": "Result Expression",
-      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>.",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>, natural language answer is in <code>result.answer</code>.",
       "group": "output",
       "type": "Text",
       "feel": "required",

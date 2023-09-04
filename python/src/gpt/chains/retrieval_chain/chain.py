@@ -1,41 +1,10 @@
-from typing import List, Optional, Dict, Union
-
 from langchain.base_language import BaseLanguageModel
 from langchain.chains import RetrievalQA
 from langchain.chains.base import Chain
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.embeddings.base import Embeddings
-from langchain.retrievers.multi_query import MultiQueryRetriever
-from langchain.vectorstores import Weaviate
-from langchain.vectorstores.weaviate import _create_weaviate_client
-
-from gpt.chains.retrieval_chain.prompt import MULTI_QUERY_PROMPT
+from gpt.chains.retrieval_chain.config import get_vector_store, get_embeddings
+from gpt.chains.retrieval_chain.multiquery_retriever.retriever import create_multi_query_retriever
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
 from gpt.chains.support.sub_query_retriever.chain import SubQueryRetriever
-
-
-def get_vector_store(database: str, database_url: str, embeddings: Embeddings, meta_attributes: Optional[List[str]] = None):
-    match database:
-        case 'weaviate':
-            base_url, index = database_url.rsplit('/', 1)
-            return Weaviate(
-                client=_create_weaviate_client(weaviate_url=base_url),
-                index_name=index,
-                text_key="text",
-                embedding=embeddings,
-                attributes=meta_attributes,
-                by_text=False
-            )
-        case _:
-            raise Exception(f'Unsupported vector database {database}.')
-
-
-def get_embeddings(embedding_provider: str, embedding_model: str) -> Embeddings:
-    match embedding_provider:
-        case 'openai':
-            return OpenAIEmbeddings(model=embedding_model)
-        case _:
-            raise Exception(f'Unsupported embedding provider: {embedding_provider}')
 
 
 def create_legacy_retrieval_chain(
@@ -51,10 +20,9 @@ def create_legacy_retrieval_chain(
     vector_store = get_vector_store(database, database_url, embeddings)
 
     # rephrase query multiple times and get union of docs
-    multi_retriever = MultiQueryRetriever.from_llm(
+    multi_retriever = create_multi_query_retriever(
         retriever=vector_store.as_retriever(),
         llm=llm,
-        prompt=MULTI_QUERY_PROMPT
     )
 
     # split query into sub queries if necessary, run multiquery on each, get union of all docs

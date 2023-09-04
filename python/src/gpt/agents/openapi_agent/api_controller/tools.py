@@ -7,7 +7,7 @@ from langchain import LLMChain
 from langchain.agents.agent_toolkits.base import BaseToolkit
 from langchain.base_language import BaseLanguageModel
 from langchain.tools import BaseTool
-from pydantic import Field, BaseModel, root_validator
+from langchain.pydantic_v1 import Field, BaseModel, root_validator
 
 from gpt.agents.openapi_agent.api_controller.prompt import PARSING_PROMPT
 from gpt.agents.openapi_agent.openapi import OpenAPISpec

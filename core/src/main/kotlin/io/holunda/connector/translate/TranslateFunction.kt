@@ -3,6 +3,7 @@ package io.holunda.connector.translate
 import io.camunda.connector.api.annotation.*
 import io.camunda.connector.api.outbound.*
 import io.holunda.connector.common.*
+import io.holunda.connector.retrieval.*
 import mu.*
 
 @OutboundConnector(
@@ -18,7 +19,7 @@ class TranslateFunction : OutboundConnectorFunction {
 
     override fun execute(context: OutboundConnectorContext): Any {
         logger.info("Executing TranslateFunction")
-        val connectorRequest = context.variables.readFromJson<TranslateRequest>()
+        val connectorRequest = context.bindVariables(TranslateRequest::class.java)
         logger.info("TranslateFunction request: $connectorRequest")
         return executeRequest(connectorRequest)
     }
