@@ -74,7 +74,7 @@ class RetrievalTask(BaseModel):
     model: str
     database: str
     database_url: str
-    password: str
+    password: Optional[str] = None
     embedding_provider: str
     embedding_model: str
     mode: str

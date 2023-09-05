@@ -28,7 +28,7 @@ data class ComposeTask(
                 request.properties.language,
                 request.properties.temperature,
                 request.sender,
-                when (request.alignment.constitutionalPrinciple) {
+                when (request.alignment?.constitutionalPrinciple) {
                     null, "none" -> null
                     "custom" -> request.alignment.customPrinciple
                     else -> request.alignment.constitutionalPrinciple

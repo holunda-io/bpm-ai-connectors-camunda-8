@@ -20,7 +20,7 @@ data class QueryConfig(
 data class VectorDatabaseConfig(
     val type: String,
     val url: String,
-    val password: String,
+    val password: String?,
     val embedding: EmbeddingConfig,
 )
 

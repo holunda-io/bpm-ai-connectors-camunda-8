@@ -493,3 +493,6 @@ def test_openapi_functions():
     openai_fns, call_api_fn = openapi_spec_to_openai_fn(spec)
     #print(json.dumps(openai_fns, indent=2))
     print(call_api_fn("getcustomers", {"params": {"page": 0, "pageSize": 1}}).text)
+
+
+

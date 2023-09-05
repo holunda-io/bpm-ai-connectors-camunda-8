@@ -7,7 +7,7 @@ data class RetrievalTask(
     val query: String,
     val database: String,
     val database_url: String,
-    val password: String,
+    val password: String?,
     val embedding_provider: String,
     val embedding_model: String,
     val document_content_description: String?,

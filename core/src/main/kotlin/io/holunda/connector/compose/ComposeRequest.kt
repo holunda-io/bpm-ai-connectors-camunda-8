@@ -9,7 +9,7 @@ data class ComposeRequest(
     val properties: TextProperties,
     val sender: String?,
     val template: String?,
-    val alignment: AlignmentPrinciple,
+    val alignment: AlignmentPrinciple?,
     val model: Model
 )
 
