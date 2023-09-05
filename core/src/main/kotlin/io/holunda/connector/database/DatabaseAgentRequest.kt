@@ -5,11 +5,16 @@ import io.holunda.connector.common.*
 
 data class DatabaseAgentRequest(
     val inputJson: JsonNode,
-    val query: String,
+    val query: QueryConfig,
     val databaseUrl: String,
     val advanced: AdvancedConfig,
-    val outputSchema: JsonNode?,
     val model: Model
+)
+
+data class QueryConfig(
+    val query: String,
+    val outputType: String,
+    val outputSchema: JsonNode?,
 )
 
 data class AdvancedConfig(

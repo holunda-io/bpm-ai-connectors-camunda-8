@@ -12,7 +12,6 @@ import mu.*
         "inputJson",
         "query",
         "databaseUrl",
-        "outputSchema",
         "advanced",
         "model"
     ],

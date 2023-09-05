@@ -107,7 +107,7 @@
       "value": "",
       "binding": {
         "type": "zeebe:input",
-        "name": "query"
+        "name": "query.query"
       },
       "constraints": {
         "notEmpty": true
@@ -208,7 +208,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "outputType"
+        "name": "query.outputType"
       }
     },
     {
@@ -220,7 +220,7 @@
       "value": "={\n  name: \"full name\",\n  birthdate: \"birthday in ISO format\"\n}",
       "binding": {
         "type": "zeebe:input",
-        "name": "outputSchema"
+        "name": "query.outputSchema"
       },
       "condition": {
         "property": "output_type",

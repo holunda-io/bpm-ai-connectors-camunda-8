@@ -18,10 +18,10 @@ data class DatabaseAgentTask(
         fun fromRequest(request: DatabaseAgentRequest) =
             DatabaseAgentTask(
                 request.model.modelId,
-                request.query,
+                request.query.query,
                 request.inputJson,
                 request.databaseUrl,
-                request.outputSchema,
+                request.query.outputSchema,
                 request.advanced.skillMode,
                 request.advanced.skillDatabase?.type,
                 request.advanced.skillDatabase?.url,
