@@ -30,8 +30,8 @@ from gpt.agents.common.agent.toolbox import Toolbox, AutoFinishTool
 class CodeExecutionParameterResolver(AgentParameterResolver):
 
     skill_store: Optional[VectorStore] = Field(None, exclude=True)
-    n_skills = 5
-    skill_relevance_threshold = 0.5
+    n_skills = 2
+    skill_relevance_threshold = 0
 
     output_schema: Optional[Dict[str, Any]] = None
     llm_call: bool = True
