@@ -51,8 +51,44 @@ Provide a natural language query or question as a fully formed sentence.
 Select Output Type `Natural Language Answer` to get back a natural language text that answers the given query. 
 Select `JSON` to provide a JSON-schema and receive back a JSON response (see Extract Connector in [Foundational Connectors](docs/foundational-connectors.md) for more details)
 
+#### Advanced
+
+For more advanced retrieval, the connector supports filtering on metadata and decoupling retrieved chunks from the vector database and (usually larger) chunks used for answer synthesis.
+
+###### Metadata filtering
+The LLM can automatically derive filters from the query to narrow down search to relevant document chunks in a large and diverse index.
+
+For this, you can provide a brief description of the documents in your index (optional) and define a list of schemas for the metadata fields you want to filter on, e.g.:
+```
+[
+  {
+    name: "bike_make",
+    description: "The bike make.",
+    type: "string",
+    enum: ["Sun Bicycles", "Cowboy"]
+  },
+  {
+    name: "bike_model",
+    description: "The bike model.",
+    type: "string",
+    enum: ["Electrolite", "3"]
+  }
+]
+```
+
+The `enum` field is optional but a good idea if the possible values are not obvious and not too many. If the model chooses a non-matching filter value, it may not retrieve any documents and will not be able to return an answer.
+
+###### Parent Documents
+
+The text chunks used for retrieval with the vector database are often not well-suited to also be used for generating the answer.
+
+This is because the embedding is more accurate for smaller chunks ("lost-in-the-middle" problem) while the answer synthesis needs appropriate context and suffers from too many small, unordered chunks. In addition, you may want to also index secondary data like summaries or hypothetical questions to enhance retrieval recall.
+
+To enable theses use-cases, you can configure a "parent ID" field that should be present in all chunks in the vector database. These IDs should point to the respective parent document (or larger chunk) suitable for answer synthesis (make sure the parent documents are not too large, the connector will use up to 4 parent documents at once for answer synthesis).
+Also configure a document key-value store from which the parent documents can be fetched by ID.
+
 ### Result
-A temporary variable `result` that contains the answer text or a result JSON object. Can be mapped to process variables using the result expression.
+A temporary variable `result` that contains the answer text in `result.answer` (in the future there will probably be a `result.sources` field that contains references to source documents) or a result JSON object. Can be mapped to process variables using the result expression.
 
 ---
 
@@ -65,6 +101,8 @@ Given just a database connection string and a query, this connector automaticall
 Example scenarios are:
 - rapid process prototyping (implement a traditional worker later)
 - adding background information to user tasks
+
+NOTE: You should use a read-only database user.
 
 ### Configuration
 
@@ -81,6 +119,31 @@ Provide a natural language query or question as a fully formed sentence.
 Select Output Type `Natural Language Answer` to get back a natural language text that answers the given query.
 Select `JSON` to provide a JSON-schema and receive back a JSON response (see Extract Connector in [Foundational Connectors](docs/foundational-connectors.md) for more details)
 
+#### Advanced / Skill Library
+
+Internally, the Database Connector generates Python code snippets. This code can optionally be stored and re-used, effectively building a library of learned "skills" that the connector already knows how to solve.
+
+This enables two exciting use-cases:
+
+###### Skill Library (Preview)
+
+If enabled, the connector can create and use skill functions from a previous run by fetching relevant snippets from a vector database. 
+An LLM is used to judge whether a snippet is actually a correct and successful solution to the given problem and only then create a new skill. 
+If a solution snippet simply delegates to another basic or skill function, no skill is created.
+
+Using a skill library allows the connector to solve increasingly complex problems through composition and save resources for common problems. 
+Theoretically, it is also possible to add handwritten solutions for typical or difficult problems.
+
+To enable, select a mode (only using existing skills or also creating new skills if possible) and configure a vector database. 
+The connector will automatically create an index.
+
+###### Direct Calling (Future Release)
+
+If the connector is executing a second time with the same input variables (but possibly different values), stored code from the previous run can directly be called with the new variable value assignments and directly yield a result - bypassing the LLM to save time and money.
+
+This is like a worker that self-implements on first run. Write once, run a million times for free :)
+
+NOTE: For this to work, your variable values need to be "pre-processed" and not contain e.g. any unstructured data. The variable values need to be directly usable from code. Simple and obvious transformations that are easy to do in code are ok, but it is better to e.g. have a `firstname` and `lastname` instead of a composite `name` which could lead to surprises when trying to split it up.
 
 ### Result
 A temporary variable `result` that contains the answer text or a result JSON object. Can be mapped to process variables using the result expression.
@@ -104,6 +167,33 @@ Performs tasks and answers questions using a REST API.
 Provide a natural language task or query as a fully formed sentence.
 
 Provide a JSON-schema for the output (see Extract Connector in [Foundational Connectors](docs/foundational-connectors.md) for more details)
+
+#### Advanced / Skill Library
+
+Internally, the OpenAPI Connector generates Python code snippets. This code can optionally be stored and re-used, effectively building a library of learned "skills" that the connector already knows how to solve.
+
+This enables two exciting use-cases:
+
+###### Skill Library (Preview)
+
+If enabled, the connector can create and use skill functions from a previous run by fetching relevant snippets from a vector database.
+An LLM is used to judge whether a snippet is actually a correct and successful solution to the given problem and only then create a new skill.
+If a solution snippet simply delegates to another basic or skill function, no skill is created.
+
+Using a skill library allows the connector to solve increasingly complex problems through composition and save resources for common problems.
+Theoretically, it is also possible to add handwritten solutions for typical or difficult problems.
+
+To enable, select a mode (only using existing skills or also creating new skills if possible) and configure a vector database.
+The connector will automatically create an index.
+
+###### Direct Calling (Future Release)
+
+If the connector is executing a second time with the same input variables (but possibly different values), stored code from the previous run can directly be called with the new variable value assignments and directly yield a result - bypassing the LLM to save time and money.
+
+This is like a worker that self-implements on first run. Write once, run a million times for free :)
+
+NOTE: For this to work, your variable values need to be "pre-processed" and not contain e.g. any unstructured data. The variable values need to be directly usable from code. Simple and obvious transformations that are easy to do in code are ok, but it is better to e.g. have a `firstname` and `lastname` instead of a composite `name` which could lead to surprises when trying to split it up.
+
 
 ### Result
 A temporary variable `result` that contains a result JSON object. Can be mapped to process variables using the result expression.

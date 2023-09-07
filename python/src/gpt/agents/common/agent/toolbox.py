@@ -47,8 +47,13 @@ class Toolbox:
     def has_tool(self, tool_name: str):
         return tool_name in self._tools
 
-    def get_tool(self, tool_name: str):
-        return self._tools[tool_name]
+    def get_tool(self, tool_name: str) -> Optional[BaseTool]:
+        if tool_name in self._tools:
+            return self.tools[tool_name]
+        elif tool_name in self._virtual_tools:
+            return self._virtual_tools[tool_name]
+        else:
+            return None
 
     @property
     def tools(self):
@@ -73,11 +78,8 @@ class Toolbox:
         return "\n".join([f"{tool.name}: {tool.description}" for tool in self.tools.values()])
 
     def run_tool(self, agent_action: AgentAction, run_manager: Optional[CallbackManagerForToolRun] = None) -> Any:
-        if agent_action.tool in self._tools:
-            tool: BaseTool = self.tools[agent_action.tool]
-        elif agent_action.tool in self._virtual_tools:
-            tool: BaseTool = self._virtual_tools[agent_action.tool]
-        else:
+        tool: BaseTool = self.get_tool(agent_action.tool)
+        if not tool:
             raise Exception(f"Tool {agent_action.tool} not found in ToolBox.")
         return tool.run(agent_action.tool_input, verbose=self.verbose, callbacks=run_manager)
 

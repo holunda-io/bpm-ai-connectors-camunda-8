@@ -32,3 +32,13 @@ As the variable is local, you need to define which parts of the result you want 
 ```
 
 The resulting JSON object is then *merged* into the current process variables (so in this example there will be a new or overwritten process variable `result`).
+
+### Secrets
+
+When using passwords, keys or other sensitive information in connectors, it is a good practice to use secrets to not expose this data to the VCS or Operate.
+
+Simply use a value `secrets.MY_SECRET` in the BPMN and make an environment variable `MY_SECRET` with corresponding value available to the connector runtime (e.g. by putting it in the connector-secrets.txt and passing that as `env_file`).
+
+The connector runtime will replace the `secrets.MY_SECRET` with the actual value during runtime.
+
+NOTE: Built-in connectors need their secrets configured in Camunda Console, the GPT connectors have their own runtime.

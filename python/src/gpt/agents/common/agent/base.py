@@ -178,7 +178,7 @@ class Agent(Chain):
         next_step = current_step.create_next_step(llm_response)
 
         # run the tool selected by the LLM
-        if not next_step.is_last() and self.toolbox.get_tool(next_step.parsed_action.tool).return_direct:
+        if not next_step.is_last() and self.toolbox.get_tool(next_step.parsed_action.tool) and self.toolbox.get_tool(next_step.parsed_action.tool).return_direct:
             next_step.manual_finish({self.output_key: next_step.parsed_action.tool_input}, None)
 
         elif not next_step.is_last():

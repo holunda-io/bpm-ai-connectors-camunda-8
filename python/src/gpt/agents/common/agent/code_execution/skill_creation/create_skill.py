@@ -63,7 +63,9 @@ class CreateSkillTool(BaseTool):
         imports = '\n'.join(extract_imports(function_def))
         function_with_imports = imports + '\n' + function
 
-        self.skill_store.add_texts(
+        self.skill_store.from_texts(
+            index_name="GPTConnectorsSkillStore",
+            embedding=self.skill_store.embeddings,
             texts=[f'# {task}\n\n{comment}\n{function_with_imports}'],
             metadatas=[{
                 'task': task,

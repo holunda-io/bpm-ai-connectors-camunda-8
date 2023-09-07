@@ -20,8 +20,7 @@ Just provide input and output variable mappings and configure what you want to a
 1. Crafting tested, task- and model-specific prompts to get the most out of the LLM
 2. Interfacing with the LLM provider (like OpenAI GPT-4 or 3.5)
 3. Parsing the response into local process variables
-4. Handling and automatically fixing common error cases 
-5. Mapping remaining exceptions to BPMN errors so that you can react to them with boundary events 
+4. Handling and automatically fixing common error cases
 
 ---
 
@@ -60,6 +59,11 @@ Run the connector runtime using a pre-built image from DockerHub:
 ```bash 
 docker run --env-file connector-secrets.txt holisticon/camunda-8-connector-gpt:develop
 ```
+
+### Use Element Templates
+
+1. Upload the element templates from [/element-templates](/element-templates) to your project in Camunda Cloud and publish them individually, or if you're working locally, place them besides your .bpmn file. 
+2. Start modeling or try the example processes from [/example](/example).
 
 ## 📚 Connectors Documentation
 
