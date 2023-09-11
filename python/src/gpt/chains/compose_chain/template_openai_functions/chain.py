@@ -97,7 +97,10 @@ class TemplateComposeChain(Chain):
             output_parser=output_parser,
         )
 
-        generated_vars = llm_chain.run({})
+        if len(template_vars_to_generate_dict) > 0:
+            generated_vars = llm_chain.run({})
+        else:
+            generated_vars = {}
         input_vars = {desc_to_var_name(k): v for k, v in inputs['input'].items()}
         all_vars = generated_vars | input_vars
 
