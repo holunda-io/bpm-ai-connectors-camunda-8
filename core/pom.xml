@@ -12,7 +12,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <connector-core.version>0.22.1</connector-core.version>
+    <connector-core.version>0.23.0</connector-core.version>
     <zeebe.version>8.2.11</zeebe.version>
     <ktor.version>2.3.2</ktor.version>
     <kotlinx-coroutines-core-jvm.version>1.6.4</kotlinx-coroutines-core-jvm.version>
