@@ -1,4 +1,5 @@
 import json
+import os
 from typing import List, Tuple
 
 import langchain
@@ -341,31 +342,33 @@ def test_retrieve():
     qa = create_retrieval_agent(
         llm=ChatOpenAI(model_name="gpt-4", temperature=0),
         database='azure_cognitive_search',
-        database_url='https://congnitive-search-test.search.windows.net/bikestore-demo',
-        database_password="",
+        database_url=os.getenv("AZURE_COGNITIVE_SEARCH_URL") + "/" + "bikestore",
+        database_password=os.getenv("AZURE_COGNITIVE_SEARCH_KEY"),
         embedding_provider="openai",
         embedding_model="text-embedding-ada-002",
         multi_query_expansion=False,
-        metadata_field_info=[
-            {
-                "name": "bike_make",
-                "description": "The bike make.",
-                "type": "string",
-                "enum": ["Sun Bicycles", "Cowboy"]
-            },
-            {
-                "name": "bike_model",
-                "description": "The bike model.",
-                "type": "string",
-                "enum": ["Electrolite", "3"]
-            },
-        ],
+        # metadata_field_info=[
+        #     {
+        #         "name": "bike_make",
+        #         "description": "The bike make.",
+        #         "type": "string",
+        #         "enum": ["Sun Bicycles", "Cowboy"]
+        #     },
+        #     {
+        #         "name": "bike_model",
+        #         "description": "The bike model.",
+        #         "type": "string",
+        #         "enum": ["Electrolite", "3"]
+        #     },
+        # ],
+        reranker="cohere",
+        filter_metadata_field="bike_model",
+        summary_index="summary-index",
         parent_document_store="azure_cosmos_nosql",
-        parent_document_store_url="https://bennetkrause.documents.azure.com:443/",
+        parent_document_store_url=os.getenv("AZURE_COSMOS_DB_URL"),
         parent_document_store_namespace="bikestore",
-        parent_document_store_password="",
+        parent_document_store_password=os.getenv("AZURE_COSMOS_DB_KEY"),
     )
-    #print(qa.run('what happens if an account is canceled that still has gift card balance?'))
     print(qa(
             inputs={
                 "input": 'How far can I ride the Sun Bicycles Electrolite with assist on?',

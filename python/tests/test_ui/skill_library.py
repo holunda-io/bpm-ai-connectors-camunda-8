@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 from dotenv import load_dotenv
 
@@ -12,9 +14,10 @@ from gpt.chains.retrieval_chain.chain import get_vector_store
 st.title('📚 Skill Library')
 
 vector_store = get_vector_store(
-    'weaviate',
-    'http://localhost:8080/SkillLibrary',
+    'azure_cognitive_search',
+    'https://bikestore-vector-search.search.windows.net/gpt-connectors-skill-store',
     OpenAIEmbeddings(),
+    password=os.getenv("AZURE_COGNITIVE_SEARCH_KEY"),
     meta_attributes=['task', 'comment', 'function', 'example_call']
 )
 

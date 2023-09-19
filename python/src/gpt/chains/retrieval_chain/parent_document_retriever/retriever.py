@@ -7,16 +7,20 @@ from langchain.schema import BaseRetriever, BaseStore, Document
 from langchain.text_splitter import TextSplitter
 from langchain.vectorstores import VectorStore
 
+from gpt.chains.retrieval_chain.metadata_filter.filter_chain import MetadataFilterRetriever
+
 
 class ParentDocumentRetriever(BaseRetriever):
     """Retrieve from a set of multiple embeddings for the same document."""
+
+    n: int = 4
 
     child_retriever: BaseRetriever
     """The underlying vectorstore to use to store small chunks
     and their embedding vectors"""
     docstore: BaseStore[str, str]
     """The storage layer for the parent documents"""
-    id_key: str = "doc_id"
+    id_key: str = "parent_id"
     search_kwargs: dict = Field(default_factory=dict)
     """Keyword arguments to pass to the search function."""
 
@@ -42,21 +46,22 @@ class ParentDocumentRetriever(BaseRetriever):
             id_counts[parent_id] += 1
 
         # If there's at least one parent_doc with id_count > 1, prune those with id_count = 1
-        if any(count > 1 for count in id_counts.values()):
-            id_counts = {k: v for k, v in id_counts.items() if v > 1}
+        #if any(count > 1 for count in id_counts.values()):
+        #    id_counts = {k: v for k, v in id_counts.items() if v > 1}
 
         # Sort the parent_doc ids based on their counts in descending order
         sorted_ids = sorted(id_counts.keys(), key=lambda x: id_counts[x], reverse=True)
 
         # Take the top 3 most relevant parent_doc ids
-        top_ids = sorted_ids[:4]
+        top_ids = sorted_ids[:self.n]
 
         # Fetch the content of these parent_docs
         doc_contents = self.docstore.mget(top_ids)
 
-        print("Counts for the top 3 parent documents:")
-        for idx, parent_id in enumerate(top_ids, 1):
-            print(f"#{idx}: Parent ID {parent_id} - Child hit count: {id_counts[parent_id]}")
+        print(f"Counts for the top {self.n} parent documents:")
+        for idx, parent_id in enumerate(top_ids, 0):
+            #print(f"#{idx}: Parent ID {parent_id} - Child hit count: {id_counts[parent_id]}")
+            print(f"#{idx}: {doc_contents[idx][:24]} - Child hit count: {id_counts[parent_id]}")
 
         return [Document(page_content=c) for c in doc_contents if c is not None]
 

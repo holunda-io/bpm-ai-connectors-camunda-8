@@ -79,6 +79,9 @@ class RetrievalTask(BaseModel):
     embedding_model: str
     mode: str
     query: str
+    reranker: Optional[str] = None
+    filter_metadata_field: Optional[str] = None
+    summary_index: Optional[str] = None
     document_content_description: Optional[str] = None
     metadata_field_info: Optional[List[dict]] = None
     output_schema: Optional[dict] = None

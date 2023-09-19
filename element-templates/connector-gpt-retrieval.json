@@ -157,6 +157,66 @@
       }
     },
     {
+      "label": "Reranking",
+      "group": "advanced",
+      "type": "Dropdown",
+      "value": "",
+      "choices": [
+        { "name": "None", "value": "" },
+        { "name": "Cohere Rerank", "value": "cohere" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.reranker"
+      }
+    },
+    {
+      "id": "filtering",
+      "label": "Filtering",
+      "group": "advanced",
+      "type": "Dropdown",
+      "value": "",
+      "choices": [
+        { "name": "None", "value": "" },
+        { "name": "Auto Metadata Filter", "value": "metadata" },
+        { "name": "Summary Index", "value": "summary" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.filtering"
+      }
+    },
+    {
+      "label": "Summary Index",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.summaryIndex"
+      },
+      "condition": {
+        "property": "filtering",
+        "equals": "summary"
+      }
+    },
+    {
+      "label": "Filter Attribute",
+      "group": "advanced",
+      "type": "String",
+      "feel": "optional",
+      "value": "",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "advanced.filterMetadataField"
+      },
+      "condition": {
+        "property": "filtering",
+        "equals": "summary"
+      }
+    },
+    {
       "label": "Document Content Description",
       "group": "advanced",
       "type": "String",
@@ -165,6 +225,10 @@
       "binding": {
         "type": "zeebe:input",
         "name": "advanced.documentDescription"
+      },
+      "condition": {
+        "property": "filtering",
+        "equals": "metadata"
       }
     },
     {
@@ -177,6 +241,10 @@
       "binding": {
         "type": "zeebe:input",
         "name": "advanced.fieldMetadata"
+      },
+      "condition": {
+        "property": "filtering",
+        "equals": "metadata"
       }
     },
     {

@@ -30,6 +30,9 @@ data class EmbeddingConfig(
 )
 
 data class AdvancedConfig(
+    val reranker: String,
+    val summaryIndex: String?,
+    val filterMetadataField: String?,
     val fieldMetadata: JsonNode?,
     val documentDescription: String?,
     val parentDocumentStore: ParentDocumentConfig,

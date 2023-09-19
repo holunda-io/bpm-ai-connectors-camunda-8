@@ -17,6 +17,13 @@ from langchain.vectorstores import (
     VectorStore,
 )
 
+class QueryContext(BaseModel):
+    original_query: Optional[str] = None
+    modified_query: Optional[str] = None
+
+    def get_query(self):
+        return self.modified_query or self.original_query
+
 
 class MetadataFilterRetriever(BaseRetriever, BaseModel):
     """Retriever that uses a vector store and an LLM to generate
@@ -35,6 +42,8 @@ class MetadataFilterRetriever(BaseRetriever, BaseModel):
     verbose: bool = False
     """Use original query instead of the revised new query from LLM"""
     use_original_query: bool = False
+
+    query_context: Optional[QueryContext] = None
 
     k = 4
 
@@ -113,6 +122,10 @@ New query without information already present in filter:""")
         #if self.use_original_query:
         #    new_query = query
 
+        if self.query_context:
+            self.query_context.original_query = query
+            self.query_context.modified_query = new_query
+
         search_kwargs = {**self.search_kwargs, **new_kwargs}
         docs = self.vectorstore.search(new_query, self.search_type, **search_kwargs)
         return docs
@@ -128,6 +141,7 @@ New query without information already present in filter:""")
         chain_kwargs: Optional[Dict] = None,
         enable_limit: bool = False,
         use_original_query: bool = False,
+        query_context: Optional[QueryContext] = None,
         **kwargs: Any,
     ) -> "MetadataFilterRetriever":
         if structured_query_translator is None:
@@ -155,5 +169,6 @@ New query without information already present in filter:""")
             vectorstore=vectorstore,
             use_original_query=use_original_query,
             structured_query_translator=structured_query_translator,
+            query_context=query_context,
             **kwargs,
         )
