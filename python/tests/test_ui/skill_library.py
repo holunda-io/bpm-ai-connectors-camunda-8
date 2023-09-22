@@ -9,7 +9,7 @@ from langchain.cache import SQLiteCache
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 from langchain.embeddings import OpenAIEmbeddings
-from gpt.chains.retrieval_chain.chain import get_vector_store
+from gpt.config import get_vector_store
 
 st.title('📚 Skill Library')
 

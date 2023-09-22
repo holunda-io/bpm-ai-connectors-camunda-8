@@ -1,7 +1,7 @@
 from langchain.base_language import BaseLanguageModel
 from langchain.chains import RetrievalQA
 from langchain.chains.base import Chain
-from gpt.chains.retrieval_chain.config import get_vector_store, get_embeddings
+from gpt.config import get_embeddings, get_vector_store
 from gpt.chains.retrieval_chain.multiquery_retriever.retriever import create_multi_query_retriever
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
 from gpt.chains.support.sub_query_retriever.chain import SubQueryRetriever

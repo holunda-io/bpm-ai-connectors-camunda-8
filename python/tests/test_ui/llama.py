@@ -15,7 +15,7 @@ from langchain.llms import LlamaCpp
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-from gpt.chains.retrieval_chain.chain import get_vector_store
+from gpt.config import get_vector_store
 
 langchain.llm_cache = SQLiteCache(database_path="../manual_integration/.langchain-test.db")
 

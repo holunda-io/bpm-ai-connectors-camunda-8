@@ -16,9 +16,8 @@ from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
-from gpt.chains.retrieval_chain.chain import get_vector_store
 from gpt.chains.translate_chain.chain import create_translate_chain
-from gpt.config import model_id_to_llm
+from gpt.config import model_id_to_llm, get_vector_store, get_embeddings, get_document_store
 from gpt.server.types import RetrievalTask, ComposeTask, GenericTask, TranslateTask, DecideTask, ExtractTask, \
     ProcessTask, ExecutorTask, PlannerTask, \
     DatabaseTask, OpenApiTask
@@ -55,14 +54,12 @@ async def post(task: DecideTask):
 
 @app.post("/translate")
 async def post(task: TranslateTask):
-    with patch('openai.ChatCompletion.create', side_effect=RateLimitError()):
-
-        chain = create_translate_chain(
-             llm=model_id_to_llm(task.model),
-             input_keys=list(task.input.keys()),
-             target_language=task.target_language
-        )
-        return chain.run(input=task.input)
+    chain = create_translate_chain(
+        llm=model_id_to_llm(task.model),
+        input_keys=list(task.input.keys()),
+        target_language=task.target_language
+    )
+    return chain.run(input=task.input)
 
 
 @app.post("/compose")
@@ -143,23 +140,33 @@ async def post(task: DatabaseTask):
 
 @app.post("/retrieval")
 async def post(task: RetrievalTask):
+    embeddings = get_embeddings(task.embedding_provider, task.embedding_model)
+    vector_store = get_vector_store(task.database, task.database_url, embeddings, password=task.password)
+    if task.parent_document_store:
+        parent_document_store = get_document_store(
+            task.parent_document_store,
+            task.parent_document_store_url,
+            task.parent_document_store_namespace,
+            password=task.parent_document_store_password
+        )
+    else:
+        parent_document_store = None
+
+    if task.summary_index:
+        base_url, _ = task.database_url.rsplit('/', 1)
+        summary_store = get_vector_store(task.database, base_url + "/" + task.summary_index, embeddings, password=task.password)
+    else:
+        summary_store = None
     agent = create_retrieval_agent(
         llm=model_id_to_llm(task.model),
-        database=task.database,
-        database_url=task.database_url,
-        database_password=task.password,
-        embedding_provider=task.embedding_provider,
-        embedding_model=task.embedding_model,
+        vector_store=vector_store,
         output_schema=task.output_schema,
         reranker=task.reranker,
         filter_metadata_field=task.filter_metadata_field,
-        summary_index=task.summary_index,
         document_content_description=task.document_content_description,
         metadata_field_info=task.metadata_field_info,
-        parent_document_store=task.parent_document_store,
-        parent_document_store_url=task.parent_document_store_url,
-        parent_document_store_password=task.parent_document_store_password,
-        parent_document_store_namespace=task.parent_document_store_namespace,
+        summary_store=summary_store,
+        parent_document_store=parent_document_store,
         parent_document_id_key=task.parent_document_id_key
     )
     result = agent.run(input=task.query, context="")

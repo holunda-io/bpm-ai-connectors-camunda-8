@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 from langchain.callbacks.streamlit.streamlit_callback_handler import ToolRecord
 from langchain.embeddings import OpenAIEmbeddings
 
-from gpt.chains.retrieval_chain.chain import get_vector_store
-
 load_dotenv(dotenv_path='../../../connector-secrets.txt')
 from langchain.callbacks import StreamlitCallbackHandler, LLMThoughtLabeler
 
@@ -16,7 +14,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.cache import SQLiteCache
 
 langchain.llm_cache = SQLiteCache(database_path="../manual_integration/.langchain-test.db")
-from gpt.config import get_openai_chat_llm
+from gpt.config import get_openai_chat_llm, get_vector_store
 
 llm = ChatOpenAI(
         model_name='gpt-4',

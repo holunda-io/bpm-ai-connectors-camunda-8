@@ -14,7 +14,7 @@ import kotlinx.coroutines.*
 
 object LLMServiceClient {
 
-    val llmServiceUrl = System.getenv("LLM_SERVICE_URL") ?: "http://localhost:9999"
+    var llmServiceUrl = System.getenv("LLM_SERVICE_URL") ?: "http://localhost:9999"
 
     val client = HttpClient {
         install(ContentNegotiation) {

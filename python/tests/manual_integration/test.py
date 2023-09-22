@@ -24,13 +24,14 @@ from gpt.agents.retrieval_agent.retrieval_agent import create_retrieval_agent
 from gpt.chains.compose_chain.chain import create_compose_chain
 from gpt.chains.decide_chain.chain import create_decide_chain
 from gpt.chains.generic_chain.chain import create_generic_chain
-from gpt.chains.retrieval_chain.chain import create_legacy_retrieval_chain, get_vector_store
+from gpt.chains.retrieval_chain.chain import create_legacy_retrieval_chain
 from gpt.chains.support.flare_instruct.base import FLAREInstructChain
 from agents.openapi_agent.openapi_spec import get_test_api_spec_str_for_url
 
 langchain.llm_cache = SQLiteCache(database_path=".langchain-test.db")
 
-from gpt.config import get_openai_chat_llm, LUMINOUS_SUPREME_CONTROL
+from gpt.config import get_openai_chat_llm, LUMINOUS_SUPREME_CONTROL, get_vector_store, get_embeddings, \
+    get_document_store
 from gpt.chains.extract_chain.chain import create_extract_chain
 from gpt.agents.openapi_agent.agent import create_openapi_agent
 from gpt.agents.plan_and_execute.executor.executor import create_executor
@@ -339,13 +340,29 @@ def test_clear_skills():
 
 @pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_retrieve():
+    embeddings = get_embeddings("openai", "text-embedding-ada-002")
+    vector_store = get_vector_store(
+        'azure_cognitive_search',
+        os.getenv("AZURE_COGNITIVE_SEARCH_URL") + "/" + "bikestore",
+        embeddings,
+        password=os.getenv("AZURE_COGNITIVE_SEARCH_KEY")
+    )
+    parent_document_store = get_document_store(
+        "azure_cosmos_nosql",
+        os.getenv("AZURE_COSMOS_DB_URL"),
+        "bikestore",
+        password=os.getenv("AZURE_COSMOS_DB_KEY")
+    )
+    summary_store = get_vector_store(
+        'azure_cognitive_search',
+        os.getenv("AZURE_COGNITIVE_SEARCH_URL") + "/" + "summary-index",
+        embeddings,
+        password=os.getenv("AZURE_COGNITIVE_SEARCH_KEY")
+    )
+
     qa = create_retrieval_agent(
         llm=ChatOpenAI(model_name="gpt-4", temperature=0),
-        database='azure_cognitive_search',
-        database_url=os.getenv("AZURE_COGNITIVE_SEARCH_URL") + "/" + "bikestore",
-        database_password=os.getenv("AZURE_COGNITIVE_SEARCH_KEY"),
-        embedding_provider="openai",
-        embedding_model="text-embedding-ada-002",
+        vector_store=vector_store,
         multi_query_expansion=False,
         # metadata_field_info=[
         #     {
@@ -363,15 +380,13 @@ def test_retrieve():
         # ],
         reranker="cohere",
         filter_metadata_field="bike_model",
-        summary_index="summary-index",
-        parent_document_store="azure_cosmos_nosql",
-        parent_document_store_url=os.getenv("AZURE_COSMOS_DB_URL"),
-        parent_document_store_namespace="bikestore",
-        parent_document_store_password=os.getenv("AZURE_COSMOS_DB_KEY"),
+        summary_store=summary_store,
+        parent_document_store=parent_document_store,
     )
     print(qa(
             inputs={
-                "input": 'How far can I ride the Sun Bicycles Electrolite with assist on?',
+                "input": "I can't decide between the Electra Townie Go! and the Sun Bicycles Electrolite. Could you tell me how they compare in terms of their weight?",
+                #"input": "What is the weight limit of the Electra Townie Go?",
                 "context": ""
             })["output"]["answer"])
 

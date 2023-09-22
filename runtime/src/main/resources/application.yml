@@ -8,6 +8,7 @@ camunda:
     polling:
       enabled: false
 
+
 # uncomment to enable inbound connectors
 #operate:
 #  client:
@@ -19,3 +20,10 @@ camunda:
 #      url: http://localhost:8081
 #      username: demo
 #      password: demo
+
+zeebe:
+  client:
+    worker:
+      max-jobs-active: 1
+    job:
+      timeout: 15m

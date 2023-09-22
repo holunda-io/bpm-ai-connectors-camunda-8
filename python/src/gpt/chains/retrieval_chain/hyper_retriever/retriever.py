@@ -8,7 +8,7 @@ from langchain.schema import BaseRetriever, BaseStore, Document
 from langchain.text_splitter import TextSplitter
 from langchain.vectorstores import VectorStore, AzureSearch
 
-from gpt.chains.retrieval_chain.config import get_embeddings, get_vector_store
+from gpt.config import get_embeddings, get_vector_store
 from gpt.chains.retrieval_chain.metadata_filter.filter_chain import MetadataFilterRetriever
 from gpt.util.query_constructor.azure_search_translator import AzureCognitiveSearchTranslator
 

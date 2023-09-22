@@ -6,11 +6,6 @@ from langchain.schema import AIMessage
 from gpt.chains.extract_chain.standard.chain import create_standard_extract_chain
 from util.fake_llm import FakeLLM
 
-
-def llm_response(json: str):
-    return [f"```\n{json}\n```"]
-
-
 @pytest.mark.parametrize("llm_response, expected_result", [
     ('```\n{ "name": "foo" }\n```', {"name": "foo"}),
     ('```\n{ "name": "foo", "age": 20, "valid": true }\n```', {"name": "foo", "age": 20, "valid": True}),

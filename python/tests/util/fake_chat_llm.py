@@ -23,6 +23,9 @@ class FakeChatOpenAI(BaseChatModel):
     def assert_last_request_contains(self, text: str):
         assert text in messages_to_str(self.requests[-1])
 
+    def assert_last_request_not_contains(self, text: str):
+        assert text not in messages_to_str(self.requests[-1])
+
     def assert_last_request_defined_function(self, function_name: str, function_call: bool = False):
         assert function_name in [f['name'] for f in self.functions[-1]]
         assert (self.function_calls[-1] == function_name) == function_call

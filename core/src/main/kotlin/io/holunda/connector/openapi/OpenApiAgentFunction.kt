@@ -29,7 +29,7 @@ class OpenApiAgentFunction : OutboundConnectorFunction {
 
     private fun executeRequest(request: OpenApiAgentRequest): OpenApiAgentResult {
         val result = LLMServiceClient.run("openapi", OpenApiAgentTask.fromRequest(request))
-        logger.info("OpenApiAgentFunction result: $request")
+        logger.info("OpenApiAgentFunction result: $result")
         return OpenApiAgentResult(result)
     }
 

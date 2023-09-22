@@ -6,8 +6,7 @@ from dotenv import load_dotenv
 from gpt.agents.common.agent.memory import AgentMemory
 from gpt.agents.database_agent.agent import create_database_agent
 from gpt.agents.database_agent.code_exection.base import create_database_code_execution_agent
-from gpt.chains.retrieval_chain.chain import get_vector_store
-from gpt.config import get_openai_chat_llm
+from gpt.config import get_openai_chat_llm, get_vector_store
 
 load_dotenv(dotenv_path='../../../connector-secrets.txt')
 
