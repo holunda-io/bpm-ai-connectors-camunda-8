@@ -230,6 +230,7 @@ def test_retrieval(agent_function_mock):
 
     agent_function_mock.assert_called_with(
         llm=None,
+        filter_llm=None,
         vector_store=None,
         output_schema={'result': 'the result'},
         reranker='test_reranker',

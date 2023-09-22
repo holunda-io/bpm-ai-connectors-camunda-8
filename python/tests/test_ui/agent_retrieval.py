@@ -50,7 +50,8 @@ if prompt := st.chat_input():
         )
 
         agent = create_retrieval_agent(
-            llm=ChatOpenAI(model="gpt-4", streaming=True),
+            llm=ChatOpenAI(model="gpt-4", streaming=True, temperature=0),
+            filter_llm=ChatOpenAI(model="gpt-4", temperature=0),
             vector_store=vector_store,
             parent_document_store=parent_document_store,
             summary_store=summary_store,

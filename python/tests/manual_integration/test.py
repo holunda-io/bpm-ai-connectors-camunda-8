@@ -362,6 +362,7 @@ def test_retrieve():
 
     qa = create_retrieval_agent(
         llm=ChatOpenAI(model_name="gpt-4", temperature=0),
+        filter_llm=ChatOpenAI(model_name="gpt-4", temperature=0),
         vector_store=vector_store,
         multi_query_expansion=False,
         # metadata_field_info=[

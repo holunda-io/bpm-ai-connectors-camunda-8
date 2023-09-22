@@ -159,6 +159,7 @@ async def post(task: RetrievalTask):
         summary_store = None
     agent = create_retrieval_agent(
         llm=model_id_to_llm(task.model),
+        filter_llm=model_id_to_llm(task.model),
         vector_store=vector_store,
         output_schema=task.output_schema,
         reranker=task.reranker,

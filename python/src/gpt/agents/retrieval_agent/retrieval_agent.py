@@ -56,7 +56,7 @@ def json_schema_to_pydantic_model(name: str, schema: Dict[str, Any]) -> Any:
 def create_retrieval_agent(
     llm: BaseChatModel,
     vector_store: VectorStore,
-    filter_llm: BaseChatModel = ChatOpenAI(temperature=0),
+    filter_llm: BaseChatModel,
     summary_store: Optional[VectorStore] = None,
     output_schema: Optional[Dict[str, Union[str, dict]]] = None,
     multi_query_expansion: bool = False,
