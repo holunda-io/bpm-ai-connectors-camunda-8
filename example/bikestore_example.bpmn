@@ -1,0 +1,942 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_026ao2z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.14.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0" camunda:diagramRelationId="95b204b3-1c4c-4427-ba79-796e3289d495">
+  <bpmn:process id="bike_store_customer_service" name="Bike Store Customer Service" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="userTaskForm_1arvaih">{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.2.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "2681830"
+  },
+  "schemaVersion": 10,
+  "components": [
+    {
+      "text": "### Bicycle Insurance Claim",
+      "type": "text",
+      "layout": {
+        "row": "row_1",
+        "col": "auto"
+      },
+      "id": "File_claim"
+    },
+    {
+      "text": "##### Personal Information",
+      "type": "text",
+      "layout": {
+        "row": "row_2",
+        "col": "auto"
+      },
+      "id": "Personal_info"
+    },
+    {
+      "type": "textfield",
+      "layout": {
+        "row": "row_3",
+        "col": "auto"
+      },
+      "id": "Full_name",
+      "label": "Full Name",
+      "validate": {
+        "required": true
+      },
+      "key": "fullName"
+    },
+    {
+      "type": "textfield",
+      "layout": {
+        "row": "row_3",
+        "col": "auto"
+      },
+      "id": "Address",
+      "label": "Address",
+      "validate": {
+        "required": true
+      },
+      "key": "address"
+    },
+    {
+      "type": "textfield",
+      "layout": {
+        "row": "row_4",
+        "col": "auto"
+      },
+      "id": "Phone_number",
+      "label": "Phone Number",
+      "validate": {
+        "required": true
+      },
+      "key": "phoneNumber"
+    },
+    {
+      "text": "##### Bicycle Information",
+      "type": "text",
+      "layout": {
+        "row": "row_5",
+        "col": "auto"
+      },
+      "id": "Bicycle_info"
+    },
+    {
+      "type": "textfield",
+      "layout": {
+        "row": "row_6",
+        "col": "auto"
+      },
+      "id": "Bicycle_brand",
+      "label": "Bicycle Brand",
+      "validate": {
+        "required": true
+      },
+      "key": "bicycleBrand"
+    },
+    {
+      "type": "textfield",
+      "layout": {
+        "row": "row_6",
+        "col": "auto"
+      },
+      "id": "Bicycle_model",
+      "label": "Bicycle Model",
+      "validate": {
+        "required": true
+      },
+      "key": "bicycleModel"
+    },
+    {
+      "type": "number",
+      "layout": {
+        "row": "row_7",
+        "col": "auto"
+      },
+      "id": "Bicycle_value",
+      "label": "Bicycle Value",
+      "validate": {
+        "required": true
+      },
+      "key": "bicycleValue"
+    },
+    {
+      "subtype": "datetime",
+      "dateLabel": "Date of Incident",
+      "label": "Date time",
+      "type": "datetime",
+      "layout": {
+        "row": "Row_1ois9c5",
+        "columns": null
+      },
+      "id": "Field_024yoq9",
+      "key": "incidentDatetime",
+      "timeLabel": "Time of Incident",
+      "timeSerializingFormat": "no_timezone",
+      "timeInterval": 15,
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "type": "textarea",
+      "layout": {
+        "row": "row_9",
+        "col": "auto"
+      },
+      "id": "Incident_description",
+      "label": "Description of Incident",
+      "validate": {
+        "required": true
+      },
+      "key": "incidentDescription"
+    },
+    {
+      "action": "submit",
+      "type": "button",
+      "layout": {
+        "row": "row_11",
+        "col": "auto"
+      },
+      "id": "Submit_claim",
+      "label": "Submit Claim"
+    }
+  ],
+  "generated": true,
+  "type": "default",
+  "id": "Form_1s606cg"
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:boundaryEvent id="Event_01oht24" name="No order number" attachedToRef="Activity_01zbvjd">
+      <bpmn:outgoing>Flow_0g9pdk3</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0mopd1n" errorRef="Error_130b3qo" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_0db6xeo" name="Order No. requested">
+      <bpmn:incoming>Flow_0nse0o5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0g9pdk3" sourceRef="Event_01oht24" targetRef="Activity_1kifd6e" />
+    <bpmn:exclusiveGateway id="Gateway_0p0ay6x" name="Intention?">
+      <bpmn:incoming>Flow_1s28elp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rwnrqs</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1a5wjil</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1jkz7mj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1lx9lyh</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1s28elp" sourceRef="Activity_0qr9wpe" targetRef="Gateway_0p0ay6x" />
+    <bpmn:endEvent id="Event_1o5twhg" name="Question answered">
+      <bpmn:incoming>Flow_0m0o97i</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0rwnrqs" name="Question about order" sourceRef="Gateway_0p0ay6x" targetRef="Activity_01zbvjd">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "QUESTION_ABOUT_ORDER"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1hxbwfm" name="General question answered">
+      <bpmn:incoming>Flow_07p7vuj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1a5wjil" name="General question" sourceRef="Gateway_0p0ay6x" targetRef="Activity_1qloqur">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "GENERAL_BIKE_QUESTION"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_10qzvjk" name="Email handled">
+      <bpmn:incoming>Flow_0cqjxoz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1jkz7mj" name="Other" sourceRef="Gateway_0p0ay6x" targetRef="Activity_0yi1pgm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "OTHER" or intention = null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1nwj9kt" sourceRef="StartEvent_1" targetRef="Activity_167wotv" />
+    <bpmn:sequenceFlow id="Flow_0p6n5wl" sourceRef="Activity_01zbvjd" targetRef="Activity_1nmfkd9" />
+    <bpmn:serviceTask id="Activity_1ycjg05" name="Send answer email" zeebe:modelerTemplate="io.camunda.connectors.SendGrid.v2" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%2015.6846L5.43837%2015.6844V15.7143H0.285706V15.6846ZM0.285706%2010.5619H5.43837V15.6844L0.285706%2015.6846V10.5619Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%200.285706H10.5611V5.40847H5.43837V0.285706ZM10.5616%205.43837H15.7143V10.5611H10.5616V5.43837Z%22%20fill%3D%22%2300B3E3%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V5.40847H5.43837V10.5611Z%22%20fill%3D%22%23009DD9%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%200.285706H15.7143V5.40847H10.5611V0.285706Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%205.40847H15.7143V5.43837H10.5616L10.5611%205.40847Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3C%2Fsvg%3E">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.SENDGRID_KEY" target="apiKey" />
+          <zeebe:input source="Bike Store" target="from.name" />
+          <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
+          <zeebe:input source="=customerInfo.lastname" target="to.name" />
+          <zeebe:input source="=userEmail" target="to.email" />
+          <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
+          <zeebe:input source="=&#34;Re: &#34; + emailSubject" target="content.subject" />
+          <zeebe:input source="text/plain" target="content.type" />
+          <zeebe:input source="=text" target="content.value" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rbxqkl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m0o97i</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0tpnkwe" sourceRef="Activity_167wotv" targetRef="Activity_0qr9wpe" />
+    <bpmn:sequenceFlow id="Flow_1lx9lyh" name="Insurance claim" sourceRef="Gateway_0p0ay6x" targetRef="Gateway_1tdm5e3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=intention = "INSURANCE_CLAIM"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_0mapqjl" name="Submit insurance claim">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_1arvaih" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=if insuranceClaim.fullName = null then &#34;&#34; else insuranceClaim.fullName" target="fullName" />
+          <zeebe:input source="=if insuranceClaim.address = null then &#34;&#34; else insuranceClaim.address " target="address" />
+          <zeebe:input source="=if insuranceClaim.phoneNumber = null then &#34;&#34; else insuranceClaim.phoneNumber" target="phoneNumber" />
+          <zeebe:input source="=if insuranceClaim.bicycleBrand = null then &#34;&#34; else insuranceClaim.bicycleBrand" target="bicycleBrand" />
+          <zeebe:input source="=if insuranceClaim.bicycleModel = null then &#34;&#34; else insuranceClaim.bicycleModel" target="bicycleModel" />
+          <zeebe:input source="=if insuranceClaim.bicycleValue = null then &#34;&#34; else insuranceClaim.bicycleValue" target="bicycleValue" />
+          <zeebe:input source="=if insuranceClaim.incidentDatetime = null then &#34;&#34; else insuranceClaim.incidentDatetime" target="incidentDatetime" />
+          <zeebe:input source="=if insuranceClaim.incidentDescription = null then &#34;&#34; else insuranceClaim.incidentDescription" target="incidentDescription" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0v61jm0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b9sorb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_0xzid7h" name="Claim submitted">
+      <bpmn:incoming>Flow_0mu3tso</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1qy188i" name="Send email" zeebe:modelerTemplate="io.camunda.connectors.SendGrid.v2" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%2015.6846L5.43837%2015.6844V15.7143H0.285706V15.6846ZM0.285706%2010.5619H5.43837V15.6844L0.285706%2015.6846V10.5619Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%200.285706H10.5611V5.40847H5.43837V0.285706ZM10.5616%205.43837H15.7143V10.5611H10.5616V5.43837Z%22%20fill%3D%22%2300B3E3%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V5.40847H5.43837V10.5611Z%22%20fill%3D%22%23009DD9%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%200.285706H15.7143V5.40847H10.5611V0.285706Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%205.40847H15.7143V5.43837H10.5616L10.5611%205.40847Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3C%2Fsvg%3E">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.SENDGRID_KEY" target="apiKey" />
+          <zeebe:input source="Bike Store" target="from.name" />
+          <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
+          <zeebe:input source="=customerInfo.lastname" target="to.name" />
+          <zeebe:input source="=userEmail" target="to.email" />
+          <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
+          <zeebe:input source="=&#34;Re: &#34; + emailSubject" target="content.subject" />
+          <zeebe:input source="text/plain" target="content.type" />
+          <zeebe:input source="=text" target="content.value" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00ktqmc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nse0o5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1lprcc8" sourceRef="Activity_1whqz9g" targetRef="Activity_061xaos" />
+    <bpmn:sequenceFlow id="Flow_0ba0vk3" sourceRef="Activity_1qloqur" targetRef="Activity_1whqz9g" />
+    <bpmn:serviceTask id="Activity_0tnw5u6" name="Send answer email" zeebe:modelerTemplate="io.camunda.connectors.SendGrid.v2" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%2015.6846L5.43837%2015.6844V15.7143H0.285706V15.6846ZM0.285706%2010.5619H5.43837V15.6844L0.285706%2015.6846V10.5619Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%200.285706H10.5611V5.40847H5.43837V0.285706ZM10.5616%205.43837H15.7143V10.5611H10.5616V5.43837Z%22%20fill%3D%22%2300B3E3%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V5.40847H5.43837V10.5611Z%22%20fill%3D%22%23009DD9%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%200.285706H15.7143V5.40847H10.5611V0.285706Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%205.40847H15.7143V5.43837H10.5616L10.5611%205.40847Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3C%2Fsvg%3E">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.SENDGRID_KEY" target="apiKey" />
+          <zeebe:input source="Bike Store" target="from.name" />
+          <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
+          <zeebe:input source="=customerInfo.lastname" target="to.name" />
+          <zeebe:input source="=userEmail" target="to.email" />
+          <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
+          <zeebe:input source="=&#34;Re: &#34; + emailSubject" target="content.subject" />
+          <zeebe:input source="text/plain" target="content.type" />
+          <zeebe:input source="=text" target="content.value" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0gl895s</bpmn:incoming>
+      <bpmn:outgoing>Flow_07p7vuj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0haq9rm" sourceRef="Activity_1nmfkd9" targetRef="Activity_0dn2d03" />
+    <bpmn:sequenceFlow id="Flow_0v61jm0" sourceRef="Activity_11ulumq" targetRef="Activity_0mapqjl" />
+    <bpmn:serviceTask id="Activity_1v3qvwy" name="Send reply email" zeebe:modelerTemplate="io.camunda.connectors.SendGrid.v2" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%2015.6846L5.43837%2015.6844V15.7143H0.285706V15.6846ZM0.285706%2010.5619H5.43837V15.6844L0.285706%2015.6846V10.5619Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%200.285706H10.5611V5.40847H5.43837V0.285706ZM10.5616%205.43837H15.7143V10.5611H10.5616V5.43837Z%22%20fill%3D%22%2300B3E3%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V5.40847H5.43837V10.5611Z%22%20fill%3D%22%23009DD9%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%200.285706H15.7143V5.40847H10.5611V0.285706Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%205.40847H15.7143V5.43837H10.5616L10.5611%205.40847Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3C%2Fsvg%3E">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.SENDGRID_KEY" target="apiKey" />
+          <zeebe:input source="Bike Store" target="from.name" />
+          <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
+          <zeebe:input source="=if customerInfo.lastname = null then &#34;Customer&#34; else customerInfo.lastname" target="to.name" />
+          <zeebe:input source="=userEmail" target="to.email" />
+          <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
+          <zeebe:input source="Your Email to Bike Store: We&#39;re On It!" target="content.subject" />
+          <zeebe:input source="text/plain" target="content.type" />
+          <zeebe:input source="=text" target="content.value" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ltu8tq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cqjxoz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="StartEvent_1" name="Email received" zeebe:modelerTemplate="io.camunda.connectors.webhook.WebhookConnector.v1" zeebe:modelerTemplateVersion="6" zeebe:modelerTemplateIcon="data:image/svg+xml,%3Csvg id=&#39;icon&#39; xmlns=&#39;http://www.w3.org/2000/svg&#39; width=&#39;18&#39; height=&#39;18&#39; viewBox=&#39;0 0 32 32&#39;%3E%3Cdefs%3E%3Cstyle%3E .cls-1 %7B fill: none; %7D %3C/style%3E%3C/defs%3E%3Cpath d=&#39;M24,26a3,3,0,1,0-2.8164-4H13v1a5,5,0,1,1-5-5V16a7,7,0,1,0,6.9287,8h6.2549A2.9914,2.9914,0,0,0,24,26Z&#39;/%3E%3Cpath d=&#39;M24,16a7.024,7.024,0,0,0-2.57.4873l-3.1656-5.5395a3.0469,3.0469,0,1,0-1.7326.9985l4.1189,7.2085.8686-.4976a5.0006,5.0006,0,1,1-1.851,6.8418L17.937,26.501A7.0005,7.0005,0,1,0,24,16Z&#39;/%3E%3Cpath d=&#39;M8.532,20.0537a3.03,3.03,0,1,0,1.7326.9985C11.74,18.47,13.86,14.7607,13.89,14.708l.4976-.8682-.8677-.497a5,5,0,1,1,6.812-1.8438l1.7315,1.002a7.0008,7.0008,0,1,0-10.3462,2.0356c-.457.7427-1.1021,1.8716-2.0737,3.5728Z&#39;/%3E%3Crect id=&#39;_Transparent_Rectangle_&#39; data-name=&#39;&#38;lt;Transparent Rectangle&#38;gt;&#39; class=&#39;cls-1&#39; width=&#39;32&#39; height=&#39;32&#39;/%3E%3C/svg%3E">
+      <bpmn:extensionElements>
+        <zeebe:properties>
+          <zeebe:property name="inbound.type" value="io.camunda:webhook:1" />
+          <zeebe:property name="inbound.subtype" value="ConfigurableInboundWebhook" />
+          <zeebe:property name="inbound.method" value="post" />
+          <zeebe:property name="inbound.context" value="c1fb0b71-30f8-4f4e-a05a-ad7287b2b7e3" />
+          <zeebe:property name="inbound.shouldValidateHmac" value="disabled" />
+          <zeebe:property name="inbound.auth.type" value="NONE" />
+          <zeebe:property name="resultVariable" value="fullPayload" />
+          <zeebe:property name="resultExpression" value="={&#10;  emailSubject: request.body.subject,&#10;  emailBody: request.body.body,&#10;  userEmail: request.body.userEmail,&#10;  customerEmail: request.body.customerEmail&#10;}" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1nwj9kt</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_167wotv" name="Extract customer data" zeebe:modelerTemplate="26bd33af-d894-48ff-96a0-8a673d39e7cd" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-extract:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_3" target="model" />
+          <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
+          <zeebe:input source="={&#10;  firstname: &#34;first name&#34;,&#10;  lastname: &#34;last name&#34;,&#10;  language: &#34;what is the language that the email body is written in, as two letter ISO code?&#34;&#10;}" target="extractionJson" />
+          <zeebe:input source="SINGLE" target="mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={customerInfo: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nwj9kt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tpnkwe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0qr9wpe" name="Determine intention" zeebe:modelerTemplate="a9dcda95-9a45-439a-8f41-87eac8eb2c1e" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0yMCAxNEMyMS4xMDQ2IDE0IDIyIDEzLjEwNDYgMjIgMTJDMjIgMTAuODk1NCAyMS4xMDQ2IDEwIDIwIDEwQzE4Ljg5NTQgMTAgMTggMTAuODk1NCAxOCAxMkMxOCAxMy4xMDQ2IDE4Ljg5NTQgMTQgMjAgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCA2QzIxLjEwNDYgNiAyMiA1LjEwNDU3IDIyIDRDMjIgMi44OTU0MyAyMS4xMDQ2IDIgMjAgMkMxOC44OTU0IDIgMTggMi44OTU0MyAxOCA0QzE4IDUuMTA0NTcgMTguODk1NCA2IDIwIDZaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCAyMkMyMS4xMDQ2IDIyIDIyIDIxLjEwNDYgMjIgMjBDMjIgMTguODk1NCAyMS4xMDQ2IDE4IDIwIDE4QzE4Ljg5NTQgMTggMTggMTguODk1NCAxOCAyMEMxOCAyMS4xMDQ2IDE4Ljg5NTQgMjIgMjAgMjJaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik00IDE0QzUuMTA0NTcgMTQgNiAxMy4xMDQ2IDYgMTJDNiAxMC44OTU0IDUuMTA0NTcgMTAgNCAxMEMyLjg5NTQzIDEwIDIgMTAuODk1NCAyIDEyQzIgMTMuMTA0NiAyLjg5NTQzIDE0IDQgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02IDEySDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xOCA0SDE0QzEyIDQgMTEgNSAxMSA3VjE3QzExIDE5IDEyIDIwIDE0IDIwSDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-decide:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
+          <zeebe:input source="We have a bike store that has an online shop and local stores.&#10;Decide what the primary intention of the customer&#39;s mail is: asking about a specific order in our bike store (even if the customer may not specify the specific order); Having general questions about a bike, our product line, or issues with a bike; Filing a bike insurance claim; Or any other intention not related to the above." target="instructions" />
+          <zeebe:input source="STRING" target="outputType" />
+          <zeebe:input source="=[&#10;  &#34;QUESTION_ABOUT_ORDER&#34;,&#10;  &#34;GENERAL_BIKE_QUESTION&#34;,&#10;  &#34;INSURANCE_CLAIM&#34;,&#10;  &#34;OTHER&#34;&#10;]" target="possibleValues" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#10;  intention: result.decision,&#10;  intentionReasoning: result.reasoning&#10;}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0tpnkwe</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s28elp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_01zbvjd" name="Extract question details" zeebe:modelerTemplate="26bd33af-d894-48ff-96a0-8a673d39e7cd" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-extract:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={&#10;  &#34;emailSubject&#34;: emailSubject,&#10;  &#34;emailBody&#34;: emailBody &#10;}" target="inputJson" />
+          <zeebe:input source="={&#10;  question: &#34;what question does the customer have? Should be a fully formed question.&#34;,&#10;  orderNo: {&#10;    description: &#34;the order number&#34;,&#10;    type: &#34;integer&#34;&#10;  }&#10;}" target="extractionJson" />
+          <zeebe:input source="SINGLE" target="mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#10;  question: result.question,&#10;  orderNo: result.orderNo&#10;}" />
+          <zeebe:header key="errorExpression" value="=if response.orderNo = null then&#10;  bpmnError(&#34;NO_ORDER_NUMBER&#34;, &#34;No order number provided.&#34;)&#10;else null" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rwnrqs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p6n5wl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1nmfkd9" name="Answer order question" zeebe:modelerTemplate="c0591679-4c0b-4d1e-a3c7-082cbdabe50f" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0zLjE3MDA0IDcuNDM5OTRMMTIgMTIuNTQ5OUwyMC43NyA3LjQ2OTkxIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xMiAyMS42MDk5VjEyLjUzOTkiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTIxLjYxIDEyLjgzVjkuMTdDMjEuNjEgNy43OSAyMC42MiA2LjExMDAyIDE5LjQxIDUuNDQwMDJMMTQuMDcgMi40OEMxMi45MyAxLjg0IDExLjA3IDEuODQgOS45Mjk5OSAyLjQ4TDQuNTkgNS40NDAwMkMzLjM4IDYuMTEwMDIgMi4zOTAwMSA3Ljc5IDIuMzkwMDEgOS4xN1YxNC44M0MyLjM5MDAxIDE2LjIxIDMuMzggMTcuODkgNC41OSAxOC41Nkw5LjkyOTk5IDIxLjUyQzEwLjUgMjEuODQgMTEuMjUgMjIgMTIgMjJDMTIuNzUgMjIgMTMuNSAyMS44NCAxNC4wNyAyMS41MiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuMiAyMS40QzIwLjk2NzMgMjEuNCAyMi40IDE5Ljk2NzMgMjIuNCAxOC4yQzIyLjQgMTYuNDMyNyAyMC45NjczIDE1IDE5LjIgMTVDMTcuNDMyNyAxNSAxNiAxNi40MzI3IDE2IDE4LjJDMTYgMTkuOTY3MyAxNy40MzI3IDIxLjQgMTkuMiAyMS40WiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMjMgMjJMMjIgMjEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-database:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#10;  &#34;orderId&#34;: orderNo,&#10;  &#34;order_status_dict&#34;: {&#10;    &#34;1&#34;: &#34;pending&#34;,&#10;    &#34;2&#34;: &#34;processing&#34;,&#10;    &#34;3&#34;: &#34;rejected&#34;,&#10;    &#34;4&#34;: &#34;completed&#34;&#10;  }&#10;}" target="inputJson" />
+          <zeebe:input source="secrets.POSTGRES_CONNECTION" target="databaseUrl" />
+          <zeebe:input source="=question" target="query.query" />
+          <zeebe:input source="use" target="advanced.skillMode" />
+          <zeebe:input source="azure_cognitive_search" target="advanced.skillDatabase.type" />
+          <zeebe:input source="https://bikestore-vector-search.search.windows.net/gpt-connectors-skill-store" target="advanced.skillDatabase.url" />
+          <zeebe:input source="secrets.AZURE_COGNITIVE_SEARCH_KEY" target="advanced.skillDatabase.password" />
+          <zeebe:input source="natural" target="query.outputType" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={answer: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0p6n5wl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0haq9rm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0dn2d03" name="Compose answer email" zeebe:modelerTemplate="78dfbed0-b2ee-4462-b4b2-c4b047ada516" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-compose:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#10;  &#34;customerName&#34;: customerInfo.firstname + &#34; &#34; + customerInfo.lastname,&#10;  &#34;question&#34;: question, &#10;  &#34;answerFromCustomerService&#34;: answer&#10;}" target="inputJson" />
+          <zeebe:input source="letter" target="properties.type" />
+          <zeebe:input source="formal" target="properties.style" />
+          <zeebe:input source="friendly" target="properties.tone" />
+          <zeebe:input source="English" target="properties.language" />
+          <zeebe:input source="adequate" target="properties.length" />
+          <zeebe:input source="0" target="properties.temperature" />
+          <zeebe:input source="template" target="template" />
+          <zeebe:input source="Hello {customerName},&#10;&#10;{ thank the customer for his question }&#10;&#10;{ answer the customer&#39;s question based on the provided customer service answer. If the answer is null, tell the customer that we couldn&#39;t find the information he/she was looking for }&#10;&#10;Best wishes,&#10;Your Bike Store Team" target="description" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={text: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0haq9rm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rbxqkl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1kifd6e" name="Compose reply email" zeebe:modelerTemplate="78dfbed0-b2ee-4462-b4b2-c4b047ada516" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-compose:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_3" target="model" />
+          <zeebe:input source="={ &#10;  &#34;emailBody&#34;: emailBody, &#10;  &#34;emailSubject&#34;: emailSubject&#10;}" target="inputJson" />
+          <zeebe:input source="letter" target="properties.type" />
+          <zeebe:input source="formal" target="properties.style" />
+          <zeebe:input source="friendly" target="properties.tone" />
+          <zeebe:input source="English" target="properties.language" />
+          <zeebe:input source="brief" target="properties.length" />
+          <zeebe:input source="0" target="properties.temperature" />
+          <zeebe:input source="none" target="template" />
+          <zeebe:input source="The customer did not provide an order number. Ask the customer to provide it, so we can answer his question." target="description" />
+          <zeebe:input source="Your Bike Store Team" target="sender" />
+          <zeebe:input source="none" target="alignment.constitutionalPrinciple" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={text: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g9pdk3</bpmn:incoming>
+      <bpmn:outgoing>Flow_00ktqmc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_061xaos" name="Compose answer email" zeebe:modelerTemplate="78dfbed0-b2ee-4462-b4b2-c4b047ada516" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-compose:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#10;  &#34;customerName&#34;: customerInfo.firstname + &#34; &#34; + customerInfo.lastname,&#10;  &#34;question&#34;: question, &#10;  &#34;answerFromCustomerService&#34;: answer&#10;}" target="inputJson" />
+          <zeebe:input source="letter" target="properties.type" />
+          <zeebe:input source="formal" target="properties.style" />
+          <zeebe:input source="friendly" target="properties.tone" />
+          <zeebe:input source="English" target="properties.language" />
+          <zeebe:input source="adequate" target="properties.length" />
+          <zeebe:input source="0" target="properties.temperature" />
+          <zeebe:input source="template" target="template" />
+          <zeebe:input source="Hello {customerName},&#10;&#10;{ thank the customer for his question }&#10;&#10;{ answer the customer&#39;s question based on the provided customer service answer. If the answer is null, tell the customer that we couldn&#39;t find the information he/she was looking for }&#10;&#10;Best wishes,&#10;Your Bike Store Team" target="description" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={text: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1lprcc8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gl895s</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1qloqur" name="Extract question" zeebe:modelerTemplate="26bd33af-d894-48ff-96a0-8a673d39e7cd" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-extract:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
+          <zeebe:input source="={&#10;  question: &#34;what question does the customer have? Should be a fully formed question.&#34;&#10;}" target="extractionJson" />
+          <zeebe:input source="SINGLE" target="mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={question: result.question}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1a5wjil</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ba0vk3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_11ulumq" name="Extract insurance claim data" zeebe:modelerTemplate="26bd33af-d894-48ff-96a0-8a673d39e7cd" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-extract:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="={ &#34;emailBody&#34;: emailBody }" target="inputJson" />
+          <zeebe:input source="={&#10;  fullName: &#34;full name&#34;,&#10;  address: &#34;full address&#34;,&#10;  phoneNumber: &#34;phone number&#34;,&#10;  bicycleBrand: &#34;bicycle brand&#34;,&#10;  bicycleModel: &#34;bicycle model&#34;,&#10;  bicycleValue: {type: &#34;number&#34;, description: &#34;the claimed value of the bicycle&#34;},&#10;  incidentDatetime: &#34;date &#38; time of the incident in format YYYY-MM-DDTHH:MM&#34;,&#10;  incidentDescription: &#34;incident description&#34;&#10;}" target="extractionJson" />
+          <zeebe:input source="SINGLE" target="mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#34;insuranceClaim&#34;: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qkrn0x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v61jm0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1tdm5e3" name="Process claim?" default="Flow_1nxliqq">
+      <bpmn:incoming>Flow_1lx9lyh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qkrn0x</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1nxliqq</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0qkrn0x" sourceRef="Gateway_1tdm5e3" targetRef="Activity_11ulumq">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_1mf6s6r" name="Send confirmation email" zeebe:modelerTemplate="io.camunda.connectors.SendGrid.v2" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%2015.6846L5.43837%2015.6844V15.7143H0.285706V15.6846ZM0.285706%2010.5619H5.43837V15.6844L0.285706%2015.6846V10.5619Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%200.285706H10.5611V5.40847H5.43837V0.285706ZM10.5616%205.43837H15.7143V10.5611H10.5616V5.43837Z%22%20fill%3D%22%2300B3E3%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V5.40847H5.43837V10.5611Z%22%20fill%3D%22%23009DD9%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%200.285706H15.7143V5.40847H10.5611V0.285706Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%205.40847H15.7143V5.43837H10.5616L10.5611%205.40847Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3C%2Fsvg%3E">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="secrets.SENDGRID_KEY" target="apiKey" />
+          <zeebe:input source="Bike Store" target="from.name" />
+          <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
+          <zeebe:input source="=if customerInfo.lastname = null then &#34;Customer&#34; else customerInfo.lastname" target="to.name" />
+          <zeebe:input source="=userEmail" target="to.email" />
+          <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
+          <zeebe:input source="Confirmation of Insurance Claim Submission" target="content.subject" />
+          <zeebe:input source="text/plain" target="content.type" />
+          <zeebe:input source="=text" target="content.value" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0b9sorb</bpmn:incoming>
+      <bpmn:incoming>Flow_1jcw0v5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mu3tso</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1nxliqq" sourceRef="Gateway_1tdm5e3" targetRef="Activity_0zaaug0" />
+    <bpmn:subProcess id="Activity_1e732sm" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0w8hnkg" name="Timeout 5m" isInterrupting="false">
+        <bpmn:outgoing>Flow_02v68ez</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0vj9u54">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_116pyfz" name="Delay notification sent">
+        <bpmn:incoming>Flow_1baafhi</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_02v68ez" sourceRef="Event_0w8hnkg" targetRef="Activity_09a5710" />
+      <bpmn:serviceTask id="Activity_09a5710" name="Compose delay notification email" zeebe:modelerTemplate="78dfbed0-b2ee-4462-b4b2-c4b047ada516" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.holunda:connector-compose:1" />
+          <zeebe:ioMapping>
+            <zeebe:input source="GPT_3" target="model" />
+            <zeebe:input source="={customer: &#34;customer&#34;}" target="inputJson" />
+            <zeebe:input source="letter" target="properties.type" />
+            <zeebe:input source="formal" target="properties.style" />
+            <zeebe:input source="friendly" target="properties.tone" />
+            <zeebe:input source="English" target="properties.language" />
+            <zeebe:input source="adequate" target="properties.length" />
+            <zeebe:input source="0" target="properties.temperature" />
+            <zeebe:input source="template" target="template" />
+            <zeebe:input source="Dear {customer},&#10;&#10;Thank you for reaching out to us!&#10;&#10;We sincerely apologize for the delay in our response. Due to an unexpected high volume of inquiries, our customer service team is currently experiencing longer response times.&#10;&#10;Please rest assured that we are working diligently to get back to you as soon as possible. We appreciate your patience and understanding during this time.&#10;&#10;Warm regards,&#10;Your Bike Store Team" target="description" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders>
+            <zeebe:header key="resultExpression" value="={&#34;text&#34;: result}" />
+          </zeebe:taskHeaders>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_02v68ez</bpmn:incoming>
+        <bpmn:outgoing>Flow_05k5gac</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_05k5gac" sourceRef="Activity_09a5710" targetRef="Activity_0318mzy" />
+      <bpmn:serviceTask id="Activity_0318mzy" name="Send delay notification email" zeebe:modelerTemplate="io.camunda.connectors.SendGrid.v2" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%2015.6846L5.43837%2015.6844V15.7143H0.285706V15.6846ZM0.285706%2010.5619H5.43837V15.6844L0.285706%2015.6846V10.5619Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%200.285706H10.5611V5.40847H5.43837V0.285706ZM10.5616%205.43837H15.7143V10.5611H10.5616V5.43837Z%22%20fill%3D%22%2300B3E3%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V5.40847H5.43837V10.5611Z%22%20fill%3D%22%23009DD9%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%200.285706H15.7143V5.40847H10.5611V0.285706Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%205.40847H15.7143V5.43837H10.5616L10.5611%205.40847Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3C%2Fsvg%3E">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
+          <zeebe:ioMapping>
+            <zeebe:input source="secrets.SENDGRID_KEY" target="apiKey" />
+            <zeebe:input source="Bike Store" target="from.name" />
+            <zeebe:input source="bennet.krause@holisticon.de" target="from.email" />
+            <zeebe:input source="Customer" target="to.name" />
+            <zeebe:input source="=userEmail" target="to.email" />
+            <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
+            <zeebe:input source="Your Email to Bike Store: An Update" target="content.subject" />
+            <zeebe:input source="text/plain" target="content.type" />
+            <zeebe:input source="=text" target="content.value" />
+          </zeebe:ioMapping>
+          <zeebe:taskHeaders />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_05k5gac</bpmn:incoming>
+        <bpmn:outgoing>Flow_1baafhi</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_1baafhi" sourceRef="Activity_0318mzy" targetRef="Event_116pyfz" />
+    </bpmn:subProcess>
+    <bpmn:serviceTask id="Activity_0yi1pgm" name="Compose reply email" zeebe:modelerTemplate="78dfbed0-b2ee-4462-b4b2-c4b047ada516" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-compose:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_3" target="model" />
+          <zeebe:input source="={customer: (if customerInfo.lastname = null or customerInfo.firstname = null then &#34;customer&#34; else customerInfo.firstname + &#34; &#34; + customerInfo.lastname)}" target="inputJson" />
+          <zeebe:input source="letter" target="properties.type" />
+          <zeebe:input source="formal" target="properties.style" />
+          <zeebe:input source="friendly" target="properties.tone" />
+          <zeebe:input source="English" target="properties.language" />
+          <zeebe:input source="adequate" target="properties.length" />
+          <zeebe:input source="0" target="properties.temperature" />
+          <zeebe:input source="template" target="template" />
+          <zeebe:input source="Dear {customer},&#10;&#10;Thank you for reaching out to us!&#10;&#10;We wanted to let you know that, unfortunately, we could not automatically process your recent email. Not to worry, though; our dedicated customer service team will personally handle your inquiry to ensure all your concerns are addressed.&#10;&#10;Please note that due to a high volume of inquiries, it might take us a few days to get back to you. We appreciate your patience as we work to provide you with the assistance you need.&#10;&#10;Thank you for your understanding and for being a valued member of our community.&#10;&#10;Warm regards,&#10;Your Bike Store Team" target="description" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#34;text&#34;: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jkz7mj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ltu8tq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0zaaug0" name="Compose reply email" zeebe:modelerTemplate="78dfbed0-b2ee-4462-b4b2-c4b047ada516" zeebe:modelerTemplateVersion="1" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-compose:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_3" target="model" />
+          <zeebe:input source="={customer: (if customerInfo.lastname = null or customerInfo.firstname = null then &#34;customer&#34; else customerInfo.firstname + &#34; &#34; + customerInfo.lastname)}" target="inputJson" />
+          <zeebe:input source="letter" target="properties.type" />
+          <zeebe:input source="formal" target="properties.style" />
+          <zeebe:input source="friendly" target="properties.tone" />
+          <zeebe:input source="English" target="properties.language" />
+          <zeebe:input source="adequate" target="properties.length" />
+          <zeebe:input source="0" target="properties.temperature" />
+          <zeebe:input source="template" target="template" />
+          <zeebe:input source="Dear {customer},&#10;&#10;We have successfully received your insurance claim submission. Our team is currently reviewing the details, and we will be in touch with you shortly regarding the next steps.&#10;&#10;Thank you for trusting us with your insurance needs. We appreciate your patience during this process.&#10;&#10;Warm regards,&#10;Your Bike Store Team" target="description" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#34;text&#34;: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nxliqq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jcw0v5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1whqz9g" name="Find answer to question" zeebe:modelerTemplate="fed14359-7708-490f-906e-1c6402b01bf2" zeebe:modelerTemplateVersion="1695129485667" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNyAxOC40MzAxSDEzTDguNTQ5OTkgMjEuMzlDNy44ODk5OSAyMS44MyA3IDIxLjM2MDEgNyAyMC41NjAxVjE4LjQzMDFDNCAxOC40MzAxIDIgMTYuNDMwMSAyIDEzLjQzMDFWNy40Mjk5OUMyIDQuNDI5OTkgNCAyLjQyOTk5IDcgMi40Mjk5OUgxN0MyMCAyLjQyOTk5IDIyIDQuNDI5OTkgMjIgNy40Mjk5OVYxMy40MzAxQzIyIDE2LjQzMDEgMjAgMTguNDMwMSAxNyAxOC40MzAxWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xMi4wMDAxIDExLjM2VjExLjE1QzEyLjAwMDEgMTAuNDcgMTIuNDIwMSAxMC4xMSAxMi44NDAxIDkuODIwMDFDMTMuMjUwMSA5LjU0MDAxIDEzLjY2IDkuMTgwMDIgMTMuNjYgOC41MjAwMkMxMy42NiA3LjYwMDAyIDEyLjkyMDEgNi44NTk5OSAxMi4wMDAxIDYuODU5OTlDMTEuMDgwMSA2Ljg1OTk5IDEwLjM0MDEgNy42MDAwMiAxMC4zNDAxIDguNTIwMDIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTExLjk5NTUgMTMuNzVIMTIuMDA0NSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8L3N2Zz4=">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-retrieval:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="GPT_4" target="model" />
+          <zeebe:input source="azure_cognitive_search" target="database.type" />
+          <zeebe:input source="secrets.AZURE_COGNITIVE_SEARCH_URL" target="database.url" />
+          <zeebe:input source="secrets.AZURE_COGNITIVE_SEARCH_KEY" target="database.password" />
+          <zeebe:input source="openai" target="database.embedding.provider" />
+          <zeebe:input source="text-embedding-ada-002" target="database.embedding.model" />
+          <zeebe:input source="=question" target="query.query" />
+          <zeebe:input source="cohere" target="advanced.reranker" />
+          <zeebe:input source="summary" target="advanced.filtering" />
+          <zeebe:input source="summary-index" target="advanced.summaryIndex" />
+          <zeebe:input source="bike_model" target="advanced.filterMetadataField" />
+          <zeebe:input source="azure_cosmos_nosql" target="advanced.parentDocumentStore.type" />
+          <zeebe:input source="secrets.AZURE_COSMOS_DB_URL" target="advanced.parentDocumentStore.url" />
+          <zeebe:input source="secrets.AZURE_COSMOS_DB_KEY" target="advanced.parentDocumentStore.password" />
+          <zeebe:input source="bikestore" target="advanced.parentDocumentStore.namespace" />
+          <zeebe:input source="parent_id" target="advanced.parentDocumentStore.parentDocumentId" />
+          <zeebe:input source="natural" target="query.outputType" />
+          <zeebe:input source="standard" target="query.mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={answer: result.answer}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ba0vk3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lprcc8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1ltu8tq" sourceRef="Activity_0yi1pgm" targetRef="Activity_1v3qvwy" />
+    <bpmn:sequenceFlow id="Flow_0gl895s" sourceRef="Activity_061xaos" targetRef="Activity_0tnw5u6" />
+    <bpmn:sequenceFlow id="Flow_00ktqmc" sourceRef="Activity_1kifd6e" targetRef="Activity_1qy188i" />
+    <bpmn:sequenceFlow id="Flow_0rbxqkl" sourceRef="Activity_0dn2d03" targetRef="Activity_1ycjg05" />
+    <bpmn:sequenceFlow id="Flow_0m0o97i" sourceRef="Activity_1ycjg05" targetRef="Event_1o5twhg" />
+    <bpmn:sequenceFlow id="Flow_0nse0o5" sourceRef="Activity_1qy188i" targetRef="Event_0db6xeo" />
+    <bpmn:sequenceFlow id="Flow_07p7vuj" sourceRef="Activity_0tnw5u6" targetRef="Event_1hxbwfm" />
+    <bpmn:sequenceFlow id="Flow_0b9sorb" sourceRef="Activity_0mapqjl" targetRef="Activity_1mf6s6r" />
+    <bpmn:sequenceFlow id="Flow_0mu3tso" sourceRef="Activity_1mf6s6r" targetRef="Event_0xzid7h" />
+    <bpmn:sequenceFlow id="Flow_1jcw0v5" sourceRef="Activity_0zaaug0" targetRef="Activity_1mf6s6r" />
+    <bpmn:sequenceFlow id="Flow_0cqjxoz" sourceRef="Activity_1v3qvwy" targetRef="Event_10qzvjk" />
+  </bpmn:process>
+  <bpmn:error id="Error_131f88n" name="Null" errorCode="NULL" />
+  <bpmn:error id="Error_0oezphj" name="MISSING_DATA" errorCode="MISSING_DATA" />
+  <bpmn:error id="Error_130b3qo" name="No Order Number" errorCode="NO_ORDER_NUMBER" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="bike_store_customer_service">
+      <bpmndi:BPMNShape id="Event_0db6xeo_di" bpmnElement="Event_0db6xeo">
+        <dc:Bounds x="1492" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1486" y="265" width="49" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0p0ay6x_di" bpmnElement="Gateway_0p0ay6x" isMarkerVisible="true">
+        <dc:Bounds x="725" y="102" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="726" y="80" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o5twhg_di" bpmnElement="Event_1o5twhg">
+        <dc:Bounds x="1492" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1487" y="152" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hxbwfm_di" bpmnElement="Event_1hxbwfm">
+        <dc:Bounds x="1492" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1468" y="416" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10qzvjk_di" bpmnElement="Event_10qzvjk">
+        <dc:Bounds x="1492" y="762" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1476" y="805" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wle652_di" bpmnElement="Activity_0mapqjl">
+        <dc:Bounds x="1180" y="500" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xzid7h_di" bpmnElement="Event_0xzid7h">
+        <dc:Bounds x="1492" y="522" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1471" y="565" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10z86c0_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="312" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="294" y="152" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1iwx3xe_di" bpmnElement="Activity_167wotv">
+        <dc:Bounds x="420" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01y70gw_di" bpmnElement="Activity_0qr9wpe">
+        <dc:Bounds x="570" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_019z7u2_di" bpmnElement="Activity_01zbvjd">
+        <dc:Bounds x="860" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0krv26e_di" bpmnElement="Activity_1nmfkd9">
+        <dc:Bounds x="1020" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pr9uj2_di" bpmnElement="Activity_0dn2d03">
+        <dc:Bounds x="1180" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00qgip6_di" bpmnElement="Activity_1kifd6e">
+        <dc:Bounds x="1180" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0upij37_di" bpmnElement="Activity_061xaos">
+        <dc:Bounds x="1180" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0immm5l_di" bpmnElement="Activity_1qloqur">
+        <dc:Bounds x="860" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15353ti_di" bpmnElement="Activity_11ulumq">
+        <dc:Bounds x="1020" y="500" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1tdm5e3_di" bpmnElement="Gateway_1tdm5e3" isMarkerVisible="true">
+        <dc:Bounds x="885" y="515" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="872" y="491" width="75" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07d2v8v_di" bpmnElement="Activity_1ycjg05">
+        <dc:Bounds x="1340" y="87" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y90eqt" bpmnElement="Activity_1qy188i">
+        <dc:Bounds x="1340" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bfoofp" bpmnElement="Activity_0tnw5u6">
+        <dc:Bounds x="1340" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1f65di3" bpmnElement="Activity_1mf6s6r">
+        <dc:Bounds x="1340" y="500" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1fe3r9q" bpmnElement="Activity_1v3qvwy">
+        <dc:Bounds x="1340" y="740" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0its5pc_di" bpmnElement="Activity_1e732sm" isExpanded="true">
+        <dc:Bounds x="130" y="290" width="540" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03dhtc0_di" bpmnElement="Event_0w8hnkg">
+        <dc:Bounds x="170" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="415" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_116pyfz_di" bpmnElement="Event_116pyfz">
+        <dc:Bounds x="592" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="568" y="415" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qgyxet_di" bpmnElement="Activity_09a5710">
+        <dc:Bounds x="270" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0u2tyl9" bpmnElement="Activity_0318mzy">
+        <dc:Bounds x="420" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_02v68ez_di" bpmnElement="Flow_02v68ez">
+        <di:waypoint x="206" y="390" />
+        <di:waypoint x="270" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05k5gac_di" bpmnElement="Flow_05k5gac">
+        <di:waypoint x="370" y="390" />
+        <di:waypoint x="420" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1baafhi_di" bpmnElement="Flow_1baafhi">
+        <di:waypoint x="520" y="390" />
+        <di:waypoint x="592" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_0zg4ybq" bpmnElement="Activity_0yi1pgm">
+        <dc:Bounds x="1180" y="740" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dxk8wf" bpmnElement="Activity_0zaaug0">
+        <dc:Bounds x="1180" y="620" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dmlgvm_di" bpmnElement="Activity_1whqz9g">
+        <dc:Bounds x="1020" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0u1hndy_di" bpmnElement="Event_01oht24">
+        <dc:Bounds x="892" y="149" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="915" y="187" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0g9pdk3_di" bpmnElement="Flow_0g9pdk3">
+        <di:waypoint x="910" y="185" />
+        <di:waypoint x="910" y="240" />
+        <di:waypoint x="1180" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s28elp_di" bpmnElement="Flow_1s28elp">
+        <di:waypoint x="670" y="127" />
+        <di:waypoint x="725" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rwnrqs_di" bpmnElement="Flow_0rwnrqs">
+        <di:waypoint x="775" y="127" />
+        <di:waypoint x="860" y="127" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="771" y="135" width="75" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a5wjil_di" bpmnElement="Flow_1a5wjil">
+        <di:waypoint x="750" y="152" />
+        <di:waypoint x="750" y="390" />
+        <di:waypoint x="860" y="390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="758" y="398" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jkz7mj_di" bpmnElement="Flow_1jkz7mj">
+        <di:waypoint x="750" y="152" />
+        <di:waypoint x="750" y="780" />
+        <di:waypoint x="1180" y="780" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="776" y="793" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nwj9kt_di" bpmnElement="Flow_1nwj9kt">
+        <di:waypoint x="348" y="127" />
+        <di:waypoint x="420" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p6n5wl_di" bpmnElement="Flow_0p6n5wl">
+        <di:waypoint x="960" y="127" />
+        <di:waypoint x="1020" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tpnkwe_di" bpmnElement="Flow_0tpnkwe">
+        <di:waypoint x="520" y="127" />
+        <di:waypoint x="570" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lx9lyh_di" bpmnElement="Flow_1lx9lyh">
+        <di:waypoint x="750" y="152" />
+        <di:waypoint x="750" y="540" />
+        <di:waypoint x="885" y="540" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="761" y="549" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lprcc8_di" bpmnElement="Flow_1lprcc8">
+        <di:waypoint x="1120" y="390" />
+        <di:waypoint x="1180" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ba0vk3_di" bpmnElement="Flow_0ba0vk3">
+        <di:waypoint x="960" y="390" />
+        <di:waypoint x="1020" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0haq9rm_di" bpmnElement="Flow_0haq9rm">
+        <di:waypoint x="1120" y="127" />
+        <di:waypoint x="1180" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v61jm0_di" bpmnElement="Flow_0v61jm0">
+        <di:waypoint x="1120" y="540" />
+        <di:waypoint x="1180" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qkrn0x_di" bpmnElement="Flow_0qkrn0x">
+        <di:waypoint x="935" y="540" />
+        <di:waypoint x="1020" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nxliqq_di" bpmnElement="Flow_1nxliqq">
+        <di:waypoint x="910" y="565" />
+        <di:waypoint x="910" y="660" />
+        <di:waypoint x="1180" y="660" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ltu8tq_di" bpmnElement="Flow_1ltu8tq">
+        <di:waypoint x="1280" y="780" />
+        <di:waypoint x="1340" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gl895s_di" bpmnElement="Flow_0gl895s">
+        <di:waypoint x="1280" y="390" />
+        <di:waypoint x="1340" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00ktqmc_di" bpmnElement="Flow_00ktqmc">
+        <di:waypoint x="1280" y="240" />
+        <di:waypoint x="1340" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rbxqkl_di" bpmnElement="Flow_0rbxqkl">
+        <di:waypoint x="1280" y="127" />
+        <di:waypoint x="1340" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m0o97i_di" bpmnElement="Flow_0m0o97i">
+        <di:waypoint x="1440" y="127" />
+        <di:waypoint x="1492" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nse0o5_di" bpmnElement="Flow_0nse0o5">
+        <di:waypoint x="1440" y="240" />
+        <di:waypoint x="1492" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07p7vuj_di" bpmnElement="Flow_07p7vuj">
+        <di:waypoint x="1440" y="390" />
+        <di:waypoint x="1492" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b9sorb_di" bpmnElement="Flow_0b9sorb">
+        <di:waypoint x="1280" y="540" />
+        <di:waypoint x="1340" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mu3tso_di" bpmnElement="Flow_0mu3tso">
+        <di:waypoint x="1440" y="540" />
+        <di:waypoint x="1492" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jcw0v5_di" bpmnElement="Flow_1jcw0v5">
+        <di:waypoint x="1280" y="660" />
+        <di:waypoint x="1390" y="660" />
+        <di:waypoint x="1390" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cqjxoz_di" bpmnElement="Flow_0cqjxoz">
+        <di:waypoint x="1440" y="780" />
+        <di:waypoint x="1492" y="780" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
