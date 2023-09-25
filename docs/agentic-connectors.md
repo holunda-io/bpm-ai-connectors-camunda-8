@@ -53,7 +53,17 @@ Select `JSON` to provide a JSON-schema and receive back a JSON response (see Ext
 
 #### Advanced
 
-For more advanced retrieval, the connector supports filtering on metadata and decoupling retrieved chunks from the vector database and (usually larger) chunks used for answer synthesis.
+For more advanced retrieval, the connector supports:
+* Re-ranking preliminary results from the vector database to increase precision of final top-3 results 
+* Automatically filtering on metadata to reduce irrelevant documents
+* Using a dedicated summary index so select a sub-index for retrieval 
+* Decoupling retrieved chunks from the vector database and (usually larger) chunks used for answer synthesis.
+
+###### Re-Ranking
+
+Optionally, select Cohere Rerank (special re-ranking model by Cohere, custom solutions using GPT-3.5 and GPT-4 to follow soon).
+
+If selected, the connector will retrieve a higher initial k document count from the database and let the re-ranker select the top-3 document chunks. 
 
 ###### Metadata filtering
 The LLM can automatically derive filters from the query to narrow down search to relevant document chunks in a large and diverse index.
@@ -78,13 +88,20 @@ For this, you can provide a brief description of the documents in your index (op
 
 The `enum` field is optional but a good idea if the possible values are not obvious and not too many. If the model chooses a non-matching filter value, it may not retrieve any documents and will not be able to return an answer.
 
+###### Summary Index
+
+As an alternative to metadata filtering, you can use hierarchical retrieval using a dedicated summary index. 
+The summary index should contain a single document for each (virtual) child index, containing a concise summary of the child index contents.
+A metadata field in this document must be specified and is expected to also exists in all child index documents.
+The connector will use the query to find the semantically most similar summary and use the value of its filter attribute to filter the child index for actual retrieval, narrowing down the search space and reducing irrelevant chunks.
+
 ###### Parent Documents
 
 The text chunks used for retrieval with the vector database are often not well-suited to also be used for generating the answer.
 
 This is because the embedding is more accurate for smaller chunks ("lost-in-the-middle" problem) while the answer synthesis needs appropriate context and suffers from too many small, unordered chunks. In addition, you may want to also index secondary data like summaries or hypothetical questions to enhance retrieval recall.
 
-To enable theses use-cases, you can configure a "parent ID" field that should be present in all chunks in the vector database. These IDs should point to the respective parent document (or larger chunk) suitable for answer synthesis (make sure the parent documents are not too large, the connector will use up to 4 parent documents at once for answer synthesis).
+To enable theses use-cases, you can configure a "parent ID" field that should be present in all chunks in the vector database. These IDs should point to the respective parent document (or larger chunk) suitable for answer synthesis (make sure the parent documents are not too large, the connector will use up to 3 parent documents at once for answer synthesis).
 Also configure a document key-value store from which the parent documents can be fetched by ID.
 
 ### Result
