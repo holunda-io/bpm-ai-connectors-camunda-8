@@ -7,7 +7,7 @@ import pytest
 from langchain import Cohere, SQLDatabase
 from langchain.cache import SQLiteCache
 from langchain.chains import RetrievalQA, FlareChain
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI, ChatCohere
 from langchain.document_loaders import WebBaseLoader, PyPDFLoader, OnlinePDFLoader
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.llms import AlephAlpha
@@ -147,12 +147,13 @@ def test_decide_standard():
         "qualifications": "Went to highschool, no further education.",
     }
     chain = create_decide_chain(
-        AlephAlpha(model=LUMINOUS_SUPREME_CONTROL),
+        #AlephAlpha(model=LUMINOUS_SUPREME_CONTROL),
+        ChatCohere(temperature=0, max_tokens=1024),
         instructions="Decide if the applicant is qualified for the job as CTO.",
         output_type="string",
         possible_values=["QUALIFIED", "NOT_QUALIFIED"]
     )
-    print(chain.run(json.dumps(context)))
+    print(chain.run(input=context))
 
 
 @pytest.mark.skip(reason="only on demand, uses real LLM")

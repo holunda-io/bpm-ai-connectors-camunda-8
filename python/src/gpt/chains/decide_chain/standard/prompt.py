@@ -24,5 +24,7 @@ CONTEXT:
 DECISION TASK DESCRIPTION:
 {task}
 
-### Response:
+Remember to output the result as JSON following above schema!
+
+### Result as JSON:
 """
