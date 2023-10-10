@@ -190,7 +190,7 @@ def create_retrieval_qa(
             verbose=True
         )
     else:
-        if isinstance(vector_store, AzureSearch):
+        if filter and isinstance(vector_store, AzureSearch):
             filter_dict = {'filters': f"{list(filter.keys())[0]} eq '{list(filter.values())[0]}'"}
         else:
             filter_dict = {'filter': filter}

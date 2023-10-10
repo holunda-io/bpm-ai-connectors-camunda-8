@@ -386,8 +386,7 @@ def test_retrieve():
     )
     print(qa(
             inputs={
-                "input": "I can't decide between the Electra Townie Go! and the Sun Bicycles Electrolite. Could you tell me how they compare in terms of their weight?",
-                #"input": "What is the weight limit of the Electra Townie Go?",
+                "input": "What is the weight limit of the Electra Townie Go?",
                 "context": ""
             })["output"]["answer"])
 
