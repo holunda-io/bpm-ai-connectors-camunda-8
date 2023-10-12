@@ -121,7 +121,10 @@
       "type": "Dropdown",
       "value": "openai",
       "choices": [
-        { "name": "OpenAI", "value": "openai" }
+        { "name": "OpenAI", "value": "openai" },
+        { "name": "Aleph Alpha", "value": "aleph-alpha" },
+        { "name": "Cohere English", "value": "cohere-english" },
+        { "name": "Cohere Multilingual", "value": "cohere-multi" }
       ],
       "binding": {
         "type": "zeebe:input",
