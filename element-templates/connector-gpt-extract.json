@@ -56,7 +56,7 @@
         { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
         { "name": "OpenAI GPT-4", "value": "GPT_4" },
         { "name": "Aleph Alpha Luminous Supreme", "value": "LUMINOUS_SUPREME" },
-        { "name": "Cohere Command XLarge", "value": "COHERE_COMMAND_XLARGE" }
+        { "name": "Cohere Chat Command", "value": "COHERE_CHAT_COMMAND" }
       ],
       "binding": {
         "type": "zeebe:input",
@@ -95,7 +95,7 @@
       "group": "extract",
       "type": "Text",
       "feel": "required",
-      "value": "={\n  name: \"full name\",\n  age: { type: \"integer\", description: \"birthday in ISO format\" }\n}",
+      "value": "={\n  name: \"full name\",\n  age: { type: \"integer\", description: \"age in years\" }\n}",
       "binding": {
         "type": "zeebe:input",
         "name": "extractionJson"
@@ -143,7 +143,7 @@
       "group": "output",
       "type": "Text",
       "feel": "required",
-      "value": "={\"customerInfo\": result}",
+      "value": "={customerInfo: result}",
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"

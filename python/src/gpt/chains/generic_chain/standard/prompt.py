@@ -24,5 +24,5 @@ TASK DESCRIPTION:
 
 Remember to output the result as JSON following above schema!
 
-### Response:
+### Result as JSON:
 """

@@ -19,7 +19,9 @@ Passage:
 {{input_md}}
 ```
 
-### Response:
+Remember to output the result as JSON following above schema!
+
+### Result as JSON:
 """
 
 TASK_EXTRACT_SINGLE = "Your task is to extract the desired information from the following passage (in triple backticks) by the user."

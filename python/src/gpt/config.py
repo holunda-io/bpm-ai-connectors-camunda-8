@@ -2,8 +2,9 @@ from typing import Union, Optional, List
 
 from langchain import Cohere
 from langchain.base_language import BaseLanguageModel
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings import OpenAIEmbeddings, DeterministicFakeEmbedding
+from langchain.chat_models import ChatOpenAI, ChatCohere
+from langchain.embeddings import OpenAIEmbeddings, DeterministicFakeEmbedding, AlephAlphaAsymmetricSemanticEmbedding, \
+    CohereEmbeddings, HuggingFaceEmbeddings
 from langchain.embeddings.base import Embeddings
 from langchain.llms import AlephAlpha
 from langchain.schema import BaseStore
@@ -19,7 +20,7 @@ OPENAI_4 = "gpt-4"
 DEFAULT_OPENAI_MODEL = OPENAI_3_5
 
 LUMINOUS_SUPREME_CONTROL = "luminous-supreme-control"
-COHERE_COMMAND_XLARGE = "command-xlarge-beta"
+COHERE_CHAT_COMMAND = "command"
 
 
 def get_openai_chat_llm(model_name: str = DEFAULT_OPENAI_MODEL) -> ChatOpenAI:
@@ -37,7 +38,7 @@ def model_id_to_llm(
     model_id: str,
     temperature: float = 0.0,
     cache: bool = True
-) -> Union[BaseLanguageModel, ChatOpenAI, RunnableWithFallbacks]:
+) -> Union[BaseLanguageModel, ChatOpenAI, ChatCohere, RunnableWithFallbacks]:
     match model_id:
         case "gpt-3.5-turbo":
             return ChatOpenAI(model_name=OPENAI_3_5, temperature=temperature, cache=cache)
@@ -48,8 +49,8 @@ def model_id_to_llm(
             # ))
         case "luminous-supreme":
             return AlephAlpha(model=LUMINOUS_SUPREME_CONTROL, temperature=temperature, cache=cache)
-        case "cohere-command-xlarge":
-            return Cohere(model=COHERE_COMMAND_XLARGE, temperature=temperature, cache=cache)
+        case "cohere-chat-command":
+            return ChatCohere(model=COHERE_CHAT_COMMAND, temperature=temperature, cache=cache, max_tokens=1024)
 
 
 def llm_to_model_tag(llm: BaseLanguageModel) -> str:
@@ -58,7 +59,7 @@ def llm_to_model_tag(llm: BaseLanguageModel) -> str:
             return "openai-chat"
         case AlephAlpha():
             return "aleph-alpha"
-        case Cohere():
+        case ChatCohere():
             return "cohere"
         case _:
             return "unknown"
@@ -68,6 +69,12 @@ def get_embeddings(embedding_provider: str, embedding_model: str) -> Embeddings:
     match embedding_provider:
         case 'openai':
             return OpenAIEmbeddings(model=embedding_model)
+        case 'aleph-alpha':
+            return AlephAlphaAsymmetricSemanticEmbedding(normalize=True, compress_to_size=128)
+        case 'cohere':
+            return CohereEmbeddings(model=embedding_model)  # 'embed-multilingual-v2.0'
+        case 'huggingface':
+            return HuggingFaceEmbeddings(model_name=embedding_model)
 
 
 def get_vector_store(

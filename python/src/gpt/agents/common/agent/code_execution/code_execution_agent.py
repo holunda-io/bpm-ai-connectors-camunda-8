@@ -33,7 +33,7 @@ class CodeExecutionParameterResolver(AgentParameterResolver):
     n_skills = 2
     skill_relevance_threshold = 0
 
-    output_schema: Optional[Dict[str, Any]] = None
+    agent_output_schema: Optional[Dict[str, Any]] = None
     llm_call: bool = True
 
     class Config:
@@ -59,7 +59,7 @@ class CodeExecutionParameterResolver(AgentParameterResolver):
         return {
             "functions": get_python_functions_descriptions(all_functions),
             "function_names": [f.__name__ for f in all_functions],
-            **({"result_function_stub": generate_function_stub(inputs['context'], self.output_schema)} if (self.output_schema or not self.llm_call) else {}),
+            **({"result_function_stub": generate_function_stub(inputs['context'], self.agent_output_schema)} if (self.agent_output_schema or not self.llm_call) else {}),
             "transcript": agent_step.transcript,
             **inputs
         }
@@ -87,7 +87,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
     base_functions: List[Callable] = []
     additional_defs: Optional[Sequence[str]] = None
 
-    output_schema: Optional[Dict[str, Any]] = None
+    agent_output_schema: Optional[Dict[str, Any]] = None
     llm_call: bool = True
 
     skill_store: Optional[VectorStore] = None
@@ -133,7 +133,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
             few_shot_prompt_messages=few_shot_prompt_messages,
             prompt_parameters_resolver=CodeExecutionParameterResolver(
                 skill_store=skill_store,
-                output_schema=output_schema,
+                agent_output_schema=output_schema,
                 llm_call=llm_call
             ),
             output_parser=OpenAIFunctionsOutputParser(no_function_call_means_final_answer=False),
@@ -142,7 +142,7 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
             additional_defs=additional_python_definitions,
             enable_skill_creation=enable_skill_creation,
             skill_store=skill_store,
-            output_schema=output_schema,
+            agent_output_schema=output_schema,
             llm_call=llm_call,
             stop_words=None,
             agent_memory=agent_memory,
@@ -180,8 +180,8 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
                     output = python_tool.run(function_and_call, truncate=False)
 
                     # todo duplication
-                    if self.output_schema and len(self.output_schema.items()) == 1 and not isinstance(output, dict):
-                        output = {list(self.output_schema.keys())[0]: output}
+                    if self.agent_output_schema and len(self.agent_output_schema.items()) == 1 and not isinstance(output, dict):
+                        output = {list(self.agent_output_schema.keys())[0]: output}
 
                     return {self.output_key: output}
 
@@ -200,10 +200,10 @@ class PythonCodeExecutionAgent(OpenAIFunctionsAgent):
         return_vals = last_step.return_values
 
         # if output schema has just one field, the result function returns a simple value, and we need to wrap it
-        if self.output_schema and len(self.output_schema.items()) == 1 and not isinstance(return_vals['output'], dict):
-            return_vals['output'] = {list(self.output_schema.keys())[0]: return_vals['output']}
+        if self.agent_output_schema and len(self.agent_output_schema.items()) == 1 and not isinstance(return_vals['output'], dict):
+            return_vals['output'] = {list(self.agent_output_schema.keys())[0]: return_vals['output']}
 
-        if not self.output_schema:
+        if not self.agent_output_schema:
             answer = create_natural_lang_answer_chain(self.llm).run(
                 query=inputs["input"],
                 context=inputs["context"],

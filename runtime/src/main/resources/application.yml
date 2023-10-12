@@ -23,7 +23,5 @@ camunda:
 
 zeebe:
   client:
-    worker:
-      max-jobs-active: 1
     job:
       timeout: 15m

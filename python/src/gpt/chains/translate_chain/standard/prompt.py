@@ -13,5 +13,7 @@ Output the result as a JSON blob of the same form and with the same keys as the 
 
 {{input_json}}
 
-### Response:
+Remember to output the result as JSON following the same schema as the input JSON!
+
+### Result as JSON:
 """
