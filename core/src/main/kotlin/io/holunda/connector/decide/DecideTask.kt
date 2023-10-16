@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.*
 data class DecideTask(
     val model: String,
     val context: JsonNode,
+    val strategy: String?,
     val instructions: String,
     val output_type: String,
     val possible_values: List<Any>?
@@ -14,8 +15,9 @@ data class DecideTask(
             DecideTask(
                 request.model.modelId,
                 request.inputJson,
+                request.strategy,
                 request.instructions,
-                request.outputType.name.lowercase(),
+                request.outputType.lowercase(),
                 request.possibleValues
             )
     }

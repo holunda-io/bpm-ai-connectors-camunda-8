@@ -10,6 +10,7 @@ import mu.*
     name = "gpt-decide",
     inputVariables = [
         "inputJson",
+        "strategy",
         "instructions",
         "outputType",
         "possibleValues",

@@ -6,13 +6,8 @@ import io.holunda.connector.common.*
 data class DecideRequest(
     val inputJson: JsonNode,
     val instructions: String,
-    val outputType: DecisionOutputType,
+    val outputType: String,
     val possibleValues: List<Any>?,
+    val strategy: String?,
     val model: Model
 )
-
-enum class DecisionOutputType(name: String) {
-    BOOLEAN("Boolean"),
-    INTEGER("Integer"),
-    STRING("String")
-}
