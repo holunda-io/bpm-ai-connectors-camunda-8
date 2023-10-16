@@ -43,6 +43,7 @@ def test_decide(chain_function_mock):
         "instructions": "Decide ...",
         "output_type": "string",
         "possible_values": ["A", "B"],
+        "strategy": "cot",
         "context": {'my_input': 1}
     })
     assert response.status_code == 200
@@ -52,7 +53,8 @@ def test_decide(chain_function_mock):
         llm=None,
         instructions="Decide ...",
         output_type="string",
-        possible_values=["A", "B"]
+        possible_values=["A", "B"],
+        strategy="cot"
     )
     chain_instance.run.assert_called_with(input={'my_input': 1})
 

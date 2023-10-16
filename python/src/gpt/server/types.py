@@ -14,6 +14,7 @@ class ExtractTask(BaseModel):
 class DecideTask(BaseModel):
     model: str
     context: dict
+    strategy: Optional[str] = None
     instructions: str
     output_type: str
     possible_values: Optional[List[Any]] = None

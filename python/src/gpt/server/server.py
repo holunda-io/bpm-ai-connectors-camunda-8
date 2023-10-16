@@ -45,6 +45,7 @@ async def post(task: ExtractTask):
 async def post(task: DecideTask):
     chain = create_decide_chain(
         llm=model_id_to_llm(task.model),
+        strategy=task.strategy,
         instructions=task.instructions,
         output_type=task.output_type,
         possible_values=task.possible_values,

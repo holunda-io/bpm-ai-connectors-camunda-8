@@ -75,6 +75,25 @@
       }
     },
     {
+      "id": "strategy",
+      "label": "Decision Strategy",
+      "group": "decision",
+      "type": "Dropdown",
+      "value": "direct",
+      "choices": [
+        { "name": "Fast", "value": "direct" },
+        { "name": "Thorough", "value": "cot" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "strategy"
+      },
+      "condition": {
+        "property": "model",
+        "oneOf": ["GPT_3", "GPT_4"]
+      }
+    },
+    {
       "label": "Instructions",
       "description": "Instructions on what and how to decide.",
       "group": "decision",
@@ -94,11 +113,12 @@
       "label": "Output Type",
       "group": "decision",
       "type": "Dropdown",
-      "value": "STRING",
+      "value": "string",
       "choices": [
-        { "name": "Boolean", "value": "BOOLEAN" },
-        { "name": "Integer", "value": "INTEGER" },
-        { "name": "String", "value": "STRING" }
+        { "name": "Boolean", "value": "boolean" },
+        { "name": "Integer", "value": "integer" },
+        { "name": "Float", "value": "number" },
+        { "name": "String", "value": "string" }
       ],
       "binding": {
         "type": "zeebe:input",
