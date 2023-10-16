@@ -139,7 +139,7 @@
       },
       "condition": {
         "property": "outputType",
-        "oneOf": ["INTEGER", "STRING"]
+        "oneOf": ["integer", "string"]
       }
     },
     {
