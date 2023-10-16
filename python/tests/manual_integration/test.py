@@ -124,18 +124,24 @@ def test_extract_repeated():
 @pytest.mark.skip(reason="only on demand, uses real LLM")
 def test_decide():
     context = {
-        "firstname": "Max",
-        "lastname": "Meier",
-        "age": "39",
-        "qualifications": "Went to highschool, no further education.",
+          "riddle": """\
+Riddle me this: 
+Penny has 5 children. 
+The 1st is named January.
+ 2nd kid is February. 
+Her 3rd is called March. 
+4th is April. 
+What is the name of the 5th."""
     }
+
     chain = create_decide_chain(
-        get_openai_chat_llm(model_name="gpt-3.5-turbo-0613"),
-        instructions="Decide if the applicant is qualified for the job as CTO.",
+        get_openai_chat_llm(model_name="gpt-4"),
+        instructions="What is the solution to the riddle?",
         output_type="string",
-        possible_values=["QUALIFIED", "NOT_QUALIFIED"]
+        possible_values=[],
+        strategy="cot"
     )
-    print(chain.run(json.dumps(context)))
+    print(chain.run(input=context))
 
 
 @pytest.mark.skip(reason="only on demand, uses real LLM")
@@ -144,7 +150,7 @@ def test_decide_standard():
         "firstname": "Max",
         "lastname": "Meier",
         "age": "39",
-        "qualifications": "Went to highschool, no further education.",
+        "qualifications": ["Went to highschool.","Has a ton of friends.", "Very wealthy.", "CS degree."],
     }
     chain = create_decide_chain(
         #AlephAlpha(model=LUMINOUS_SUPREME_CONTROL),
