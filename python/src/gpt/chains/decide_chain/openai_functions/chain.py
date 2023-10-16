@@ -22,28 +22,36 @@ def get_cot_decision_output_schema(
     possible_values: Optional[List] = None
 ):
     return {
-        "relevantFacts": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "description": "A discrete fact"
+        "reasoning": {
+            "type": "object",
+            "properties": {
+                "relevantFacts": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "A discrete fact"
+                    }
+                },
+                "deducedInformation": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "Additional information that can be deduced from the relevantFacts"
+                    }
+                },
+                "reasoningSteps": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "A discrete reasoning step. Do not perform multiple steps in one. Be very fine-grained and use discrete steps/items."
+                    }
+                },
+                "finalReasoning": {
+                    "type": "string",
+                    "description": "concise description of the final reasoning behind the decision"
+                }
             }
         },
-        "deducedInformation": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "description": "Additional information that can be deduced from the relevantFacts"
-            }
-        },
-        "reasoningSteps": {
-            "type": "array",
-            "items": {
-                "type": "string",
-                "description": "A discrete reasoning step. Do not perform multiple steps in one. Be very fine-grained and use discrete steps/items."
-            }
-        },
-        "finalReasoning": "concise description of the final reasoning behind the decision",
         "decision": {
             "description": "the final decision value, may be null if no decision was possible",
             "type": output_type,
@@ -89,7 +97,7 @@ def create_openai_functions_decide_chain(
             template="Decision stored, continue with next task.",
         )] if strategy == 'cot' else [])
         + [HumanMessagePromptTemplate.from_template(
-            USER_MESSAGE_TEMPLATE.format(task=instructions)
+            USER_MESSAGE_TEMPLATE.format(task=instructions, output_type=output_type)
         )]
     )
 

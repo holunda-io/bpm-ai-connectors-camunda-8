@@ -34,7 +34,7 @@ What is the best dish?
 
 Remember to respect the enum of possible decision values, if given!"""
 
-ONE_SHOT_FUNCTION_CALL_ARG = '{"relevantFacts": ["The season is Fall", "The number of guests is 26", "The occasion is a House Party", "The budget is low"], "deducedInformation": ["Fall season usually calls for warm, hearty meals", "A low budget means we need to choose a dish that is cost-effective", "The number of guests suggests we need a dish that can be easily prepared in large quantities", "The occasion of a house party does not call for a special or extravagant dish."], "reasoningSteps": ["1. Given the Fall season, a warm, hearty meal like Spareribs, Roastbeef, Dry Aged Gourmet Steak or Stew would be appropriate", "2. Considering the low budget, Stew would be more cost-effective than Spareribs, Roastbeef or Dry Aged Gourmet Steak.", "3. Given the number of guests, a dish that can be easily prepared in large quantities like a Stew would be suitable", "4. Considering all factors (warm and hearty for Fall, cost-effective for a low budget, and easily prepared in large quantities for a house party) Stew seems to be the best choice"], "finalReasoning": "Stew is the best choice as it meets all the requirements: it\'s a warm, hearty meal suitable for Fall, it\'s cost-effective, and it can be easily prepared in large quantities for a house party.", "decision": "Stew"}'
+ONE_SHOT_FUNCTION_CALL_ARG = '{"reasoning": {"relevantFacts": ["The season is Fall", "The number of guests is 26", "The occasion is a House Party", "The budget is low"], "deducedInformation": ["Fall season usually calls for warm, hearty meals", "A low budget means we need to choose a dish that is cost-effective", "The number of guests suggests we need a dish that can be easily prepared in large quantities", "The occasion of a house party does not call for a special or extravagant dish."], "reasoningSteps": ["1. Given the Fall season, a warm, hearty meal like Spareribs, Roastbeef, Dry Aged Gourmet Steak or Stew would be appropriate", "2. Considering the low budget, Stew would be more cost-effective than Spareribs, Roastbeef or Dry Aged Gourmet Steak.", "3. Given the number of guests, a dish that can be easily prepared in large quantities like a Stew would be suitable", "4. Considering all factors (warm and hearty for Fall, cost-effective for a low budget, and easily prepared in large quantities for a house party) Stew seems to be the best choice"], "finalReasoning": "Stew is the best choice as it meets all the requirements: it\'s a warm, hearty meal suitable for Fall, it\'s cost-effective, and it can be easily prepared in large quantities for a house party."}, "decision": "Stew"}'
 
 USER_MESSAGE_TEMPLATE = """\
 # CONTEXT
@@ -43,4 +43,5 @@ USER_MESSAGE_TEMPLATE = """\
 # DECISION TASK DESCRIPTION
 {task}
 
-Remember to respect the enum of possible decision values, if given!"""
+Remember to respect the enum of possible decision values, if given!
+Remember that the type of the final decision value must be `{output_type}`."""
