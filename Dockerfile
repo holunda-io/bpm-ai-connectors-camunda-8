@@ -1,5 +1,5 @@
 # ---- Build Maven Java Spring Boot App ----
-FROM maven:3.9.3-eclipse-temurin-17 AS build-java
+FROM maven:3.9.4-eclipse-temurin-21 AS build-java
 WORKDIR /build-java
 
 # Copy only the POM file to leverage Docker cache for dependencies
