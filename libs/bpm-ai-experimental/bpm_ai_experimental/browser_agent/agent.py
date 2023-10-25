@@ -1,19 +1,30 @@
 import asyncio
-from typing import Coroutine, Any, T
-
 from bpm_ai_core.llm.openai_chat import ChatOpenAI
 from playwright.async_api import async_playwright, Playwright
 
+from bpm_ai_experimental.browser_agent.util.browser import start_playwright, type_text, click
+from bpm_ai_experimental.browser_agent.util.simplify_dom import get_simplified_html
+
 
 async def run_browser_agent(start_url: str, task: str) -> str:
-    playwright: Playwright = await async_playwright().start()
-    browser = await playwright.chromium.launch(
-        headless=False
-        #ignore_default_args=["--headless"],
-        #args=["--headless=new"],
-    )
 
-    page = await browser.new_page()
-    res = await page.goto(start_url)
+    playwright, browser, page = await start_playwright(start_url, headless=False)
 
-    return await res.text()
+    while True:
+        title, html = await get_simplified_html(page)
+
+        print(html)
+
+        cmd = input()
+        if ':' in cmd:
+            id = cmd.split(':')[0]
+            text = cmd.split(':')[-1]
+            await type_text(page, id, text)
+        else:
+            id = cmd
+            await click(page, id)
+
+    await browser.close()
+    await playwright.stop()
+
+    return ""
