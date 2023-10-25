@@ -35,10 +35,7 @@ def test_openai_json_2():
         messages=[{"role": "user", "content": "How many Bundesländer are there?"}],
         output_schema={
             "länder": {
-                "type": "array",
-                "items": {
-                    "type": "string"
-                }
+                "type": "number"
             }
         }
     )

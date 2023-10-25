@@ -1,0 +1,13 @@
+# CURRENT PAGE:
+{{title}}
+
+# CURRENT DOM:
+```
+{{html}}
+```
+
+# TASK DESCRIPTION:
+{{task}}
+
+# PREVIOUS ACTIONS:
+{{action_history}}

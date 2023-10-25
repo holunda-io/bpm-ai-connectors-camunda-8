@@ -50,6 +50,7 @@ def simplify_html(html: str):
     original_soup = BeautifulSoup(html, 'html.parser')
     # Create a new soup for the simplified DOM
     new_soup = BeautifulSoup('<html></html>', 'html.parser')
+    new_soup.title = original_soup.title
 
     # Recursive function to process elements and their children
     def process_element(element, parent):
@@ -159,4 +160,4 @@ async def get_simplified_html(page: Page) -> Tuple[str, str]:
     # Extract the title of the page
     title = simplified_dom.title.string if simplified_dom.title else ""
 
-    return title, simplified_dom.body.prettify()
+    return title, simplified_dom.body#.prettify()
