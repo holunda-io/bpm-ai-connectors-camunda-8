@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "bpm-ai"
+version = "0.1.0"
+description = ""
+authors = ["Benjoyo <bennet.krause@gmx.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+bpm-ai-core = { path = "../bpm-ai-core" }
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
