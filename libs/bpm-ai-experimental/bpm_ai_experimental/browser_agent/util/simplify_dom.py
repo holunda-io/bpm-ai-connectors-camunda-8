@@ -5,8 +5,10 @@ from bs4 import BeautifulSoup, Comment, Tag, NavigableString
 from playwright.async_api import Page
 from playwright.sync_api import sync_playwright, expect, Locator
 
+from bpm_ai_experimental.browser_agent.util.browser import PlaywrightBrowser
+from bpm_ai_experimental.browser_agent.util.injection import disable_animations, ripple_css, ripple_js
 from bpm_ai_experimental.browser_agent.util.utils import is_interactive, truncate_str, is_visible, \
-    convert_list_to_markdown, has_label
+    convert_list_to_markdown, has_label, in_viewport
 
 attributes_to_keep = [
     'aria-label',
@@ -17,15 +19,16 @@ attributes_to_keep = [
     'placeholder',
     'value',
     'role',
-    'title'
+    'title',
+    'alt'
 ]
 
 tags_to_drop = ['script', 'style', 'link', 'meta', 'noscript']
 
-tags_to_drop_but_keep_children = ['strong']
+tags_to_drop_but_keep_children = ['strong', 'em']
 tags_to_drop_if_only_text_child = ['span', 'label', 'p']
 
-interactive_tags = ['a', 'input', 'button', 'select', 'textarea']
+interactive_tags = ['a', 'input', 'button', 'select', 'textarea', 'img']
 interactive_attrs = ['onclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup']
 
 invisibility_attrs = {
@@ -64,7 +67,12 @@ def simplify_html(html: str):
                 parent.append(truncate_str(text))
             return
 
-        if not is_visible(element) or (element.name in tags_to_drop):
+        if element.name == "IMG" or element.name == 'img':
+            print(element)
+            print(not is_visible(element) or not in_viewport(element) or element.name in tags_to_drop)
+            print((is_interactive(element) or has_label(element)))
+
+        if not is_visible(element) or not in_viewport(element) or element.name in tags_to_drop:
             return
 
         # Attempt to convert lists to markdown
@@ -88,6 +96,8 @@ def simplify_html(html: str):
             # If the element is interactive, convert data-testid to id
             if is_interactive(element) and 'data-testid' in element.attrs:
                 new_element['id'] = element['data-testid']
+            if 'data-value' in element.attrs:
+                new_element['value'] = element['data-value']
 
         # Process children
         for child in element.children:
@@ -111,6 +121,37 @@ interactive_tags = [tag.upper() for tag in interactive_tags]
 
 js_annotate_dom = f"""
 () => {{
+  
+  const isElementFullyInViewport = (element) => {{
+    const rect = element.getBoundingClientRect();
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }}
+  
+  const isElementInViewport = (el, percentVisible) => {{
+    if (!el) {{
+      return false;
+    }}
+    const rect = el.getBoundingClientRect();
+    const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+    const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
+    
+    const visibleWidth = Math.max(0, Math.min(rect.right, windowWidth)) - Math.max(0, rect.left);
+    const visibleHeight = Math.max(0, Math.min(rect.bottom, windowHeight)) - Math.max(0, rect.top);
+    
+    const elementArea = rect.width * rect.height;
+    const visibleArea = visibleWidth * visibleHeight;
+    
+    // Calculate the percentage of the element that is visible
+    const visiblePercentage = (visibleArea / elementArea) * 100;
+    
+    return (visiblePercentage > percentVisible) || isElementFullyInViewport(el);
+  }}
+
   let currentElements = [];
 
   const traverseDOM = (node, pageElements) => {{
@@ -134,6 +175,14 @@ js_annotate_dom = f"""
       }}
       node.setAttribute('data-interactive', interactive.toString());
       node.setAttribute('data-visible', visible.toString());
+      
+      const inViewport = isElementInViewport(element, 0);
+      node.setAttribute('data-in-viewport', inViewport.toString());
+      
+      // Check if the element is an input and has a value
+      if (element.tagName.toLowerCase() === 'input' && element.value) {{
+        node.setAttribute('data-value', element.value);
+      }}
     }}
 
     node.childNodes.forEach(child => {{
@@ -146,9 +195,8 @@ js_annotate_dom = f"""
 """
 
 
-async def get_simplified_html(page: Page) -> Tuple[str, str]:
-    await page.wait_for_load_state('load')
-    await page.wait_for_load_state('networkidle')
+async def get_simplified_html(browser: PlaywrightBrowser) -> Tuple[str, str]:
+    page = await browser.prepare_page()
 
     # annotate DOM with runtime information
     await page.evaluate(js_annotate_dom)
@@ -159,5 +207,7 @@ async def get_simplified_html(page: Page) -> Tuple[str, str]:
 
     # Extract the title of the page
     title = simplified_dom.title.string if simplified_dom.title else ""
+
+    print(simplified_dom.body.prettify())
 
     return title, simplified_dom.body#.prettify()

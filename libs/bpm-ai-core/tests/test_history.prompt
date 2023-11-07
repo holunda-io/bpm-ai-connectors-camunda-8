@@ -1,0 +1,18 @@
+[# system #]
+You are a smart assistant.
+
+[# user #]
+What is one plus one?
+
+{% for i in range(3) %}
+  [# assistant #]
+  Hello {{i}}
+  [# function_call: foo #]
+  input={{i}}
+
+  [# function: foo #]
+  result_{{i}}
+{% endfor %}
+
+[# user #]
+{{task}}

@@ -1,0 +1,5 @@
+{# system #}
+You are a {{trait}} assistant.
+
+{# user #}
+Hi, my name is {{name}}! What is happening in Hamburg and Kiel with soccer?

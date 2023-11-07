@@ -15,6 +15,9 @@ pytest = "^7.4.2"
 pytest-dotenv = "^0.5.2"
 
 
+[tool.poetry.group.dev.dependencies]
+setuptools = "^68.2.2"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

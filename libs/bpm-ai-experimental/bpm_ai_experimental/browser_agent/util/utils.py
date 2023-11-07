@@ -16,6 +16,10 @@ def is_visible(element):
     return element.get('data-visible') == 'true'
 
 
+def in_viewport(element):
+    return element.get('data-in-viewport') == 'true'
+
+
 def truncate_str(s, n=100):
     """Limit the string to at most n characters and add '[…]' at the end if it's truncated."""
     if len(s) <= n:

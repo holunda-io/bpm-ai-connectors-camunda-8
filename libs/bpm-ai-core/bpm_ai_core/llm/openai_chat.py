@@ -1,26 +1,25 @@
 import json
+
 from typing import Dict, Any, Optional, List, Union
-from openai import OpenAI
+
+from langsmith import traceable
+from openai import OpenAI, APIConnectionError, InternalServerError, RateLimitError
 from openai.types.chat import ChatCompletionMessageParam, ChatCompletionMessage
 from typing_extensions import TypedDict, Literal
 
-from bpm_ai_core.llm.common.tool import Tool
+from bpm_ai_core.llm.common.llm import LLM
+from bpm_ai_core.llm.common.message import ChatMessage, FunctionCallMessage
+from bpm_ai_core.llm.common.function import Function
+from bpm_ai_core.util.openai import messages_to_openai_dicts, json_schema_to_openai_function
 
 
-class ChatOpenAI:
+class ChatOpenAI(LLM):
     """
     `OpenAI` Chat large language models API.
 
     To use, you should have the ``openai`` python package installed, and the
     environment variable ``OPENAI_API_KEY`` set with your API key.
     """
-
-    model: str
-    """Model name to use."""
-    temperature: float
-    """What sampling temperature to use."""
-
-    client: OpenAI
 
     def __init__(
         self,
@@ -31,60 +30,79 @@ class ChatOpenAI:
     ):
         self.model = model
         self.temperature = temperature
+        self.max_retries = max_retries
+        self.retryable_exceptions = [
+            RateLimitError, InternalServerError, APIConnectionError
+        ]
         self.client = OpenAI(
-            max_retries=max_retries,
+            max_retries=0,  # we use own retry logic
             **(client_kwargs or {})
         )
 
-    def predict_text(self, user_message: str) -> str:
-        completion = self.client.chat.completions.create(
-            model=self.model,
-            temperature=self.temperature,
-            messages=[{"role": "user", "content": user_message}]
-        )
-        return completion.choices[0].message.content
-
-    def predict_message(
+    def _predict(
         self,
-        messages: List[ChatCompletionMessageParam],
-    ) -> ChatCompletionMessage:
-        completion = self.client.chat.completions.create(
-            model=self.model,
-            temperature=self.temperature,
-            messages=messages
-        )
-        return completion.choices[0].message
+        messages: List[ChatMessage],
+        output_schema: Optional[Dict[str, Any]] = None,
+        functions: Optional[List[Function]] = None
+    ) -> ChatMessage:
+        openai_functions = []
+        if output_schema:
+            openai_functions = [self._get_default_result_function(output_schema)]
+        elif functions:
+            openai_functions = [json_schema_to_openai_function(f.name, f.description, f.args_schema) for f in functions]
 
-    def predict_json(
-        self,
-        messages: List[ChatCompletionMessageParam],
-        output_schema: Dict[str, Any],
-    ) -> dict:
-        completion = self.client.chat.completions.create(
-            model=self.model,
-            temperature=self.temperature,
-            messages=messages,
-            function_call={"name": "store_result"},
-            functions=[
-                {
-                    "name": "store_result",
-                    "description": "Stores your result",
-                    "parameters": {
-                        "type": "object",
-                        "properties": output_schema,
-                        "required": list(output_schema.keys()),
-                    }
-                }
-            ]
-        )
-        assistant_message = completion.choices[0].message
-        if assistant_message.function_call:
-            try:
-                json_object = json.loads(assistant_message.function_call.arguments)
-                return json_object
-            except ValueError as e:
-                print(e)
-                return {}
+        completion = self._run_completion(messages, openai_functions)
+
+        message = completion.choices[0].message
+        if message.function_call:
+            if output_schema:
+                return ChatMessage(role=message.role, content=self._load_function_call_json(message))
+            else:
+                return self._openai_function_call_to_function_message(message, functions)
         else:
-            print("WARNING: No function call!")
-            return {}
+            return ChatMessage(role=message.role, content=message.content)
+
+    def _run_completion(self, messages: List[ChatMessage], functions: List[dict]):
+        return self.client.chat.completions.create(
+            model=self.model,
+            temperature=self.temperature,
+            messages=messages_to_openai_dicts(messages),
+            **({
+                   "function_call": {"name": functions[0]["name"]} if (len(functions) == 1) else "auto",
+                   "functions": functions
+               } if functions else {})
+        )
+
+    @staticmethod
+    def _openai_function_call_to_function_message(message: ChatCompletionMessage, functions) -> FunctionCallMessage:
+        function_name = message.function_call.name
+        return FunctionCallMessage(
+            name=function_name,
+            content=message.content,
+            payload=message.function_call.arguments,
+            function=next((item for item in functions if item.name == function_name), None)
+        )
+
+    @staticmethod
+    def _load_function_call_json(message: ChatCompletionMessage):
+        try:
+            json_object = json.loads(message.function_call.arguments)
+        except ValueError as e:
+            print(e)
+            json_object = None
+        return json_object
+
+    @staticmethod
+    def _get_default_result_function(output_schema):
+        return {
+            "name": "store_result",
+            "description": "Stores your result",
+            "parameters": {
+                "type": "object",
+                "properties": output_schema,
+                "required": list(output_schema.keys()),
+            }
+        }
+
+    def name(self) -> str:
+        return "openai"

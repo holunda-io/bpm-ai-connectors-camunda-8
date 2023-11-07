@@ -1,42 +1,80 @@
+import re
+
+from jinja2 import Template
+from langsmith import traceable
+from pydantic import BaseModel, Field
+
+from bpm_ai_core.llm.common.function import Function
+from bpm_ai_core.llm.common.message import FunctionCallMessage
 from bpm_ai_core.llm.openai_chat import ChatOpenAI
+from bpm_ai_core.prompt.prompt import Prompt
+from bpm_ai_core.util.openai import json_schema_from_shorthand
 
 
-def test_openai():
+@traceable(run_type="chain", name="Test_OpenAI")
+def test_openai(name: str = "Bennet"):
     llm = ChatOpenAI()
-    res = llm.predict_text("Hello, beautiful day right?")
-    print(res)
+    prompt = Prompt.from_file("test", name=name, x=False)
+    print("Prompt: ")
+    print(prompt.format())
+    print("Answer: ")
+    message = llm.predict(prompt)
+    print(message)
+    return message.content
 
 
-def test_openai_message():
-    llm = ChatOpenAI()
-    res = llm.predict_message([{"role": "user", "content": "Hello, beautiful day right?"}])
-    print(res)
+def test_prompt():
+    prompt = Prompt.from_file("test_history", task="go go gadget")
+    print("Prompt: ")
+    print(prompt.format())
 
 
+@traceable(run_type="chain", name="Test_OutputSchema_OpenAI")
 def test_openai_json():
     llm = ChatOpenAI()
-    res = llm.predict_json(
-        messages=[{"role": "user", "content": "Where is Hamburg?"}],
+    prompt = Prompt.from_file("test", name="Bennet", x=False)
+    print("Prompt: ")
+    print(prompt.format())
+    print("Answer: ")
+    message = llm.predict(
+        prompt,
         output_schema={
-            "type": "object",
-            "properties": {
-                "country": {"type": "string"},
-                "continent": {"type": "string"},
-            },
-            "required": ["country", "continent"],
-        }
-    )
-    print(res)
-
-
-def test_openai_json_2():
-    llm = ChatOpenAI()
-    res = llm.predict_json(
-        messages=[{"role": "user", "content": "How many Bundesländer are there?"}],
-        output_schema={
-            "länder": {
-                "type": "number"
+            "is_question": {
+                "type": "boolean"
             }
         }
     )
-    print(res)
+    print(message.content)
+    return message.content
+
+
+class WeatherArgs(BaseModel):
+    location: str
+    n_days: int = Field(description="number of days to forecast")
+
+
+def test_fun(locations, days):
+    print(f"called fun with {locations} and {days}")
+
+
+@traceable(run_type="chain", name="Test_Functions_OpenAI")
+def test_openai(name: str = "Bennet"):
+    llm = ChatOpenAI()
+    prompt = Prompt.from_file("test", name=name, x=False)
+    print("Prompt: ")
+    print(prompt.format())
+    print("Answer: ")
+    message = llm.predict(
+        prompt,
+        functions=[
+            Function.from_callable("get_weather", "get the weather", WeatherArgs, test_fun),
+            Function.from_callable("get_news", "get the news",
+                                   {"locations": ["location for the news"], "days": [{"type": "integer", "description": "n days to check news"}]}, test_fun),
+        ]
+    )
+    print(message)
+
+    if isinstance(message, FunctionCallMessage):
+        print(message.invoke())
+
+    return message.content
