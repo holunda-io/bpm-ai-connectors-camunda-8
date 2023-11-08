@@ -1,0 +1,38 @@
+[# system #]
+You are a smart assistant.
+[# image {{image_url}} #]
+Go!
+
+[# user #]
+What is one plus one?
+
+[# assistant #]
+I will call some tools.
+[# tool_call: foo (foo_id) #]
+x
+[# tool_call: bar #]
+y
+
+[# tool_result: foo_id #]
+the result
+
+[# assistant #]
+Looks good, now another one:
+
+[# tool_call: other (other_id) #]
+z
+
+[# tool_result: other_id #]
+the result 2
+
+[# assistant #]
+[# tool_call: another #]
+123
+
+[# assistant #]
+That's that.
+
+[# user #]
+Here is an image:
+[# image {{image_url}} #]
+{{task}}

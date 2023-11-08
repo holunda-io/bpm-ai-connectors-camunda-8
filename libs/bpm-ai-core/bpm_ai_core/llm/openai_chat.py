@@ -8,8 +8,8 @@ from openai.types.chat import ChatCompletionMessageParam, ChatCompletionMessage
 from typing_extensions import TypedDict, Literal
 
 from bpm_ai_core.llm.common.llm import LLM
-from bpm_ai_core.llm.common.message import ChatMessage, FunctionCallMessage
-from bpm_ai_core.llm.common.function import Function
+from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage, SingleToolCallMessage
+from bpm_ai_core.llm.common.tool import Tool
 from bpm_ai_core.util.openai import messages_to_openai_dicts, json_schema_to_openai_function
 
 
@@ -23,9 +23,9 @@ class ChatOpenAI(LLM):
 
     def __init__(
         self,
-        model: str = "gpt-3.5-turbo",
+        model: str = "gpt-3.5-turbo-1106",
         temperature: float = 0.0,
-        max_retries: int = 3,
+        max_retries: int = 0,
         client_kwargs: Optional[Dict[str, Any]] = None
     ):
         self.model = model
@@ -43,66 +43,68 @@ class ChatOpenAI(LLM):
         self,
         messages: List[ChatMessage],
         output_schema: Optional[Dict[str, Any]] = None,
-        functions: Optional[List[Function]] = None
+        tools: Optional[List[Tool]] = None
     ) -> ChatMessage:
-        openai_functions = []
+        openai_tools = []
         if output_schema:
-            openai_functions = [self._get_default_result_function(output_schema)]
-        elif functions:
-            openai_functions = [json_schema_to_openai_function(f.name, f.description, f.args_schema) for f in functions]
+            tools = [Tool(name="store_result", description="Stores your result", args_schema=output_schema)]
+        if tools:
+            openai_tools = [json_schema_to_openai_function(f.name, f.description, f.args_schema) for f in tools]
 
-        completion = self._run_completion(messages, openai_functions)
+        completion = self._run_completion(messages, openai_tools)
 
         message = completion.choices[0].message
-        if message.function_call:
+        if message.tool_calls:
             if output_schema:
-                return ChatMessage(role=message.role, content=self._load_function_call_json(message))
+                return ChatMessage(role=message.role, content=self._load_tool_call_json(message))
             else:
-                return self._openai_function_call_to_function_message(message, functions)
+                return self._openai_tool_calls_to_tool_message(message, tools)
         else:
             return ChatMessage(role=message.role, content=message.content)
 
     def _run_completion(self, messages: List[ChatMessage], functions: List[dict]):
-        return self.client.chat.completions.create(
-            model=self.model,
-            temperature=self.temperature,
-            messages=messages_to_openai_dicts(messages),
+        p = {
+            "model": self.model,
+            "temperature": self.temperature,
+            "messages": messages_to_openai_dicts(messages),
             **({
-                   "function_call": {"name": functions[0]["name"]} if (len(functions) == 1) else "auto",
-                   "functions": functions
+                   "tool_choice": {
+                       "type": "function",
+                       "function": {"name": functions[0]["function"]["name"]}
+                   } if (len(functions) == 1) else ("auto" if functions else "none"),
+                   "tools": functions
                } if functions else {})
+        }
+        print(p)
+        return self.client.chat.completions.create(
+            **p,
+            max_tokens=4096
         )
 
     @staticmethod
-    def _openai_function_call_to_function_message(message: ChatCompletionMessage, functions) -> FunctionCallMessage:
-        function_name = message.function_call.name
-        return FunctionCallMessage(
-            name=function_name,
+    def _openai_tool_calls_to_tool_message(message: ChatCompletionMessage, tools: List[Tool]) -> ToolCallsMessage:
+        return ToolCallsMessage(
+            name=", ".join([t.function.name for t in message.tool_calls]),
             content=message.content,
-            payload=message.function_call.arguments,
-            function=next((item for item in functions if item.name == function_name), None)
+            tool_calls=[
+                SingleToolCallMessage(
+                    id=t.id,
+                    name=t.function.name,
+                    payload=t.function.arguments,
+                    tool=next((item for item in tools if item.name == t.function.name), None)
+                )
+                for t in message.tool_calls
+            ]
         )
 
     @staticmethod
-    def _load_function_call_json(message: ChatCompletionMessage):
+    def _load_tool_call_json(message: ChatCompletionMessage):
         try:
-            json_object = json.loads(message.function_call.arguments)
+            json_object = json.loads(message.tool_calls[0].function.arguments)
         except ValueError as e:
             print(e)
             json_object = None
         return json_object
-
-    @staticmethod
-    def _get_default_result_function(output_schema):
-        return {
-            "name": "store_result",
-            "description": "Stores your result",
-            "parameters": {
-                "type": "object",
-                "properties": output_schema,
-                "required": list(output_schema.keys()),
-            }
-        }
 
     def name(self) -> str:
         return "openai"

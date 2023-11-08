@@ -67,11 +67,6 @@ def simplify_html(html: str):
                 parent.append(truncate_str(text))
             return
 
-        if element.name == "IMG" or element.name == 'img':
-            print(element)
-            print(not is_visible(element) or not in_viewport(element) or element.name in tags_to_drop)
-            print((is_interactive(element) or has_label(element)))
-
         if not is_visible(element) or not in_viewport(element) or element.name in tags_to_drop:
             return
 
@@ -136,20 +131,32 @@ js_annotate_dom = f"""
     if (!el) {{
       return false;
     }}
+
     const rect = el.getBoundingClientRect();
     const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
     const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
+
+    // Check if the element has zero width and height
+    if (rect.width === 0 && rect.height === 0) {{
+        return true; // The element is not visible if it has no size, but whatever...
+    }}
+
+    // Calculate visible dimensions, considering if width or height is zero
+    var visibleWidth = rect.width === 0 ? 0 : Math.max(0, Math.min(rect.right, windowWidth)) - Math.max(0, rect.left);
+    var visibleHeight = rect.height === 0 ? 0 : Math.max(0, Math.min(rect.bottom, windowHeight)) - Math.max(0, rect.top);
     
-    const visibleWidth = Math.max(0, Math.min(rect.right, windowWidth)) - Math.max(0, rect.left);
-    const visibleHeight = Math.max(0, Math.min(rect.bottom, windowHeight)) - Math.max(0, rect.top);
+    // For elements with zero width or height, we treat the visible dimension as 1 pixel if it's within the viewport
+    visibleWidth = visibleWidth <= 0 ? (rect.height > 0 ? 1 : 0) : visibleWidth;
+    visibleHeight = visibleHeight <= 0 ? (rect.width > 0 ? 1 : 0) : visibleHeight;
     
-    const elementArea = rect.width * rect.height;
+    // Calculate the area of the element and the visible area
+    const elementArea = rect.width * rect.height || 1; // Prevent division by zero by defaulting to 1 if both dimensions are zero
     const visibleArea = visibleWidth * visibleHeight;
     
     // Calculate the percentage of the element that is visible
     const visiblePercentage = (visibleArea / elementArea) * 100;
     
-    return (visiblePercentage > percentVisible) || isElementFullyInViewport(el);
+    return (visiblePercentage > percentVisible);
   }}
 
   let currentElements = [];
@@ -176,7 +183,7 @@ js_annotate_dom = f"""
       node.setAttribute('data-interactive', interactive.toString());
       node.setAttribute('data-visible', visible.toString());
       
-      const inViewport = isElementInViewport(element, 0);
+      const inViewport = isElementInViewport(element, 1);
       node.setAttribute('data-in-viewport', inViewport.toString());
       
       // Check if the element is an input and has a value
@@ -195,6 +202,26 @@ js_annotate_dom = f"""
 """
 
 
+def remove_tags_without_attributes(soup, tags_to_remove):
+    # Collect all tags that match the criteria in a list
+    def collect_tags(tag, tags_to_remove):
+        tags_to_unwrap = []
+        for child in tag.find_all(recursive=False):
+            if child.name in tags_to_remove and not child.attrs:
+                tags_to_unwrap.append(child)
+            else:
+                # Recursively check the children of this tag
+                tags_to_unwrap.extend(collect_tags(child, tags_to_remove))
+        return tags_to_unwrap
+
+    # Get the list of tags to unwrap
+    tags_to_unwrap = collect_tags(soup, tags_to_remove)
+
+    # Unwrap the tags
+    for tag in tags_to_unwrap:
+        tag.unwrap()
+
+
 async def get_simplified_html(browser: PlaywrightBrowser) -> Tuple[str, str]:
     page = await browser.prepare_page()
 
@@ -205,9 +232,11 @@ async def get_simplified_html(browser: PlaywrightBrowser) -> Tuple[str, str]:
     html = await page.content()
     simplified_dom = simplify_html(html)
 
+    remove_tags_without_attributes(simplified_dom, ["div", "span"])
+
     # Extract the title of the page
     title = simplified_dom.title.string if simplified_dom.title else ""
 
-    print(simplified_dom.body.prettify())
+    #print(simplified_dom.body.prettify())
 
     return title, simplified_dom.body#.prettify()

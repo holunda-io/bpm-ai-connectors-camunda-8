@@ -51,7 +51,7 @@ def create_schema_from_function(
     )
 
 
-class Function(BaseModel):
+class Tool(BaseModel):
 
     name: str
     """
@@ -66,7 +66,7 @@ class Function(BaseModel):
     args_schema: Optional[Dict[str, Any]] = None
     """Function's input argument schema."""
 
-    callable: Callable
+    callable: Optional[Callable] = None
 
     @classmethod
     def from_callable(

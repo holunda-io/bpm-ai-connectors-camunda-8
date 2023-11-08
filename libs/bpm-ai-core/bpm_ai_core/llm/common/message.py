@@ -1,17 +1,21 @@
+import asyncio
 import inspect
 import json
-from typing import TypedDict, Optional, Literal, Any, Union
+from typing import TypedDict, Optional, Literal, Any, Union, List
 
+from PIL import Image
 from pydantic import BaseModel, Field
 
-from bpm_ai_core.llm.common.function import Function
+from bpm_ai_core.llm.common.tool import Tool
 
 
 class ChatMessage(BaseModel):
-    content: Optional[Union[str, dict]] = None
+    content: Optional[Union[str, dict, List[Union[str, Image]]]] = None
     """
     The contents of the message. 
-    Either a string for normal completions or a dict for prediction with output schema.
+    Either a string for normal completions, 
+    or a list of strings and images for multimodal completions, 
+    or a dict for prediction with output schema.
     """
 
     role: Literal["system", "user", "assistant", "function"]
@@ -25,19 +29,24 @@ class ChatMessage(BaseModel):
     The name of the author of this message.
     """
 
+    class Config:
+        arbitrary_types_allowed = True
 
-class FunctionCallMessage(ChatMessage):
 
-    role: str = Field("assistant")
+class SingleToolCallMessage(BaseModel):
+
+    id: str
+
+    type: str = Field("function")
 
     name: str
     """
-    The name of the function that was used.
+    The name of the tool that was used.
     """
 
     payload: Any
 
-    function: Optional[Function] = None
+    tool: Optional[Tool] = None
 
     def payload_dict(self) -> dict:
         if isinstance(self.payload, dict):
@@ -51,14 +60,14 @@ class FunctionCallMessage(ChatMessage):
             raise Exception("Payload has unexpected type.")
 
     def invoke(self):
-        return self.function.callable(**self.payload_dict())
+        return self.tool.callable(**self.payload_dict())
 
-    async def ainvoke(self):
-        _callable = self.function.callable
+    async def ainvoke(self) -> Any:
+        _callable = self.tool.callable
         inputs = self.payload_dict()
         from bpm_ai_core.tracing.tracing import LangsmithTracer
         tracer = LangsmithTracer()  # todo
-        tracer.start_function_trace(self.function, inputs)
+        tracer.start_function_trace(self.tool, inputs)
         if inspect.iscoroutinefunction(_callable):
             result = await _callable(**inputs)
         else:
@@ -67,12 +76,27 @@ class FunctionCallMessage(ChatMessage):
         return result
 
 
-class FunctionResultMessage(ChatMessage):
+class ToolCallsMessage(ChatMessage):
+    role: str = Field("assistant")
 
-    role: str = Field("function")
+    tool_calls: List[SingleToolCallMessage]
 
-    name: str
+    def invoke_all(self) -> List[Any]:
+        return [t.invoke() for t in self.tool_calls]
+
+    async def ainvoke_all(self) -> List[Any]:
+        return [await t.ainvoke() for t in self.tool_calls]
+
+    async def ainvoke_all_parallel(self) -> List[Any]:
+        return await asyncio.gather(*[t.ainvoke() for t in self.tool_calls])
+
+
+class ToolResultMessage(ChatMessage):
+
+    role: str = Field("tool")
+
+    id: str
     """
-    The name of the function.
+    The id of the tool.
     """
 

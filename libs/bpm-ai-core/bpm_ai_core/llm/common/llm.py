@@ -6,7 +6,7 @@ from openai.types.chat import ChatCompletionMessageParam
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from bpm_ai_core.llm.common.message import ChatMessage
-from bpm_ai_core.llm.common.function import Function
+from bpm_ai_core.llm.common.tool import Tool
 from bpm_ai_core.prompt.prompt import Prompt
 from bpm_ai_core.tracing.tracing import LangsmithTracer, LangsmithTracer
 
@@ -18,7 +18,7 @@ class LLM(ABC):
 
     model: str
     temperature: float = 0.0
-    max_retries: int = 5
+    max_retries: int = 0
     retryable_exceptions: List[Type[BaseException]] = [Exception]
 
     tracer = LangsmithTracer()
@@ -32,15 +32,15 @@ class LLM(ABC):
         self,
         prompt: Prompt,
         output_schema: Optional[Dict[str, Any]] = None,
-        functions: Optional[List[Function]] = None
+        tools: Optional[List[Tool]] = None
     ) -> ChatMessage:
-        if output_schema and functions:
-            raise ValueError("Must not pass both an output_schema and functions")
+        if output_schema and tools:
+            raise ValueError("Must not pass both an output_schema and tools")
 
         messages = prompt.format(llm_name=self.name())
 
-        self.tracer.start_llm_trace(self, messages, self.predict.retry.statistics['attempt_number'], functions)
-        completion = self._predict(messages, output_schema, functions)
+        self.tracer.start_llm_trace(self, messages, self.predict.retry.statistics['attempt_number'], tools)
+        completion = self._predict(messages, output_schema, tools)
         self.tracer.end_llm_trace(completion)
 
         return completion
@@ -50,7 +50,7 @@ class LLM(ABC):
         self,
         messages: List[ChatMessage],
         output_schema: Optional[Dict[str, Any]] = None,
-        functions: Optional[List[Function]] = None
+        functions: Optional[List[Tool]] = None
     ) -> ChatMessage:
         pass
 

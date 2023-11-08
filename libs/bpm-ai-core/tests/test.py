@@ -4,8 +4,8 @@ from jinja2 import Template
 from langsmith import traceable
 from pydantic import BaseModel, Field
 
-from bpm_ai_core.llm.common.function import Function
-from bpm_ai_core.llm.common.message import FunctionCallMessage
+from bpm_ai_core.llm.common.message import ToolCallsMessage
+from bpm_ai_core.llm.common.tool import Tool
 from bpm_ai_core.llm.openai_chat import ChatOpenAI
 from bpm_ai_core.prompt.prompt import Prompt
 from bpm_ai_core.util.openai import json_schema_from_shorthand
@@ -13,7 +13,7 @@ from bpm_ai_core.util.openai import json_schema_from_shorthand
 
 @traceable(run_type="chain", name="Test_OpenAI")
 def test_openai(name: str = "Bennet"):
-    llm = ChatOpenAI()
+    llm = ChatOpenAI(model="gpt-4-1106-preview")
     prompt = Prompt.from_file("test", name=name, x=False)
     print("Prompt: ")
     print(prompt.format())
@@ -24,13 +24,16 @@ def test_openai(name: str = "Bennet"):
 
 
 def test_prompt():
-    prompt = Prompt.from_file("test_history", task="go go gadget")
+    prompt = Prompt.from_file("test_history2", task="go go gadget", image_url="https://www.planet-wissen.de/technik/verkehr/mobilitaet_von_morgen/mobilitaet-google-auto-100~_v-gseapremiumxl.jpg")
     print("Prompt: ")
-    print(prompt.format())
+    messages = prompt.format()
+    print(messages)
+    #for m in messages:
+    #    print(m)
 
 
 @traceable(run_type="chain", name="Test_OutputSchema_OpenAI")
-def test_openai_json():
+def test_openai_output_schema():
     llm = ChatOpenAI()
     prompt = Prompt.from_file("test", name="Bennet", x=False)
     print("Prompt: ")
@@ -48,33 +51,48 @@ def test_openai_json():
     return message.content
 
 
+@traceable(run_type="chain", name="Test_Images_OpenAI")
+def test_openai_images():
+    llm = ChatOpenAI(model="gpt-4-vision-preview")
+    prompt = Prompt.from_file("test_image", image_url="/Users/bennet/Desktop/Screenshot 2023-10-16 at 00.13.54.png")
+    print("Prompt: ")
+    print(prompt.format())
+    print("Answer: ")
+    message = llm.predict(prompt)
+    print(message.content)
+    return message.content
+
+
 class WeatherArgs(BaseModel):
     location: str
     n_days: int = Field(description="number of days to forecast")
 
+def weather_fun(location, n_days):
+    print(f"called weather fun with {location} and {n_days}")
+    return "Sunny"
 
-def test_fun(locations, days):
-    print(f"called fun with {locations} and {days}")
+def news_fun(locations, days):
+    print(f"called news fun with {locations} and {days}")
+    return "Coool news"
 
 
-@traceable(run_type="chain", name="Test_Functions_OpenAI")
-def test_openai(name: str = "Bennet"):
+@traceable(run_type="chain", name="Test_Tools_OpenAI")
+def test_openai_tools():
     llm = ChatOpenAI()
-    prompt = Prompt.from_file("test", name=name, x=False)
-    print("Prompt: ")
+    prompt = Prompt.from_file("test_tools")
     print(prompt.format())
     print("Answer: ")
     message = llm.predict(
         prompt,
-        functions=[
-            Function.from_callable("get_weather", "get the weather", WeatherArgs, test_fun),
-            Function.from_callable("get_news", "get the news",
-                                   {"locations": ["location for the news"], "days": [{"type": "integer", "description": "n days to check news"}]}, test_fun),
+        tools=[
+            Tool.from_callable("get_weather", "get the weather", WeatherArgs, weather_fun),
+            Tool.from_callable("get_news", "get the news",
+                               {"locations": ["location for the news"], "days": [{"type": "integer", "description": "n days to check news"}]}, news_fun),
         ]
     )
     print(message)
 
-    if isinstance(message, FunctionCallMessage):
-        print(message.invoke())
+    if isinstance(message, ToolCallsMessage):
+        print(message.invoke_all())
 
     return message.content

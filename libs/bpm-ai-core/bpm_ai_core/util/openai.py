@@ -1,33 +1,78 @@
 from typing import List, Dict, Union, Any
 
+from PIL.Image import Image
 from openai.types.chat import ChatCompletionMessageParam
 
-from bpm_ai_core.llm.common.message import ChatMessage, FunctionCallMessage, FunctionResultMessage
+from bpm_ai_core.llm.common.image import base64_encode_image
+from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage, ToolResultMessage
 
 
-def get_openai_function_call_dict(message: FunctionCallMessage):
-    return {"function_call": {"name": message.name, "arguments": message.payload}}
+def get_openai_tool_call_dict(message: ToolCallsMessage):
+    return {
+        "tool_calls": [
+            {
+                "type": "function",
+                "id": t.id,
+                "function": {
+                    "name": t.name,
+                    "arguments": t.payload
+                }
+            }
+            for t in message.tool_calls
+        ]
+    }
 
 
 def message_to_openai_dict(message: ChatMessage) -> ChatCompletionMessageParam:
-    if isinstance(message, FunctionCallMessage):
-        return {
-            "role": message.role,
-            "content": message.content,
-            **get_openai_function_call_dict(message)
+    if isinstance(message, ToolCallsMessage):
+        extra_dict = {
+            **get_openai_tool_call_dict(message)
         }
-    elif isinstance(message, FunctionResultMessage):
-        return {
-            "role": message.role,
-            "content": message.content,
-            "name": message.name
+    elif isinstance(message, ToolResultMessage):
+        extra_dict = {
+            "tool_call_id": message.id
         }
-    elif isinstance(message, ChatMessage):
-        return {
-            "role": message.role,
-            "content": message.content,
-            **({"name": message.name} if message.name else {})
+    else:
+        extra_dict = {}
+
+    if isinstance(message.content, str):
+        content = message.content
+    elif isinstance(message.content, list):
+        content = []
+        for e in message.content:
+            if isinstance(message.content, str):
+                content.append(str_to_openai_text_dict(e))
+            elif isinstance(message.content, Image):
+                content.append(image_to_openai_image_dict(e))
+            else:
+                raise ValueError(
+                    "Elements in ChatMessage.content must be of type str or PIL.Image."
+                )
+    else:
+        raise ValueError(
+            "ChatMessage.content must be of type str or List[Union[str, PIL.Image]] if used for chat completions."
+        )
+    return {
+        "role": message.role,
+        "content": content,
+        **extra_dict,
+        **({"name": message.name} if message.name else {})
+    }
+
+
+def image_to_openai_image_dict(image: Image) -> dict:
+    return {
+        "type": "image_url",
+        "image_url": {
+            "url": f"data:image/{image.format.lower()};base64,{base64_encode_image(image)}"
         }
+    }
+
+def str_to_openai_text_dict(text: str) -> dict:
+    return {
+        "type": "text",
+        "text": text
+    }
 
 
 def messages_to_openai_dicts(messages: List[ChatMessage]):
@@ -77,7 +122,10 @@ def schema_from_properties(properties: Dict[str, Union[str, dict]]):
 
 def json_schema_to_openai_function(name: str, desc: str, schema: Dict[str, Any]) -> dict:
     return {
-        "name": name,
-        "description": desc,
-        "parameters": schema_from_properties(schema),
+        "type": "function",
+        "function": {
+            "name": name,
+            "description": desc,
+            "parameters": schema_from_properties(schema),
+        }
     }
