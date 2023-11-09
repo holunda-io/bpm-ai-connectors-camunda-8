@@ -62,7 +62,9 @@ class Prompt:
                     start = 0
                     for match in re.finditer(image_regex, content):
                         # Add the text before the image
-                        content_parts.append(content[start:match.start()].strip())
+                        before_text = content[start:match.start()].strip()
+                        if before_text:
+                            content_parts.append(before_text)
                         # Add the image
                         image_url = match.group(1)
                         content_parts.append(load_image(image_url))
@@ -115,78 +117,6 @@ class Prompt:
 
         return [m for m in messages if m]
 
-
-
-
-    def format2(self, llm_name: str = "") -> List[ChatMessage]:
-        template = self.load_template(self.path, llm_name)
-        full_prompt = template.render(self.template_vars)
-
-        regex = r'\[#\s*(user|assistant|system|function_result:.*|function_call:.*)\s*#\]'
-
-        # Check if the raw template contains message prompt sections
-        if re.search(regex, full_prompt):
-            sections = re.split(regex, full_prompt)[1:]
-            # Create a list of messages from the sections
-            messages = [
-                self.section_to_message(sections, i)
-                for i in range(0, len(sections) - 1, 2)
-            ]
-        else:
-            # If the raw template doesn't contain any sections, treat whole file as 'user' message
-            messages = [{'user': full_prompt}]
-
-        return [m for m in messages if m]
-
-    @staticmethod
-    def section_to_message(sections, i) -> ChatMessage:
-        role = sections[i].strip()
-        next_role = sections[i+2].strip() if len(sections) > (i+2) else None
-        content = sections[i+1].strip()
-        next_content = sections[i+3].strip() if len(sections) > (i+3) else None
-        if role == "user" and next_role and next_role.startswith("image"):
-            return ChatMessage(
-                role=role,
-                content=next_content,
-                images=[load_image(next_role.split("#")[-1].strip())]
-            )
-        elif role == "assistant" and next_role and next_role.startswith("function_call"):
-            return ToolCallsMessage(
-                tool_calls=[
-                    SingleToolCallMessage(
-                        name=next_role.split(":")[-1].strip(),
-                        id=next_role.split(":")[-1].strip(),  # todo
-                        content=content,
-                        payload=next_content
-                    )
-                ]
-            )
-        elif role.startswith("function_result"):
-            return ToolResultMessage(
-                id=role.split(":")[-1].strip(),
-                content=content
-            )
-        elif role.startswith("function_call"):
-            prev_role = sections[i-2].strip() if i > 1 else None
-            if prev_role and prev_role == "assistant":
-                return None
-            else:
-                return ToolCallsMessage(
-                    tool_calls=[
-                        SingleToolCallMessage(
-                            name=next_role.split(":")[-1].strip(),
-                            id=next_role.split(":")[-1].strip(),  # todo
-                            content=content,
-                            payload=next_content
-                        )
-                    ]
-                )
-        elif role.startswith("image"):
-            prev_role = sections[i-2].strip() if i > 1 else None
-            if prev_role and prev_role == "user":
-                return None
-        else:
-            return ChatMessage(role=role, content=content)
 
     @staticmethod
     def load_template(path: str, llm_name: str) -> Template:

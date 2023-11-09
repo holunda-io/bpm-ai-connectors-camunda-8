@@ -37,7 +37,7 @@ class PlaywrightBrowser:
         )
         #context = await self.browser.new_context(viewport={'width': 1280, 'height': 1024})
         self.page = await self.browser.new_page()
-        await self.page.set_viewport_size({'width': 1280, 'height': 1024})
+        await self.page.set_viewport_size({'width': 1280, 'height': 1000})
 
         await self.page.goto(url)
 

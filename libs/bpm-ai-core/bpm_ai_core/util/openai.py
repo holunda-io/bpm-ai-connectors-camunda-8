@@ -40,9 +40,9 @@ def message_to_openai_dict(message: ChatMessage) -> ChatCompletionMessageParam:
     elif isinstance(message.content, list):
         content = []
         for e in message.content:
-            if isinstance(message.content, str):
+            if isinstance(e, str):
                 content.append(str_to_openai_text_dict(e))
-            elif isinstance(message.content, Image):
+            elif isinstance(e, Image):
                 content.append(image_to_openai_image_dict(e))
             else:
                 raise ValueError(

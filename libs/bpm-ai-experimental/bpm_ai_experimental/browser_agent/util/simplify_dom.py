@@ -8,7 +8,7 @@ from playwright.sync_api import sync_playwright, expect, Locator
 from bpm_ai_experimental.browser_agent.util.browser import PlaywrightBrowser
 from bpm_ai_experimental.browser_agent.util.injection import disable_animations, ripple_css, ripple_js
 from bpm_ai_experimental.browser_agent.util.utils import is_interactive, truncate_str, is_visible, \
-    convert_list_to_markdown, has_label, in_viewport
+    convert_list_to_markdown, has_label, in_viewport, has_zero_area
 
 attributes_to_keep = [
     'aria-label',
@@ -67,7 +67,13 @@ def simplify_html(html: str):
                 parent.append(truncate_str(text))
             return
 
-        if not is_visible(element) or not in_viewport(element) or element.name in tags_to_drop:
+        if not is_visible(element) or element.name in tags_to_drop:
+            return
+
+        if not in_viewport(element) and not has_zero_area(element):
+            # some containers have zero height and/or width but their content is still visible
+            # so, we only ignore subtrees of non-viewport elements if the element has an area (is an actual element)
+            # the zero area container still won't be kept, but its children get a chance
             return
 
         # Attempt to convert lists to markdown
@@ -77,7 +83,7 @@ def simplify_html(html: str):
                 parent.append(markdown)
                 return
 
-        keep = (is_interactive(element) or has_label(element))
+        keep = (is_interactive(element) or has_label(element)) and in_viewport(element)
 
         new_element = None
         if has_only_text_child_and_is_to_drop(element) or (element.name in tags_to_drop_but_keep_children):
@@ -117,15 +123,26 @@ interactive_tags = [tag.upper() for tag in interactive_tags]
 js_annotate_dom = f"""
 () => {{
   
-  const isElementFullyInViewport = (element) => {{
-    const rect = element.getBoundingClientRect();
-    return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-  }}
+  const isElementXPercentInViewport = function(el, percentVisible) {{
+    let rect = el.getBoundingClientRect(),
+    windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+    
+    return !(
+      Math.floor(100 - (((rect.top >= 0 ? 0 : rect.top) / +-rect.height) * 100)) < percentVisible ||
+      Math.floor(100 - ((rect.bottom - windowHeight) / rect.height) * 100) < percentVisible
+    )
+  }};
+  
+  const elementIsVisibleInViewport = (el, partiallyVisible = false) => {{
+    const rect = el.getBoundingClientRect();
+    const innerHeight = (window.innerHeight || document.documentElement.clientHeight);
+    const innerWidth = (window.innerWidth || document.documentElement.clientWidth);
+    return partiallyVisible
+        ? ((rect.top > 0 && rect.top < innerHeight) ||
+            (rect.bottom > 0 && rect.bottom < innerHeight)) &&
+            ((rect.left > 0 && rect.left < innerWidth) || (rect.right > 0 && rect.right < innerWidth))
+        : rect.top >= 0 && rect.left >= 0 && rect.bottom <= innerHeight && rect.right <= innerWidth;
+  }};
   
   const isElementInViewport = (el, percentVisible) => {{
     if (!el) {{
@@ -183,8 +200,11 @@ js_annotate_dom = f"""
       node.setAttribute('data-interactive', interactive.toString());
       node.setAttribute('data-visible', visible.toString());
       
-      const inViewport = isElementInViewport(element, 1);
+      const inViewport = isElementXPercentInViewport(element, 1); //isElementInViewport(element, 1);
       node.setAttribute('data-in-viewport', inViewport.toString());
+      const rect = element.getBoundingClientRect();
+      const zeroArea = (rect.width === 0 || rect.height === 0);
+      node.setAttribute('data-zero-area', zeroArea.toString());
       
       // Check if the element is an input and has a value
       if (element.tagName.toLowerCase() === 'input' && element.value) {{

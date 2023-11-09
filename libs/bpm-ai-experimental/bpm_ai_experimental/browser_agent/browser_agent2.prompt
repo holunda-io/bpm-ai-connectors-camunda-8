@@ -49,20 +49,23 @@ ALWAYS finish with the store_final_result function, NEVER just return a text ans
 {% endif %}
 
 {% for action in action_history %}
-  [# assistant #]
-  {{action.content}}
+  {% if is_chat(action) and not is_tool(action) %}
+      [# assistant #]
+      {{action.content}}
 
-  {% for call in action.tool_calls %}
-    [# tool_call: {{call.name}} ({{call.id}}) #]
-    {{call.payload}}
-  {% endfor %}
-
-  {% for call in action.tool_calls %}
-    [# tool_result: {{call.id}} #]
-    {% if not loop.last %}
+      {% for call in action.tool_calls %}
+        [# tool_call: {{call.name}} ({{call.id}}) #]
+        {{call.payload}}
+      {% endfor %}
+  {% endif %}
+  {% if is_tool(action) %}
+      [# tool_result: {{action.id}} #]
+      {% if action.content %}
+        {{action.content}}
+      {% elif not loop.last %}
         [...]
-    {% else %}
+      {% else %}
 {{current_dom()}}
     {% endif %}
-  {% endfor %}
+  {% endif %}
 {% endfor %}

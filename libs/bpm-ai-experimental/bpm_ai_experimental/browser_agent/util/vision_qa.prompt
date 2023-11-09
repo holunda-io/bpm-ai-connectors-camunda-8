@@ -1,0 +1,6 @@
+[# system #]
+You are a helpful assistant that answers questions about images.
+
+[# user #]
+[# image {{image_path}} #]
+{{question}}
