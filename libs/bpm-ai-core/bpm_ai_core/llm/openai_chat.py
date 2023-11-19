@@ -75,7 +75,7 @@ class ChatOpenAI(LLM):
                    "tools": functions
                } if functions else {})
         }
-        print(p)
+        #print(p)
         return self.client.chat.completions.create(
             **p,
             max_tokens=4096

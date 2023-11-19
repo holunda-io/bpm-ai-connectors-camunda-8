@@ -1,9 +1,29 @@
 import base64
 import os
 from io import BytesIO
+from urllib.parse import urlparse
 
 import requests
 from PIL import Image
+
+from bpm_ai_core.util.file import is_supported_file
+
+supported_img_extensions = [
+    'bmp', 'dib',
+    'gif',
+    'icns', 'ico',
+    'jfif', 'jpe', 'jpeg', 'jpg',
+    'j2c', 'j2k', 'jp2', 'jpc', 'jpf', 'jpx',
+    'apng', 'png',
+    'pbm', 'pgm', 'pnm', 'ppm',
+    'tif', 'tiff',
+    'webp',
+    'emf', 'wmf'
+]
+
+
+def is_supported_img_file(url_or_path: str) -> bool:
+    return is_supported_file(url_or_path, supported_extensions=supported_img_extensions)
 
 
 def load_image(path: str) -> Image:

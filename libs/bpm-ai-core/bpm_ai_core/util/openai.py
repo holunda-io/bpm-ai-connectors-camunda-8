@@ -3,7 +3,7 @@ from typing import List, Dict, Union, Any
 from PIL.Image import Image
 from openai.types.chat import ChatCompletionMessageParam
 
-from bpm_ai_core.llm.common.image import base64_encode_image
+from bpm_ai_core.util.image import base64_encode_image
 from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage, ToolResultMessage
 
 
@@ -101,7 +101,7 @@ def json_schema_from_shorthand(schema: dict) -> dict:
                 return {"type": "object", "properties": properties, "required": list(properties.keys())}
 
             # If 'type' is not present or if 'type' is 'object', treat x as an object
-            elif not 'type' in x or x['type'] == 'object':
+            elif 'type' not in x or x['type'] == 'object':
                 properties = {k: type_or_default(v) for k, v in x.items()}
                 return {"type": "object", "properties": properties, "required": list(properties.keys())}
             else:

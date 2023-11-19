@@ -12,7 +12,10 @@ from bpm_ai_experimental.browser_agent.util.utils import is_interactive, truncat
 
 attributes_to_keep = [
     'aria-label',
+    'aria-describedby',
     'aria-current',
+    'aria-selected',
+    'aria-haspopup',
     'data-name',
     'name',
     'type',
@@ -20,7 +23,15 @@ attributes_to_keep = [
     'value',
     'role',
     'title',
-    'alt'
+    'alt',
+    'href',
+    'label',
+    'caption',
+    'summary',
+    'datetime',
+    'selected',
+    'checked',
+    'disabled',
 ]
 
 tags_to_drop = ['script', 'style', 'link', 'meta', 'noscript']
@@ -28,8 +39,8 @@ tags_to_drop = ['script', 'style', 'link', 'meta', 'noscript']
 tags_to_drop_but_keep_children = ['strong', 'em']
 tags_to_drop_if_only_text_child = ['span', 'label', 'p']
 
-interactive_tags = ['a', 'input', 'button', 'select', 'textarea', 'img']
-interactive_attrs = ['onclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup']
+interactive_tags = ['a', 'input', 'button', 'select', 'option', 'textarea', 'img', 'canvas', 'video', 'details', 'summary']
+interactive_attrs = ['onclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup', 'jsaction']
 
 invisibility_attrs = {
     'opacity': ['', '0'],
@@ -56,28 +67,28 @@ def simplify_html(html: str):
     new_soup.title = original_soup.title
 
     # Recursive function to process elements and their children
-    def process_element(element, parent):
+    def process_element(element, parent, parent_in_viewport: bool):
         if isinstance(element, Comment):
             return
 
-        # if element is just a string (NavigableString in BS4), keep it if not empty
+        # if element is just a string (NavigableString in BS4), keep it if not empty and parent is in viewport
         if isinstance(element, str):
             text = element.strip()
-            if text:
+            if text and parent_in_viewport:
                 parent.append(truncate_str(text))
             return
 
         if not is_visible(element) or element.name in tags_to_drop:
             return
 
-        if not in_viewport(element) and not has_zero_area(element):
+        #if not in_viewport(element) and not has_zero_area(element):
             # some containers have zero height and/or width but their content is still visible
             # so, we only ignore subtrees of non-viewport elements if the element has an area (is an actual element)
             # the zero area container still won't be kept, but its children get a chance
-            return
+            #return
 
         # Attempt to convert lists to markdown
-        if element.name in ['ol', 'ul']:
+        if element.name in ['ol', 'ul'] and parent_in_viewport:
             markdown = convert_list_to_markdown(element)
             if markdown:
                 parent.append(markdown)
@@ -86,13 +97,13 @@ def simplify_html(html: str):
         keep = (is_interactive(element) or has_label(element)) and in_viewport(element)
 
         new_element = None
-        if has_only_text_child_and_is_to_drop(element) or (element.name in tags_to_drop_but_keep_children):
-            new_element = parent
-        elif keep or element.name == 'body':
+        #if has_only_text_child_and_is_to_drop(element) or (element.name in tags_to_drop_but_keep_children):
+        #    new_element = parent
+        if keep or element.name == 'body':
             # Create a new element with only the allowed attributes
             new_element = Tag(name=element.name, parser=new_soup)
             for attr in attributes_to_keep:
-                if attr in element.attrs:
+                if attr in element.attrs and element[attr]:
                     new_element[attr] = element[attr]
             # If the element is interactive, convert data-testid to id
             if is_interactive(element) and 'data-testid' in element.attrs:
@@ -102,15 +113,19 @@ def simplify_html(html: str):
 
         # Process children
         for child in element.children:
-            process_element(child, new_element or parent)
+            process_element(child, new_element or parent, in_viewport(element))
 
         # If we created a new element, append it to its parent
         # but only if it has more than just an id attribute or has children
-        if new_element and (len(new_element.attrs) > 1 or new_element.contents) and new_element is not parent:
+        #if new_element and (len(new_element.attrs) > 1 or element.contents) and new_element is not parent:
+        #    parent.append(new_element)
+        #else:
+        #    print(f"ignoring {new_element}")
+        if new_element and new_element is not parent:
             parent.append(new_element)
 
     # Start processing from the body of the original HTML
-    process_element(original_soup.body, new_soup)
+    process_element(original_soup.body, new_soup, True)
 
     return new_soup
 
@@ -122,6 +137,40 @@ interactive_tags = [tag.upper() for tag in interactive_tags]
 
 js_annotate_dom = f"""
 () => {{
+
+    const tagElementStyles = {{
+    color: "black",
+    fontSize: "14px",
+    padding: "3px",
+    fontWeight: "bold",
+    zIndex: "999",
+    position: "relative"
+  }};
+  
+  function createTagElement(uniqueTag, styles) {{
+      const tagElement = document.createElement("span");
+    
+      Object.keys(styles).forEach((styleKey) => {{
+        tagElement.style[styleKey] = styles[styleKey];
+      }});
+    
+      tagElement.textContent = uniqueTag;
+      tagElement.setAttribute('data-vision-tag', true)
+    
+      return tagElement;
+  }}
+  
+  const addTag = (element, id) => {{
+    const tagElement = createTagElement(id, tagElementStyles);
+
+      if (["input", "textarea"].includes(element.tagName.toLowerCase()) || element.getAttribute('role') === 'textbox') {{
+        tagElement.style.background = "orange";
+        element.parentNode.insertBefore(tagElement, element);
+      }} else {{
+        tagElement.style.background = "yellow";
+        element.prepend(tagElement);
+      }}
+  }}
   
   const isElementXPercentInViewport = function(el, percentVisible) {{
     let rect = el.getBoundingClientRect(),
@@ -179,7 +228,7 @@ js_annotate_dom = f"""
   let currentElements = [];
 
   const traverseDOM = (node, pageElements) => {{
-    if (node.nodeType === Node.ELEMENT_NODE) {{
+    if (node.nodeType === Node.ELEMENT_NODE && !node.hasAttribute('data-vision-tag')) {{
       const element = node;
       const style = window.getComputedStyle(element);
 
@@ -192,6 +241,12 @@ js_annotate_dom = f"""
       const visible = !Object.keys(invisibility_attrs).some(attr => 
         invisibility_attrs[attr].includes(element.getAttribute(attr)) || 
         invisibility_attrs[attr].includes(style[attr]));
+        
+    const inViewport = isElementXPercentInViewport(element, 50); //isElementInViewport(element, 1);
+        
+    if (!element.hasAttribute("data-testid") && interactive && visible && inViewport) {{
+        //addTag(element, (pageElements.length - 1).toString());
+      }}
 
       if (visible && interactive) {{
         pageElements.push(element);
@@ -200,14 +255,13 @@ js_annotate_dom = f"""
       node.setAttribute('data-interactive', interactive.toString());
       node.setAttribute('data-visible', visible.toString());
       
-      const inViewport = isElementXPercentInViewport(element, 1); //isElementInViewport(element, 1);
       node.setAttribute('data-in-viewport', inViewport.toString());
       const rect = element.getBoundingClientRect();
       const zeroArea = (rect.width === 0 || rect.height === 0);
       node.setAttribute('data-zero-area', zeroArea.toString());
       
       // Check if the element is an input and has a value
-      if (element.tagName.toLowerCase() === 'input' && element.value) {{
+      if ((element.tagName.toLowerCase() === 'input' || element.tagName.toLowerCase() === 'textarea') && element.value) {{
         node.setAttribute('data-value', element.value);
       }}
     }}
@@ -218,6 +272,72 @@ js_annotate_dom = f"""
   }};
 
   traverseDOM(document.documentElement, currentElements);
+}}
+"""
+
+js_tag_dom = f"""
+() => {{
+  const tagElementStyles = {{
+    color: "black",
+    fontSize: "15px",
+    padding: "3px",
+    fontWeight: "bold",
+    zIndex: "999999999999",
+    position: "relative",
+    borderRadius: "8px",
+    opacity: "0.75"
+  }};
+  
+  function createTagElement(uniqueTag, styles) {{
+      const tagElement = document.createElement("span");
+    
+      Object.keys(styles).forEach((styleKey) => {{
+        tagElement.style[styleKey] = styles[styleKey];
+      }});
+    
+      tagElement.textContent = uniqueTag;
+    
+      return tagElement;
+  }}
+  
+  const addTag = (element, id) => {{
+    const tagElement = createTagElement(id, tagElementStyles);
+
+      if (["input", "textarea"].includes(element.tagName.toLowerCase()) || element.getAttribute('role') === 'textbox') {{
+        tagElement.style.background = "orange";
+        element.parentNode.insertBefore(tagElement, element);
+      }} else {{
+        tagElement.style.background = "yellow";
+        element.prepend(tagElement);
+      }}
+  }}
+
+  const elements = document.querySelectorAll(
+    "a, button, input, textarea, select, option, details, summary, [role='button'], [role='textbox'], [role='tab']"
+  );
+  const moreElements = document.querySelectorAll(
+      "a, a[href], button, input, textarea, select, option, details, summary, " +
+      "[role='button'], [role='textbox'], [role='tab'], [role='link'], " +
+      "[role='menuitem'], [role='slider'], [role='checkbox'], " +
+      "[tabindex]:not([tabindex='-1']), " +
+      "div[role='button'], span[role='button'], div[onclick], span[onclick], " +
+      "area[href], [contenteditable='true'], " +
+      "audio[controls], video[controls]"
+  );
+  var i = 1;
+  elements.forEach((element) => {{
+    const style = window.getComputedStyle(element);
+    const invisibility_attrs = {invisibility_attrs_json};
+    const visible = !Object.keys(invisibility_attrs).some(attr => 
+        invisibility_attrs[attr].includes(element.getAttribute(attr)) || 
+        invisibility_attrs[attr].includes(style[attr]));
+        
+    if (visible) {{
+        element.setAttribute('data-testid', i);
+        addTag(element, i);
+        i++;
+    }}
+  }})
 }}
 """
 
@@ -242,6 +362,18 @@ def remove_tags_without_attributes(soup, tags_to_remove):
         tag.unwrap()
 
 
+def remove_empty_tags(soup):
+    for tag in soup.find_all(True):
+        # Check if the tag has no children, no text, and is not img, canvas or video
+        # If it has an 'id' attribute, it must also have other attributes to be kept, otherwise it is meaningless
+        if not tag.contents and not tag.text.strip() and tag.name not in ["img", "canvas", "video"]:
+            if 'id' in tag.attrs:
+                if len(tag.attrs) == 1:
+                    tag.decompose()  
+            else:
+                tag.decompose() 
+
+
 async def get_simplified_html(browser: PlaywrightBrowser) -> Tuple[str, str]:
     page = await browser.prepare_page()
 
@@ -252,11 +384,24 @@ async def get_simplified_html(browser: PlaywrightBrowser) -> Tuple[str, str]:
     html = await page.content()
     simplified_dom = simplify_html(html)
 
-    remove_tags_without_attributes(simplified_dom, ["div", "span"])
+    #remove_tags_without_attributes(simplified_dom, ["div", "span", "label", "p"])
+    for tag_name in ["span", "label", "p", "strong", "em", "b"]:
+        for tag in simplified_dom.find_all(tag_name, recursive=True):
+            if not tag.attrs:
+                tag.unwrap()
+
+    for i in range(0, 50):
+        remove_empty_tags(simplified_dom)
 
     # Extract the title of the page
     title = simplified_dom.title.string if simplified_dom.title else ""
 
-    #print(simplified_dom.body.prettify())
+    #print(simplified_dom.body.prettify() if simplified_dom.body else "EMPTY DOM")
 
-    return title, simplified_dom.body#.prettify()
+    return title, str(simplified_dom.body) if simplified_dom.body else None#.prettify()
+
+
+async def mark_interactive_dom(browser: PlaywrightBrowser):
+    page = await browser.prepare_page()
+    # annotate DOM with visual tags
+    await page.evaluate(js_tag_dom)

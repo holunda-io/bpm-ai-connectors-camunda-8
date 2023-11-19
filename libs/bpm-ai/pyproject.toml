@@ -7,8 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-bpm-ai-core = { path = "../bpm-ai-core" }
+bpm-ai-core = { path = "../bpm-ai-core", develop = true }
+pytest = "^7.4.3"
+pytest-dotenv = "^0.5.2"
 
+
+[tool.poetry.group.dev.dependencies]
+setuptools = "^68.2.2"
 
 [build-system]
 requires = ["poetry-core"]

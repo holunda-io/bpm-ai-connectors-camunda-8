@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 
 from jinja2 import Template
 
-from bpm_ai_core.llm.common.image import load_image
+from bpm_ai_core.util.image import load_image
 from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage, ToolResultMessage, SingleToolCallMessage
 
 

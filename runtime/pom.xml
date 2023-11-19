@@ -12,32 +12,21 @@
   <packaging>jar</packaging>
 
   <properties>
-    <spring-boot-starter-camunda-connectors.version>0.22.1</spring-boot-starter-camunda-connectors.version>
+    <camunda-connectors.version>0.22.1</camunda-connectors.version>
     <jackson.version>2.15.2</jackson.version>
   </properties>
 
   <dependencies>
-    <!-- Include the connector core -->
-    <dependency>
-      <groupId>io.holunda.connector</groupId>
-      <artifactId>camunda-8-connector-gpt-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>io.camunda.connector</groupId>
-      <artifactId>spring-boot-starter-camunda-connectors</artifactId>
-      <version>${spring-boot-starter-camunda-connectors.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
+      <artifactId>connector-runtime-core</artifactId>
+      <version>${camunda-connectors.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <groupId>net.sf.py4j</groupId>
+      <artifactId>py4j</artifactId>
+      <version>0.10.9.7</version>
     </dependency>
 
     <dependency>
@@ -57,12 +46,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>jakarta.mail</artifactId>
-      <version>1.6.5</version>
-    </dependency>
-
-    <dependency>
       <groupId>jakarta.validation</groupId>
       <artifactId>jakarta.validation-api</artifactId>
     </dependency>
@@ -79,10 +62,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
