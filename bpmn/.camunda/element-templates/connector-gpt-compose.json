@@ -156,9 +156,9 @@
       "group": "write",
       "description": "<code>High</code> results in more diverse and unpredictable text, <code>None</code> makes the output focused and deterministic.",
       "type": "Dropdown",
-      "value": "0",
+      "value": "0.0",
       "choices": [
-        { "name": "None", "value": "0" },
+        { "name": "None", "value": "0.0" },
         { "name": "Low", "value": "0.2" },
         { "name": "Medium", "value": "0.5" },
         { "name": "High", "value": "0.7" }

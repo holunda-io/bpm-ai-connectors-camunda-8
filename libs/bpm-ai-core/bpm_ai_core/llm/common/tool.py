@@ -3,6 +3,8 @@ from typing import Any, Optional, Dict, Callable, Type, Union
 
 from pydantic import BaseModel, validate_call, create_model
 
+from bpm_ai_core.util.json import expand_simplified_json_schema
+
 
 def _create_subset_model(
     name: str, model: BaseModel, field_names: list
@@ -74,12 +76,18 @@ class Tool(BaseModel):
         name: str,
         description: str,
         args_schema: Union[Dict[str, Any], Type[BaseModel]],
-        callable: Callable
+        callable: Optional[Callable] = None
     ):
+        if isinstance(args_schema, dict):
+            args_schema = expand_simplified_json_schema(args_schema)
+        else:
+            json_schema = args_schema.model_json_schema()
+            json_schema.pop("title")
+            args_schema = json_schema
         return cls(
            name=name,
             description=description,
-            args_schema=args_schema if isinstance(args_schema, dict) else args_schema.model_json_schema()["properties"],
+            args_schema=args_schema,
             callable=callable
         )
 

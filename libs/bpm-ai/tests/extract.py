@@ -1,14 +1,24 @@
+from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage, SingleToolCallMessage
 from bpm_ai_core.llm.openai_chat import ChatOpenAI
+from bpm_ai_core.testing.test_llm import TestLLM, tool_response
 
 from bpm_ai.extract.extract import run_extract
 
 
-def test_extract():
+def test_extract(use_real_llm=False):
+    llm = TestLLM(
+        name="openai",
+        real_llm_delegate=ChatOpenAI() if use_real_llm else None,
+        responses=[
+            tool_response(
+                name="information_extraction",
+                payload='{"firstname": "John", "lastname": "Meier", "age": 30, "language": "de"}'
+            )
+        ]
+    )
     result = run_extract(
-        ChatOpenAI(
-            model="gpt-4-1106-preview"
-        ),
-        {"email": "Hey ich bins, der Meier John. Mein 30. Geburtstag war krass!"},
+        llm=llm,
+        input_data={"email": "Hey ich bins, der John Meier. Mein 30. Geburtstag war mega!"},
         output_schema={
             "firstname": "the firstname",
             "lastname": "the lastname",
@@ -16,58 +26,38 @@ def test_extract():
             "language": "the language the email is written in, as two-letter ISO code"
         }
     )
-    print(result)
+    llm.assert_last_request_contains("John Meier")
+    llm.assert_last_request_defined_tool("information_extraction", is_fixed_tool_choice=True)
+
+    assert result["firstname"] == "John"
+    assert result["lastname"] == "Meier"
+    assert result["age"] == 30
+    assert result["language"] == "de"
 
 
-def test_extract_repeated():
+def test_extract_repeated(use_real_llm=False):
+    llm = TestLLM(
+        name="openai",
+        real_llm_delegate=ChatOpenAI() if use_real_llm else None,
+        responses=[
+            tool_response(
+                name="information_extraction",
+                payload='{"entities": [{"firstname": "Jörg"}, {"firstname": "Mike"}, {"firstname": "Sepp"}]}'
+            )
+        ]
+    )
     result = run_extract(
-        ChatOpenAI(
-            model="gpt-4-1106-preview"
-        ),
-        {"email": "Hey ich wollte nur sagen, John, Mike und Sepp kommen alle mit! Ich kann leider nicht. Grüße, Maria"},
+        llm=llm,
+        input_data={"email": "Hey ich wollte nur sagen, Jörg, Mike und Sepp kommen alle mit!"},
         output_schema={
             "firstname": "the firstname",
         },
         repeated=True,
-        repeated_description="Only people that are coming"
+        repeated_description="Extract people that are coming"
     )
-    print(result)
+    llm.assert_last_request_contains("Jörg, Mike und Sepp")
+    llm.assert_last_request_defined_tool("information_extraction", is_fixed_tool_choice=True)
 
-
-def test_extract_image():
-    result = run_extract(
-        ChatOpenAI(
-            model="gpt-4-vision-preview"
-        ),
-        {
-            "email": "Hey ich bins, der Meier John. Mein 30. Geburtstag war krass! Wetter war auch ok!",
-            "photo": "/Users/bennet/Desktop/Screenshot 2023-10-16 at 00.13.54.png"
-        },
-        output_schema={
-            "firstname": "the firstname",
-            "lastname": "the lastname",
-            "age": {"type": "integer", "description": "age in years"},
-            "language": "the language the email is written in, as two-letter ISO code",
-            "weather_conditions": "the weather conditions"
-        }
-    )
-    print(result)
-
-def test_extract_audio():
-    result = run_extract(
-        ChatOpenAI(
-            #model="gpt-4"
-        ),
-        {
-            "email": "Hey ich bins, der Meier John. Mein 30. Geburtstag war krass! Wetter war auch ok!",
-            "voice_memo": "/Users/bennet/Downloads/speech2.m4a"
-        },
-        output_schema={
-            "firstname": "the firstname",
-            "lastname": "the lastname",
-            "age": {"type": "integer", "description": "age in years"},
-            "language": "the language the email is written in, as two-letter ISO code",
-            "supercharger_price": {"type": "integer", "description": "the supercharger price in cent per kilowatt hour"}
-        }
-    )
-    print(result)
+    assert result[0]["firstname"] == "Jörg"
+    assert result[1]["firstname"] == "Mike"
+    assert result[2]["firstname"] == "Sepp"

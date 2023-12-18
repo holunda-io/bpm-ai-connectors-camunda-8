@@ -8,12 +8,13 @@
     <version>0.1.2-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camunda-8-connector-gpt-runtime</artifactId>
+  <artifactId>camunda-8-connector-runtime</artifactId>
   <packaging>jar</packaging>
 
   <properties>
     <camunda-connectors.version>0.22.1</camunda-connectors.version>
     <jackson.version>2.15.2</jackson.version>
+    <ktor.version>2.3.6</ktor.version>
   </properties>
 
   <dependencies>
@@ -23,15 +24,15 @@
       <artifactId>connector-runtime-core</artifactId>
       <version>${camunda-connectors.version}</version>
     </dependency>
-    <dependency>
-      <groupId>net.sf.py4j</groupId>
-      <artifactId>py4j</artifactId>
-      <version>0.10.9.7</version>
-    </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-kotlin</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>
     </dependency>
     <dependency>
@@ -46,17 +47,29 @@
     </dependency>
 
     <dependency>
-      <groupId>jakarta.validation</groupId>
-      <artifactId>jakarta.validation-api</artifactId>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-core-jvm</artifactId>
+      <version>${ktor.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-netty-jvm</artifactId>
+      <version>${ktor.version}</version>
     </dependency>
-
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-content-negotiation-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-serialization-jackson-jvm</artifactId>
+      <version>${ktor.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.ktor</groupId>
+      <artifactId>ktor-server-default-headers-jvm</artifactId>
+      <version>${ktor.version}</version>
     </dependency>
   </dependencies>
 

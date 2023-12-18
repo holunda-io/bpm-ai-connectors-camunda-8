@@ -1,14 +1,12 @@
 from abc import abstractmethod, ABC
 from typing import List, Optional, Dict, Any, Type
 
-from langsmith import traceable
-from openai.types.chat import ChatCompletionMessageParam
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from bpm_ai_core.llm.common.message import ChatMessage
 from bpm_ai_core.llm.common.tool import Tool
 from bpm_ai_core.prompt.prompt import Prompt
-from bpm_ai_core.tracing.tracing import LangsmithTracer, LangsmithTracer
+from bpm_ai_core.tracing.tracing import LangsmithTracer
 
 
 class LLM(ABC):
@@ -31,8 +29,8 @@ class LLM(ABC):
     def predict(
         self,
         prompt: Prompt,
-        output_schema: Optional[Dict[str, Any]] = None,
-        tools: Optional[List[Tool]] = None
+        output_schema: dict[str, Any] | None = None,
+        tools: list[Tool] | None = None
     ) -> ChatMessage:
         if output_schema and tools:
             raise ValueError("Must not pass both an output_schema and tools")
@@ -48,9 +46,9 @@ class LLM(ABC):
     @abstractmethod
     def _predict(
         self,
-        messages: List[ChatMessage],
-        output_schema: Optional[Dict[str, Any]] = None,
-        functions: Optional[List[Tool]] = None
+        messages: list[ChatMessage],
+        output_schema: dict[str, Any] | None = None,
+        tools: list[Tool] | None = None
     ) -> ChatMessage:
         pass
 

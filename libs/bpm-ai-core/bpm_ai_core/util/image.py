@@ -1,7 +1,6 @@
 import base64
 import os
 from io import BytesIO
-from urllib.parse import urlparse
 
 import requests
 from PIL import Image

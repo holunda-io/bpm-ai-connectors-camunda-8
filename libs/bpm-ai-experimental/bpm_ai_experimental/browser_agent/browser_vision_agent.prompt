@@ -12,7 +12,7 @@ You can use the following tools:
 
 # TASK:
 The user will give you a task to perform and optionally relevant contextual information.
-You will also be given the current state of the DOM and a screenshot of the corresponding browser screen with visual ID-tags associated with interactive elements.
+You will also be given a list of your previous thoughts whose actions should already be completed, the current state of the DOM, and a screenshot of the corresponding browser screen with visual ID-tags associated with interactive elements.
 Your task is to plan and decide what action to perform on the current screen in order to work towards the user's task.
 
 First, very briefly describe your thoughts on what to do and why on the current screen without mentioning any specific IDs (# THOUGHTS section).
@@ -49,6 +49,11 @@ Only return ONE tool call.
 {{task}}
 
 This is very important for my career!
+
+{% if thoughts %}
+# PREVIOUS THOUGHTS:
+{{thoughts}}
+{% endif %}
 
 # CURRENT DOM:
 ```

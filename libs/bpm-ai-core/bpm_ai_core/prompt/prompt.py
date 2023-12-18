@@ -5,16 +5,15 @@ from typing import List, Dict, Any
 
 from jinja2 import Template
 
-from bpm_ai_core.util.image import load_image
 from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage, ToolResultMessage, SingleToolCallMessage
+from bpm_ai_core.util.image import load_image
 
 
 class Prompt:
-    path: str
-    template_vars: Dict[str, Any]
 
-    def __init__(self, path: str, kwargs: Dict[str, Any]):
+    def __init__(self, kwargs: Dict[str, Any], path: str | None = None, template_str: str | None = None) -> None:
         self.path = path
+        self.template_str = template_str
         self.template_vars = kwargs
 
     @classmethod
@@ -27,10 +26,14 @@ class Prompt:
         current_dir = os.path.dirname(os.path.abspath(caller_filename))
         file_path = os.path.join(current_dir, path)
 
-        return cls(file_path, kwargs)
+        return cls(kwargs, path=file_path)
+
+    @classmethod
+    def from_string(cls, template: str, **kwargs):
+        return cls(kwargs, template_str=template)
 
     def format(self, llm_name: str = "") -> List[ChatMessage]:
-        template = self.load_template(self.path, llm_name)
+        template = self.load_template(self.path, llm_name) if self.path else Template(self.template_str)
         full_prompt = template.render(self.template_vars)
 
         regex = r'\[#\s*(user|assistant|system|tool_result:.*|)\s*#\]'

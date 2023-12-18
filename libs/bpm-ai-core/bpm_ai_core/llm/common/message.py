@@ -1,7 +1,7 @@
 import asyncio
 import inspect
 import json
-from typing import TypedDict, Optional, Literal, Any, Union, List
+from typing import Optional, Literal, Any, Union, List
 
 from PIL import Image
 from pydantic import BaseModel, Field

@@ -1,11 +1,8 @@
 import json
+from typing import Dict, Any, Optional, List
 
-from typing import Dict, Any, Optional, List, Union
-
-from langsmith import traceable
 from openai import OpenAI, APIConnectionError, InternalServerError, RateLimitError
-from openai.types.chat import ChatCompletionMessageParam, ChatCompletionMessage
-from typing_extensions import TypedDict, Literal
+from openai.types.chat import ChatCompletionMessage
 
 from bpm_ai_core.llm.common.llm import LLM
 from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage, SingleToolCallMessage
@@ -25,11 +22,13 @@ class ChatOpenAI(LLM):
         self,
         model: str = "gpt-3.5-turbo-1106",
         temperature: float = 0.0,
+        seed: Optional[int] = None,
         max_retries: int = 0,
         client_kwargs: Optional[Dict[str, Any]] = None
     ):
         self.model = model
         self.temperature = temperature
+        self.seed = seed
         self.max_retries = max_retries
         self.retryable_exceptions = [
             RateLimitError, InternalServerError, APIConnectionError
@@ -47,11 +46,11 @@ class ChatOpenAI(LLM):
     ) -> ChatMessage:
         openai_tools = []
         if output_schema:
-            tools = [Tool(name="store_result", description="Stores your result", args_schema=output_schema)]
+            tools = [Tool.from_callable(name="store_result", description="Stores your result", args_schema=output_schema)]
         if tools:
             openai_tools = [json_schema_to_openai_function(f.name, f.description, f.args_schema) for f in tools]
-
         completion = self._run_completion(messages, openai_tools)
+        print(completion)
 
         message = completion.choices[0].message
         if message.tool_calls:
@@ -63,9 +62,11 @@ class ChatOpenAI(LLM):
             return ChatMessage(role=message.role, content=message.content)
 
     def _run_completion(self, messages: List[ChatMessage], functions: List[dict]):
-        p = {
+        args = {
             "model": self.model,
             "temperature": self.temperature,
+            **({"seed": self.seed} if self.seed else {}),
+            #"max_tokens": 4096,
             "messages": messages_to_openai_dicts(messages),
             **({
                    "tool_choice": {
@@ -75,11 +76,8 @@ class ChatOpenAI(LLM):
                    "tools": functions
                } if functions else {})
         }
-        #print(p)
-        return self.client.chat.completions.create(
-            **p,
-            max_tokens=4096
-        )
+        print(args)
+        return self.client.chat.completions.create(**args)
 
     @staticmethod
     def _openai_tool_calls_to_tool_message(message: ChatCompletionMessage, tools: List[Tool]) -> ToolCallsMessage:

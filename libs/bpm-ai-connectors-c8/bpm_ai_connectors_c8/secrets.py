@@ -1,6 +1,6 @@
-import re
 import os
-from typing import Callable, Optional, Any
+import re
+from typing import Callable, Optional
 
 # Patterns for secret replacement
 SECRET_PATTERN_PARENTHESIS = re.compile(r"\{\{\s*secrets\.(?P<secret>\S+?\s*)}}")

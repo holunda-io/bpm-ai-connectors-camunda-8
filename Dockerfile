@@ -26,11 +26,11 @@ RUN apt-get update  \
 COPY --from=build-java /build-java/runtime/target/camunda-8-connector-gpt-runtime-0.1.2-SNAPSHOT.jar /java/connector-runtime.jar
 
 # Install Python dependencies
-COPY python/requirements.txt /tmp/
+COPY legacy/requirements.txt /tmp/
 RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt
 
 # Copy Python source and install it
-COPY python/src/ /python/src/
+COPY legacy/src/ /python/src/
 RUN pip install -e /python/src
 
 # Install supervisord and copy config

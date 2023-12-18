@@ -1,45 +1,32 @@
-from typing import Dict, Union
-
 from bpm_ai_core.llm.common.llm import LLM
 from bpm_ai_core.llm.common.message import ToolCallsMessage
 from bpm_ai_core.llm.common.tool import Tool
 from bpm_ai_core.prompt.prompt import Prompt
-from bpm_ai_core.util.audio import is_supported_audio_file
-from bpm_ai_core.util.image import is_supported_img_file
-from bpm_ai_core.voice.common.voice import Voice
-from bpm_ai_core.voice.openai_voice import OpenAIVoice
 from langsmith import traceable
 
 from bpm_ai.common.json_utils import json_to_md
-
-
-def prepare_images(input_data: dict):
-    return {k: f"[# image {v} #]" if is_supported_img_file(v) else v for k, v in input_data.items()}
-
-
-def prepare_audio(input_data: dict, voice: Voice):
-    return {k: voice.transcribe(v) if is_supported_audio_file(v) else v for k, v in input_data.items()}
+from bpm_ai.common.multimodal import prepare_audio
 
 
 @traceable(name="Extract")
 def run_extract(
     llm: LLM,
-    input_data: Dict[str, Union[str, dict]],
-    output_schema: Dict[str, Union[str, dict]],
+    input_data: dict[str, str | dict],
+    output_schema: dict[str, str | dict],
     repeated: bool = False,
     repeated_description: str = ""
 ) -> dict:
     def transform_result(**extracted):
-        def empty_to_none(d) -> dict:
-            return {k: (None if v in ["", "null"] else v) for k, v in d.items()}
+        def empty_to_none(v):
+            return None if v in ["", "null"] else v
 
-        if repeated:
+        if repeated and "entities" in extracted.keys():
             extracted = extracted["entities"]
-        print(extracted)
+
         if isinstance(extracted, list):
-            return [empty_to_none(d) for d in extracted]
+            return [transform_result(**d) for d in extracted]
         else:
-            return empty_to_none(extracted)
+            return {k: empty_to_none(v) for k, v in extracted.items()}
 
     tool = Tool.from_callable(
         "information_extraction",
@@ -50,8 +37,8 @@ def run_extract(
         callable=transform_result
     )
 
-    #input_data = prepare_images(input_data)
-    input_data = prepare_audio(input_data, OpenAIVoice())
+    #input_data = prepare_images(input_data)  todo enable once GPT-4V is stable
+    input_data = prepare_audio(input_data)
 
     input_md = json_to_md(input_data)
 

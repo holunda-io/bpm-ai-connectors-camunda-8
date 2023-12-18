@@ -1,46 +1,54 @@
 import asyncio
-
-from dotenv import load_dotenv
-from pyzeebe import create_camunda_cloud_channel, ZeebeWorker, ZeebeTaskRouter, create_insecure_channel, Job
+import logging
 import os
 
-from bpm_ai_connectors_c8.models import model_id_to_llm
-from bpm_ai_connectors_c8.secrets import replace_secrets_in_dict
-from bpm_ai_connectors_c8.tasks.routers import task_router, experimental_task_router
-from bpm_ai_connectors_c8.tasks.rpa.rpa_task import rpa_router
+import grpc
+import requests
+from dotenv import load_dotenv
+from pyzeebe import ZeebeWorker, create_insecure_channel
+from pyzeebe.channel.camunda_cloud_channel import _create_oauth_credentials
+
+from bpm_ai_connectors_c8.decorators import job_activate, resolve_model, job_complete
+from bpm_ai_connectors_c8.tasks.experimental.rpa.rpa_task import rpa_router
+from bpm_ai_connectors_c8.tasks.foundational.compose.compose_task import compose_router
+from bpm_ai_connectors_c8.tasks.foundational.decide.decide_task import decide_router
+from bpm_ai_connectors_c8.tasks.foundational.extract.extract_task import extract_router
+from bpm_ai_connectors_c8.tasks.foundational.generic.generic_task import generic_router
+from bpm_ai_connectors_c8.tasks.foundational.translate.translate_task import translate_router
 
 load_dotenv(dotenv_path='../../../connector-secrets.txt')
 
-
-def job_activate(job: Job) -> Job:
-    print(f"Running task '{job.type}' with variables {job.variables} and headers {job.custom_headers}")
-    return None
-    job.custom_headers["connector_vars"] = set(job.variables.keys())
-    job.variables = replace_secrets_in_dict(job.variables)
-    return job
+logger = logging.getLogger(__name__)
 
 
-def job_complete(job: Job) -> Job:
-    connector_vars = job.custom_headers["connector_vars"]
-    job.variables = {k: v for k, v in job.variables.items() if k not in connector_vars}
-    print(f"Completing task '{job.type}' with variables {job.variables}")
-    return job
+async def _create_saas_channel():
+    cluster_id = os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER-ID")
+    region = os.environ.get("ZEEBE_CLIENT_CLOUD_REGION")
+    url = 'https://login.cloud.camunda.io/oauth/token'
+    headers = {'Content-Type': 'application/json'}
+    data = {
+        'audience': f'{cluster_id}.{region}.zeebe.camunda.io',
+        'client_id': os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-ID"),
+        'client_secret': os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-SECRET")
+    }
+    requests.packages.urllib3.util.connection.HAS_IPV6 = False
+    response = requests.post(url, json=data, headers=headers)
+    channel_credentials = _create_oauth_credentials(response.json()["access_token"])
+    channel = grpc.aio.secure_channel(f"{cluster_id}.{region}.zeebe.camunda.io:443", channel_credentials)
+    return channel
 
 
-def resolve_model(job: Job) -> Job:
-    if "model" in job.variables.keys():
-        job.variables["model"] = model_id_to_llm(job.variables["model"])
-    return job
-
-
-async def main():
+async def create_channel():
     if os.environ.get("ZEEBE_CLIENT_CLOUD_REGION"):
-        channel = create_camunda_cloud_channel(
-            os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-ID"),
-            os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-SECRET"),
-            os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER-ID"),
-            os.environ.get("ZEEBE_CLIENT_CLOUD_REGION")
-        )
+        # channel = create_camunda_cloud_channel(
+        #    os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-ID"),
+        #    os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-SECRET"),
+        #    os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER-ID"),
+        #    os.environ.get("ZEEBE_CLIENT_CLOUD_REGION")
+        # )
+        # todo temporary hack because ipv6 address of login.cloud.camunda.io seems to be broken
+        channel = await _create_saas_channel()
+
     else:
         if os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS"):
             host, port = os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS").split(":")
@@ -50,20 +58,40 @@ async def main():
             hostname=host,
             port=port
         )
+    return channel
+
+
+def include_foundational_connectors(worker: ZeebeWorker):
+    worker.include_router(extract_router)
+    worker.include_router(decide_router)
+    worker.include_router(compose_router)
+    worker.include_router(translate_router)
+    worker.include_router(generic_router)
+
+
+def include_experimental_connectors(worker: ZeebeWorker):
+    worker.include_router(rpa_router)
+
+
+async def main():
+    logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
+
+    channel = await create_channel()
 
     worker = ZeebeWorker(channel)
     worker.before(job_activate, resolve_model)
     worker.after(job_complete)
 
-    worker.include_router(task_router)
+    include_foundational_connectors(worker)
+
     if os.environ.get("BPM_AI_ENABLE_EXPERIMENTAL_TASKS", False):
-        worker.include_router(rpa_router)
+        include_experimental_connectors(worker)
 
-    print(worker.tasks)
+    logger.debug(worker.tasks)
 
-    print("Starting worker...")
+    logger.info("[worker] starting...")
     await worker.work()
-    print("Worker exited.")
+    logger.info("[worker] exited.")
 
 
 if __name__ == "__main__":

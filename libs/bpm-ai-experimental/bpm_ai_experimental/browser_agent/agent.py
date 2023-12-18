@@ -13,7 +13,7 @@ from langsmith import traceable
 from playwright.async_api import async_playwright, Playwright
 
 from bpm_ai_experimental.browser_agent.util.browser import PlaywrightBrowser
-from bpm_ai_experimental.browser_agent.util.simplify_dom import get_simplified_html, mark_interactive_dom
+from bpm_ai_experimental.browser_agent.util.simplify_dom import get_simplified_html, mark_interactive_dom, mask_secrets
 from bpm_ai_experimental.browser_agent.util.vision import run_vision_qa
 
 
@@ -55,6 +55,24 @@ async def run_browser_agent(llm: LLM, start_url: str, input_data: dict, task: st
         await browser.screenshot(elem_id)
         return run_vision_qa("screenshot.png", question)
 
+    async def click2(elem_id: str):
+        return await click("", elem_id)
+
+    async def scroll2(down: bool):
+        await scroll("", down)
+
+    async def goto2(url: str):
+        return await goto("", url)
+
+    async def reload2():
+        return await reload("")
+
+    async def go_back2():
+        return await go_back("")
+
+    async def type_text2(elements: List[dict], submit: bool):
+        return await type_text("", elements, submit)
+
     browser_tools = [
         Tool.from_callable(
             "goto",
@@ -84,7 +102,7 @@ async def run_browser_agent(llm: LLM, start_url: str, input_data: dict, task: st
             "go_back",
             "Navigate to the previous page in history",
             {"thought": "Always describe what to do and why"},
-            reload
+            go_back
         ),
         Tool.from_callable(
             "type_text",
@@ -105,6 +123,56 @@ async def run_browser_agent(llm: LLM, start_url: str, input_data: dict, task: st
                 "elem_id": "The id of the element to look at",
                 "question": "the question to answer about the element"},
             screenshot_analyse
+        ),
+        Tool.from_callable(
+            "finish",
+            "Finishes the task with a final result",
+            output_schema if output_schema
+            else {"result": "The result information the task asked for or TASK_COMPLETED if no result text needed"},
+            lambda x: x
+        )
+    ]
+
+    browser_tools_no_thought = [
+        Tool.from_callable(
+            "goto",
+            "Navigates to the given url. Should usually only be used if explicitly asked by the user, otherwise navigate by clicking links where possible.",
+            {"url": "The url to navigate to"},
+            goto2
+        ),
+        Tool.from_callable(
+            "click",
+            "Clicks on an element",
+            {"elem_id": "The id of the element"},
+            click2
+        ),
+        Tool.from_callable(
+            "scroll",
+            "Scrolls up or down by one viewport height",
+            {"down": {"type": "boolean", "description": "Whether to scroll down - otherwise scroll up"}},
+            scroll2
+        ),
+        Tool.from_callable(
+            "reload",
+            "Reloads the current page",
+            {},
+            reload2
+        ),
+        Tool.from_callable(
+            "go_back",
+            "Navigate to the previous page in history",
+            {},
+            go_back2
+        ),
+        Tool.from_callable(
+            "type_text",
+            "Types given text into an input elements",
+            {
+                "elements": {"type": "array", "description": "Elements to type text into",
+                             "items": {"elem_id": "The id of the element", "text": "The text to type"}},
+                "submit": {"type": "boolean", "description": "Whether to hit enter after typing the text"}
+            },
+            type_text2
         ),
         Tool.from_callable(
             "finish",
@@ -200,14 +268,31 @@ async def run_browser_agent(llm: LLM, start_url: str, input_data: dict, task: st
         Run vision based agent.
         :return:
         """
+
+        async def type_text(thought: str, elements: List[dict], submit: bool):
+            for e in elements:
+                if e["text"] in creds.keys():
+                    text = creds[e["text"]]
+                else:
+                    text = e["text"]
+                error = await browser.type_text(e["elem_id"], text)
+                if error:
+                    return error
+            if submit:
+                await browser.enter()
+
         vision_llm = ChatOpenAI(model="gpt-4-vision-preview")
 
+        thoughts = []
         action_history = []
 
         while True:
-            title, html = await get_simplified_html(browser)
+            title, html = await get_simplified_html(browser, creds)
             #print(html)
             #await mark_interactive_dom(browser)
+
+            await mask_secrets(browser.page, creds)
+
             await browser.screenshot()
 
             # print()
@@ -225,11 +310,16 @@ async def run_browser_agent(llm: LLM, start_url: str, input_data: dict, task: st
                 html=html,
                 can_scroll_down=await browser.can_scroll_down(),
                 can_scroll_up=await browser.can_scroll_up(),
-                action_history=action_history
+                action_history=action_history,
+                thoughts="* ".join(thoughts)
             )
+            print(vision_prompt.format("openai"))
 
             result = vision_llm.predict(vision_prompt)
             print(result)
+
+            thought = result.content.split("# TOOL CALL")[0].replace("# THOUGHTS", "")
+            thoughts.append(thought)
 
             prompt = Prompt.from_file(
                 "browser_agent_executor",
@@ -242,8 +332,10 @@ async def run_browser_agent(llm: LLM, start_url: str, input_data: dict, task: st
             input()
             print("[Thinking...]")
 
-            actions = llm.predict(prompt, tools=browser_tools)
+            actions = llm.predict(prompt, tools=browser_tools_no_thought)
             action_history.append(actions)
+
+            await mask_secrets(browser.page, creds, reverse=True)
 
             if isinstance(actions, ToolCallsMessage):
                 thought_key = "thought"
@@ -273,3 +365,26 @@ async def run_browser_agent(llm: LLM, start_url: str, input_data: dict, task: st
             time.sleep(1)  # todo
 
     return await run_vision_based()
+
+# from bpm_ai_core.llm.common.llm import LLM
+# # from bpm_ai_experimental.browser_agent.agent import run_browser_agent
+# from pyzeebe import ZeebeTaskRouter
+#
+# from bpm_ai_connectors_c8.config import DEFAULT_TASK_TIMEOUT
+#
+# rpa_router = ZeebeTaskRouter()
+#
+# @rpa_router.task(
+#     task_type="io.holunda:connector-rpa:1",
+#     timeout_ms=DEFAULT_TASK_TIMEOUT
+# )
+# async def rpa(model: LLM, inputJson: dict, startUrl: str, task: dict):
+#     # result = await run_browser_agent(
+#     #     llm=model,
+#     #     input_data=inputJson,
+#     #     output_schema=task["outputSchema"] if "outputSchema" in task.keys() else None,
+#     #     start_url=startUrl,
+#     #     task=task["task"]
+#     # )
+#     #return {"result": result}
+#     return {}

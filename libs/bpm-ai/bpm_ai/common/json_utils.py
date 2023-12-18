@@ -7,7 +7,7 @@ def json_to_md(json_obj, depth=2):
         for key, value in json_obj.items():
             if isinstance(value, list) and all(isinstance(item, dict) for item in value):
                 # If it's a list of objects, pretty print the JSON representation
-                markdown += f"{'#' * depth} {key}\n\n```json\n{json.dumps(value, indent=2)}\n```\n\n"
+                markdown += f"{'#' * depth} {key}\n\n```json\n{json.dumps(value, indent=2, ensure_ascii=False)}\n```\n\n"
             elif isinstance(value, (dict, list)):
                 markdown += f"{'#' * depth} {key}\n"
                 markdown += json_to_md(value, depth + 1)

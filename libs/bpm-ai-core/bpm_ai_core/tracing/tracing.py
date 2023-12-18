@@ -1,16 +1,8 @@
-from __future__ import annotations
-
-import contextvars
-import inspect
-import json
-import logging
 import os
-import traceback
 import uuid
 from concurrent import futures
 from typing import (
     Any,
-    Callable,
     Dict,
     List,
     Mapping,
@@ -18,11 +10,11 @@ from typing import (
 )
 
 from langsmith import client, run_trees
-from langsmith.run_helpers import _setup_run, LangSmithExtra, _collect_extra, _TraceableContainer, _PROJECT_NAME, \
+from langsmith.run_helpers import LangSmithExtra, _collect_extra, _TraceableContainer, _PROJECT_NAME, \
     _PARENT_RUN_TREE, _TAGS, _METADATA
 
-from bpm_ai_core.llm.common.tool import Tool
 from bpm_ai_core.llm.common.message import ChatMessage, ToolCallsMessage
+from bpm_ai_core.llm.common.tool import Tool
 from bpm_ai_core.util.openai import messages_to_openai_dicts, json_schema_to_openai_function
 
 
@@ -45,7 +37,7 @@ class LangsmithTracer:
             "temperature": llm.temperature,
             "current_try": current_try,
             "max_tries": llm.max_retries + 1,
-            "functions": [json_schema_to_openai_function(f.name, f.description, f.args_schema) for f in tools] if tools else None
+            "tools": [json_schema_to_openai_function(f.name, f.description, f.args_schema) for f in tools] if tools else None
         }
         self.start_trace(
             name=llm.__class__.__name__,
@@ -54,16 +46,21 @@ class LangsmithTracer:
         )
 
     def end_llm_trace(self, completion: Optional[ChatMessage] = None, error_msg: Optional[str] = None):
-        # choices = {
-        #     "choices": [{"message":
-        #                      {"role": "assistant", "content": completion.content, **({"function_call": {"name": completion.name, "arguments": completion.payload_dict()}} if isinstance(completion, ToolCallsMessage) else {})}  # todo
-        #                  }]
-        # } if completion else None
-        # self.end_trace(
-        #     outputs=choices,
-        #     error=error_msg
-        # )
-        pass
+        choices = {
+            "choices": [{
+                "message": {
+                    "role": "assistant",
+                    "content": completion.content,
+                    **({"tool_calls":
+                            [{"function": {"name": c.name, "arguments": c.payload_dict()}} for c in completion.tool_calls]
+                        } if isinstance(completion, ToolCallsMessage) else {})
+                }
+            }]
+        } if completion else None
+        self.end_trace(
+            outputs=choices,
+            error=error_msg
+        )
 
     def start_function_trace(
         self,

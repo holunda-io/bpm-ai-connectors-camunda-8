@@ -18,13 +18,11 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- eco system -->
-    <spring-boot.version>3.1.1</spring-boot.version>
     <kotlin.version>1.8.22</kotlin.version>
     <jackson.version>2.15.2</jackson.version>
   </properties>
 
   <modules>
-    <module>core</module>
     <module>runtime</module>
   </modules>
 
@@ -34,13 +32,6 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-bom</artifactId>
         <version>${kotlin.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>

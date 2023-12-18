@@ -41,6 +41,7 @@ tags_to_drop_if_only_text_child = ['span', 'label', 'p']
 
 interactive_tags = ['a', 'input', 'button', 'select', 'option', 'textarea', 'img', 'canvas', 'video', 'details', 'summary']
 interactive_attrs = ['onclick', 'onmousedown', 'onmouseup', 'onkeydown', 'onkeyup', 'jsaction']
+interactive_roles = ['button', 'option', 'tab', 'textarea']
 
 invisibility_attrs = {
     'opacity': ['', '0'],
@@ -140,11 +141,13 @@ js_annotate_dom = f"""
 
     const tagElementStyles = {{
     color: "black",
-    fontSize: "14px",
+    fontSize: "15px",
     padding: "3px",
     fontWeight: "bold",
-    zIndex: "999",
-    position: "relative"
+    //zIndex: "999999999999",
+    position: "relative",
+    borderRadius: "8px",
+    opacity: "0.75"
   }};
   
   function createTagElement(uniqueTag, styles) {{
@@ -155,13 +158,13 @@ js_annotate_dom = f"""
       }});
     
       tagElement.textContent = uniqueTag;
-      tagElement.setAttribute('data-vision-tag', true)
+      tagElement.setAttribute('data-vision-tag', 'true')
     
       return tagElement;
   }}
   
   const addTag = (element, id) => {{
-    const tagElement = createTagElement(id, tagElementStyles);
+      const tagElement = createTagElement(id, tagElementStyles);
 
       if (["input", "textarea"].includes(element.tagName.toLowerCase()) || element.getAttribute('role') === 'textbox') {{
         tagElement.style.background = "orange";
@@ -181,49 +184,6 @@ js_annotate_dom = f"""
       Math.floor(100 - ((rect.bottom - windowHeight) / rect.height) * 100) < percentVisible
     )
   }};
-  
-  const elementIsVisibleInViewport = (el, partiallyVisible = false) => {{
-    const rect = el.getBoundingClientRect();
-    const innerHeight = (window.innerHeight || document.documentElement.clientHeight);
-    const innerWidth = (window.innerWidth || document.documentElement.clientWidth);
-    return partiallyVisible
-        ? ((rect.top > 0 && rect.top < innerHeight) ||
-            (rect.bottom > 0 && rect.bottom < innerHeight)) &&
-            ((rect.left > 0 && rect.left < innerWidth) || (rect.right > 0 && rect.right < innerWidth))
-        : rect.top >= 0 && rect.left >= 0 && rect.bottom <= innerHeight && rect.right <= innerWidth;
-  }};
-  
-  const isElementInViewport = (el, percentVisible) => {{
-    if (!el) {{
-      return false;
-    }}
-
-    const rect = el.getBoundingClientRect();
-    const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
-    const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
-
-    // Check if the element has zero width and height
-    if (rect.width === 0 && rect.height === 0) {{
-        return true; // The element is not visible if it has no size, but whatever...
-    }}
-
-    // Calculate visible dimensions, considering if width or height is zero
-    var visibleWidth = rect.width === 0 ? 0 : Math.max(0, Math.min(rect.right, windowWidth)) - Math.max(0, rect.left);
-    var visibleHeight = rect.height === 0 ? 0 : Math.max(0, Math.min(rect.bottom, windowHeight)) - Math.max(0, rect.top);
-    
-    // For elements with zero width or height, we treat the visible dimension as 1 pixel if it's within the viewport
-    visibleWidth = visibleWidth <= 0 ? (rect.height > 0 ? 1 : 0) : visibleWidth;
-    visibleHeight = visibleHeight <= 0 ? (rect.width > 0 ? 1 : 0) : visibleHeight;
-    
-    // Calculate the area of the element and the visible area
-    const elementArea = rect.width * rect.height || 1; // Prevent division by zero by defaulting to 1 if both dimensions are zero
-    const visibleArea = visibleWidth * visibleHeight;
-    
-    // Calculate the percentage of the element that is visible
-    const visiblePercentage = (visibleArea / elementArea) * 100;
-    
-    return (visiblePercentage > percentVisible);
-  }}
 
   let currentElements = [];
 
@@ -234,7 +194,9 @@ js_annotate_dom = f"""
 
       const interactive = ({interactive_tags}.includes(element.tagName) ||
         {interactive_attrs}.some(attr => element.hasAttribute(attr)) ||
-        style.cursor === 'pointer');
+        {interactive_roles}.some(role => element.getAttribute("role") == role)
+        //|| style.cursor === 'pointer'
+      );
       
       const invisibility_attrs = {invisibility_attrs_json};
       
@@ -242,15 +204,13 @@ js_annotate_dom = f"""
         invisibility_attrs[attr].includes(element.getAttribute(attr)) || 
         invisibility_attrs[attr].includes(style[attr]));
         
-    const inViewport = isElementXPercentInViewport(element, 50); //isElementInViewport(element, 1);
-        
-    if (!element.hasAttribute("data-testid") && interactive && visible && inViewport) {{
-        //addTag(element, (pageElements.length - 1).toString());
-      }}
+      const inViewport = isElementXPercentInViewport(element, 50); 
 
       if (visible && interactive) {{
         pageElements.push(element);
         node.setAttribute('data-testid', (pageElements.length - 1).toString());
+      }} else {{
+        node.removeAttribute('data-testid');
       }}
       node.setAttribute('data-interactive', interactive.toString());
       node.setAttribute('data-visible', visible.toString());
@@ -270,10 +230,58 @@ js_annotate_dom = f"""
       traverseDOM(child, pageElements);
     }});
   }};
+  
+  var elements = document.querySelectorAll('[data-vision-tag="true"]');
+  elements.forEach(function(element) {{
+    element.parentNode.removeChild(element);
+  }});
 
   traverseDOM(document.documentElement, currentElements);
+  
+  var elements = document.querySelectorAll("[data-visible='true'][data-interactive='true'][data-testid]");
+  elements.forEach(function(element) {{
+    //if (!node.hasAttribute('data-vision-tagged')) {{
+      addTag(element, element.getAttribute('data-testid'))
+      //element.setAttribute('data-vision-tagged', 'true');
+    //}}
+  }});
 }}
 """
+
+x="""
+function isElementPartiallyCovered(el) {
+    const rect = el.getBoundingClientRect();
+    let isCovered = false;
+
+    // Function to check if the element at the point is the target element or its descendant
+    function isTargetOrDescendant(el, target) {
+        while (el) {
+            if (el === target) {
+                return true;
+            }
+            el = el.parentElement;
+        }
+        return false;
+    }
+
+    // Iterate over a set of points within the element's bounding rectangle
+    for (let x = rect.left; x <= rect.right; x += 5) { // Adjust the step as needed
+        for (let y = rect.top; y <= rect.bottom; y += 5) { // Adjust the step as needed
+            const elementAtPoint = document.elementFromPoint(x, y);
+
+            // If the element at the point isn't the target or its descendant, it's covered
+            if (elementAtPoint && !isTargetOrDescendant(elementAtPoint, el)) {
+                isCovered = true;
+                break;
+            }
+        }
+        if (isCovered) break;
+    }
+
+    return isCovered;
+}
+"""
+
 
 js_tag_dom = f"""
 () => {{
@@ -374,8 +382,10 @@ def remove_empty_tags(soup):
                 tag.decompose() 
 
 
-async def get_simplified_html(browser: PlaywrightBrowser) -> Tuple[str, str]:
+async def get_simplified_html(browser: PlaywrightBrowser, secrets: dict) -> Tuple[str, str]:
     page = await browser.prepare_page()
+
+    await mask_secrets(browser.page, secrets)
 
     # annotate DOM with runtime information
     await page.evaluate(js_annotate_dom)
@@ -405,3 +415,36 @@ async def mark_interactive_dom(browser: PlaywrightBrowser):
     page = await browser.prepare_page()
     # annotate DOM with visual tags
     await page.evaluate(js_tag_dom)
+
+
+js_mask_secrets = f"""
+() => {{
+const replaceStringInDOM = (rootElement, searchString, replacementString, caseSensitive = true) => {{
+    const searchRegex = new RegExp(searchString, caseSensitive ? 'g' : 'gi');
+
+    const replaceInElement = (element) => {{
+        if (element.nodeType === Node.TEXT_NODE) {{
+            element.textContent = element.textContent.replace(searchRegex, replacementString);
+        }} else if (element.nodeType === Node.ELEMENT_NODE) {{
+            if (element.nodeName === 'INPUT' || element.nodeName === 'TEXTAREA') {{
+                element.value = element.value.replace(searchRegex, replacementString);
+            }} else {{
+                Array.from(element.childNodes).forEach(replaceInElement);
+            }}
+        }}
+    }}
+
+    replaceInElement(rootElement);
+}};
+"""
+
+
+async def mask_secrets(page: Page, secrets: dict, reverse: bool = False):
+    for k, v in secrets.items():
+        if reverse:
+            x = k
+            k = v
+            v = x
+        await page.evaluate(
+            js_mask_secrets + f"replaceStringInDOM(document.body, '{v}', '{k}'); }}"
+        )

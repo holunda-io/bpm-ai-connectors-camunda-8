@@ -20,7 +20,7 @@ def get_tts_answer(q: str, raw_answer: str) -> str:
 #url = "https://hoang-bistro.de/produkt/cola-033l-122/"
 url = "https://hoang-bistro.de/"
 url = "https://green-stone-027bc5603.3.azurestaticapps.net"
-#url = "https://weblogin.cloud.camunda.io"
+url = "https://weblogin.cloud.camunda.io"
 #url = "https://martinfowler.com/articles/2023-liberal-arts.html"
 #url = "https://twitter.com/home"
 #url="https://www.hamburger-tierschutzverein.de/tiervermittlung/hunde/grosse-hunde"
@@ -37,21 +37,21 @@ url = "https://green-stone-027bc5603.3.azurestaticapps.net"
 
 voice = OpenAIVoice()
 #task = "log in, switch the organisation to Holisticon, open the Tasklist component, and start a new Process_0o5b5xm process instance." does not find the components menu
-#task = "log in, switch the organisation to Holisticon, open the Tasklist component via the Camunda components button, and start a new Process_0o5b5xm process instance."#voice.listen()
+task = "log in (submit by clicking, not enter), switch the organisation to Holisticon, open the Tasklist component via the Camunda components button, and start a new Process_0o5b5xm process instance."#voice.listen()
 #task = "Log in and post a snippy retweet/repost in response to the first Tesla-themed post you find."#voice.listen()
 #task = "From when is this blog post and who is the author?"
-task = "Select the battery issue example and submit for bennet.krause@gmail.com"
+#task = "Select the battery issue example and submit for bennet.krause@gmail.com"
 #print(task)
 
 
 
 result = asyncio.run(run_browser_agent(
-    ChatOpenAI(),#model="gpt-4-1106-preview"),
+    ChatOpenAI(model="gpt-4-1106-preview"),
     url,
     input_data={},
     task=task,
     #output_schema={"autor": "the author name", "date": "the date"}
-    #creds={"username": "bennet.krause@holisticon.de", "password": "Bennet_987!Camunda"},
+    creds={"username": "bennet.krause@holisticon.de", "password": "Bennet_987!Camunda"},
 ))
 
 #tts_text = get_tts_answer(task, result)
