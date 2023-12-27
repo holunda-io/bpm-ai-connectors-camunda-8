@@ -1,4 +1,4 @@
-from typing import List, Dict, Union, Any
+from typing import List, Dict, Any
 
 from PIL.Image import Image
 from openai.types.chat import ChatCompletionMessageParam
@@ -68,6 +68,7 @@ def image_to_openai_image_dict(image: Image) -> dict:
             "url": f"data:image/{image.format.lower()};base64,{base64_encode_image(image)}"
         }
     }
+
 
 def str_to_openai_text_dict(text: str) -> dict:
     return {

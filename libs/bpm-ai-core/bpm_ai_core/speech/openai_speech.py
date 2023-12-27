@@ -3,8 +3,8 @@ from typing import Optional, Dict, Any, Union
 
 from openai import OpenAI
 
-from bpm_ai_core.util.audio import load_audio
 from bpm_ai_core.speech.common.speech import Speech
+from bpm_ai_core.util.audio import load_audio
 
 
 class OpenAISpeech(Speech):

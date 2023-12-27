@@ -66,7 +66,6 @@ class ChatOpenAI(LLM):
             "model": self.model,
             "temperature": self.temperature,
             **({"seed": self.seed} if self.seed else {}),
-            #"max_tokens": 4096,
             "messages": messages_to_openai_dicts(messages),
             **({
                    "tool_choice": {

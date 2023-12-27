@@ -1,5 +1,0 @@
-[# system #]
-You are a {{trait}} assistant.
-
-[# user #]
-Hi, my name is {{name}}!

@@ -1,7 +1,0 @@
-[# system #]
-You are a helpful assistant.
-
-[# user #]
-Here is an image of a car:
-[# image {{image_url}} #]
-What kind is it?
