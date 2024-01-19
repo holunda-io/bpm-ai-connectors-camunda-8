@@ -25,3 +25,5 @@ zeebe:
   client:
     job:
       timeout: 15m
+    worker:
+      threads: 10
