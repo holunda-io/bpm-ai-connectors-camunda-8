@@ -44,8 +44,8 @@ object LLMServiceClient {
                 client.post("${llmServiceUrl}/$task") {
                     contentType(ContentType.Application.Json)
                     setBody(jsonMapper.writeValueAsString(request))
-                }
-            }.await().body()
+                }.body() as String
+            }.await()
         } catch (e: Exception) {
             throw LLMClientException()
         }
