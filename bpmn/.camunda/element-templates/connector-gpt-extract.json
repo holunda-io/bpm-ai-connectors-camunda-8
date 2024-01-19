@@ -3,7 +3,7 @@
   "name": "GPT Data Extraction Connector",
   "id": "io.holunda.connector.extract.v1",
   "description": "Extracts information from structured or unstructured input data",
-  "version": 1,
+  "version": 2,
   "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
   "icon": {
     "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+"
@@ -41,26 +41,38 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "io.holunda:connector-extract:1",
+      "value": "io.holunda:connector-extract:2",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
     },
     {
-      "id": "model",
+      "id": "llm",
       "label": "LLM",
       "group": "model",
       "type": "Dropdown",
-      "value": "GPT_3",
+      "value": "gpt-4",
       "choices": [
-        { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
-        { "name": "OpenAI GPT-4", "value": "GPT_4" },
-        { "name": "Aleph Alpha Luminous Supreme", "value": "LUMINOUS_SUPREME" },
-        { "name": "Cohere Chat Command", "value": "COHERE_CHAT_COMMAND" }
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
+        { "name": "OpenAI GPT-4", "value": "gpt-4" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "model"
+        "name": "llm"
+      }
+    },
+    {
+      "label": "Speech-to-Text Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "openai-whisper-1",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "stt"
       }
     },
     {
@@ -76,17 +88,6 @@
       "value": "={ \"myVariable\": myVariable }",
       "constraints": {
         "notEmpty": true
-      }
-    },
-    {
-      "label": "Instructions",
-      "description": "(Optional) Additional instructions/context if the output schema is not enough.",
-      "group": "extract",
-      "type": "Hidden",
-      "optional": true,
-      "binding": {
-        "type": "zeebe:input",
-        "name": "instructions"
       }
     },
     {

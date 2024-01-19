@@ -3,7 +3,7 @@
   "name": "GPT Compose Connector",
   "id": "io.holunda.connector.compose.v1",
   "description": "Composes a body for an e-mail or letter in any language",
-  "version": 1,
+  "version": 2,
   "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
   "icon": {
     "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+"
@@ -37,26 +37,38 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "io.holunda:connector-compose:1",
+      "value": "io.holunda:connector-compose:2",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
     },
     {
-      "id": "model",
+      "id": "llm",
       "label": "LLM",
       "group": "model",
       "type": "Dropdown",
-      "value": "GPT_3",
+      "value": "gpt-4",
       "choices": [
-        { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
-        { "name": "OpenAI GPT-4", "value": "GPT_4" },
-        { "name": "Aleph Alpha Luminous Supreme", "value": "LUMINOUS_SUPREME" },
-        { "name": "Cohere Chat Command", "value": "COHERE_CHAT_COMMAND" }
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
+        { "name": "OpenAI GPT-4", "value": "gpt-4" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "model"
+        "name": "llm"
+      }
+    },
+    {
+      "label": "Speech-to-Text Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "openai-whisper-1",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "stt"
       }
     },
     {
@@ -156,9 +168,9 @@
       "group": "write",
       "description": "<code>High</code> results in more diverse and unpredictable text, <code>None</code> makes the output focused and deterministic.",
       "type": "Dropdown",
-      "value": "0",
+      "value": "0.0",
       "choices": [
-        { "name": "None", "value": "0" },
+        { "name": "None", "value": "0.0" },
         { "name": "Low", "value": "0.2" },
         { "name": "Medium", "value": "0.5" },
         { "name": "High", "value": "0.7" }
@@ -169,146 +181,27 @@
       }
     },
     {
-      "id": "template",
-      "label": "Template",
-      "group": "write",
-      "type": "Dropdown",
-      "value": "none",
-      "choices": [
-        { "name": "No Template", "value": "none" },
-        { "name": "Hybrid AI Template", "value": "template" }
-      ],
-      "binding": {
-        "type": "zeebe:input",
-        "name": "template"
-      },
-      "condition": {
-        "property": "model",
-        "oneOf": ["GPT_3", "GPT_4"]
-      }
-    },
-    {
-      "label": "Text Description",
-      "description": "Description of the text to compose.",
-      "group": "write",
-      "type": "Text",
-      "feel": "optional",
-      "value": "Thank the customer for subscribing to our service.",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "description"
-      },
-      "constraints": {
-        "notEmpty": true
-      },
-      "condition": {
-        "property": "template",
-        "oneOf": ["none"]
-      }
-    },
-    {
       "label": "Template",
       "description": "Template variables found in input variables are replaced directly (but not sent to the model), text for other variables will be generated.",
       "group": "write",
       "type": "Text",
-      "value": "Hello {name},\n\n{ thank the customer for his purchase }\n\nYours,\n{agentName}",
+      "feel": "optional",
+      "value": "Hello {customerName},\n\n{ thank the customer for his purchase }\n\nYours,\n{companyName}",
       "binding": {
         "type": "zeebe:input",
-        "name": "description"
+        "name": "template"
       },
       "constraints": {
         "notEmpty": true
-      },
-      "condition": {
-        "property": "template",
-        "oneOf": ["template"]
-      }
-    },
-    {
-      "label": "Sender Name",
-      "group": "write",
-      "type": "String",
-      "feel": "optional",
-      "value": "My Company",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "sender"
-      },
-      "constraints": {
-        "notEmpty": true
-      },
-      "condition": {
-        "allMatch": [
-          {
-            "property": "type",
-            "oneOf": ["letter"]
-          },
-          {
-            "property": "template",
-            "equals": "none"
-          }
-        ]
-      }
-    },
-    {
-      "id": "alignment",
-      "label": "Alignment Principle",
-      "description": "Checks and if necessary rewrites the generated text following the selected principle.",
-      "group": "write",
-      "type": "Dropdown",
-      "value": "none",
-      "choices": [
-        { "name": "None", "value": "none" },
-        { "name": "Sensitive", "value": "insensitive" },
-        { "name": "Unoffensive", "value": "offensive" },
-        { "name": "Non Harmful or Illegal", "value": "harmful1" },
-        { "name": "Uncontroversial", "value": "controversial" },
-        { "name": "Thoughtful", "value": "thoughtful" },
-        { "name": "Young Age Appropriate", "value": "age-innappropriate" },
-        { "name": "Custom", "value": "custom" }
-      ],
-      "binding": {
-        "type": "zeebe:input",
-        "name": "alignment.constitutionalPrinciple"
-      },
-      "condition": {
-        "allMatch": [
-          {
-            "property": "model",
-            "oneOf": [
-              "GPT_3", "GPT_4"
-            ]
-          },
-          {
-            "property": "template",
-            "equals": "none"
-          }
-        ]
-      }
-    },
-    {
-      "label": "Custom Principle",
-      "group": "write",
-      "type": "Text",
-      "feel": "optional",
-      "optional": true,
-      "value": "The text must not contain any offensive or rude language. It should always be polite and professional.",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "alignment.customPrinciple"
-      },
-      "condition": {
-        "property": "alignment",
-        "equals": "custom"
       }
     },
     {
       "label": "Result Expression",
-      "description": "Expression to map the result into process variables. Result text is in a temporary variable <code>result</code>.",
+      "description": "Expression to map the result into process variables. Result text is in a temporary variable <code>result.text</code>.",
       "group": "output",
       "type": "Text",
       "feel": "required",
-      "value": "={\"text\": result}",
+      "value": "={\"text\": result.text}",
       "binding": {
         "type": "zeebe:taskHeader",
         "key": "resultExpression"

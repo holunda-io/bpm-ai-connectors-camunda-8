@@ -14,7 +14,7 @@ COPY runtime/src/ runtime/src/
 RUN mvn clean package -DskipTests
 
 # ---- Final Image with Python as Base ----
-FROM python:3.10
+FROM python:3.11
 
 # Install Java JRE and Python build dependencies in a single layer
 RUN apt-get update  \

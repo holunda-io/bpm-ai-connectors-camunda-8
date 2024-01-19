@@ -2,8 +2,8 @@
   "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
   "name": "GPT Translation Connector",
   "id": "io.holunda.connector.translate.v1",
-  "description": "Translates text from variables into any language",
-  "version": 1,
+  "description": "Translates text in variables into any language",
+  "version": 2,
   "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
   "icon": {
     "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xOS4wNiAxOC42Njk5TDE2LjkyIDE0LjM5OTlMMTQuNzggMTguNjY5OSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTUuMTY5OSAxNy45MDk5SDE4LjY4OTkiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE2LjkyMDEgMjIuMDAwMUMxNC4xMjAxIDIyLjAwMDEgMTEuODQwMSAxOS43MyAxMS44NDAxIDE2LjkyQzExLjg0MDEgMTQuMTIgMTQuMTEwMSAxMS44NDAxIDE2LjkyMDEgMTEuODQwMUMxOS43MjAxIDExLjg0MDEgMjIuMDAwMSAxNC4xMSAyMi4wMDAxIDE2LjkyQzIyLjAwMDEgMTkuNzMgMTkuNzMwMSAyMi4wMDAxIDE2LjkyMDEgMjIuMDAwMVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTUuMDIgMkg4Ljk0QzExLjAxIDIgMTIuMDEgMy4wMDAwMiAxMS45NiA1LjAyMDAyVjguOTRDMTIuMDEgMTEuMDEgMTEuMDEgMTIuMDEgOC45NCAxMS45Nkg1LjAyQzMgMTIgMiAxMSAyIDguOTI5OTlWNS4wMTAwMUMyIDMuMDAwMDEgMyAyIDUuMDIgMloiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTkuMDA5OTUgNS44NDk4NUg0Ljk0OTk1IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02Ljk2OTk3IDUuMTY5OTJWNS44NDk5MSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNNy45ODk5NCA1LjgzOTg0QzcuOTg5OTQgNy41ODk4NCA2LjYxOTk0IDkuMDA5ODMgNC45Mzk5NCA5LjAwOTgzIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik05LjAwOTkgOS4wMTAwMUM4LjI3OTkgOS4wMTAwMSA3LjYxOTkxIDguNjIgNy4xNTk5MSA4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yIDE1QzIgMTguODcgNS4xMyAyMiA5IDIyTDcuOTUgMjAuMjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTIyIDlDMjIgNS4xMyAxOC44NyAyIDE1IDJMMTYuMDUgMy43NSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8L3N2Zz4="
@@ -37,26 +37,38 @@
   "properties": [
     {
       "type": "Hidden",
-      "value": "io.holunda:connector-translate:1",
+      "value": "io.holunda:connector-translate:2",
       "binding": {
         "type": "zeebe:taskDefinition:type"
       }
     },
     {
-      "id": "model",
+      "id": "llm",
       "label": "LLM",
       "group": "model",
       "type": "Dropdown",
       "value": "GPT_3",
       "choices": [
-        { "name": "OpenAI GPT-3.5 Turbo", "value": "GPT_3" },
-        { "name": "OpenAI GPT-4", "value": "GPT_4" },
-        { "name": "Aleph Alpha Luminous Supreme", "value": "LUMINOUS_SUPREME" },
-        { "name": "Cohere Chat Command", "value": "COHERE_CHAT_COMMAND" }
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
+        { "name": "OpenAI GPT-4", "value": "gpt-4" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "model"
+        "name": "llm"
+      }
+    },
+    {
+      "label": "Speech-to-Text Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "openai-whisper-1",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "stt"
       }
     },
     {
