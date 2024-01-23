@@ -40,19 +40,19 @@ object LLMServiceClient {
 
     inline fun <reified T : Any> run(task: String, request: T): JsonNode = runBlocking {
         val response: String = try {
-            async {
+            async(Dispatchers.Unconfined) {
                 client.post("${llmServiceUrl}/$task") {
                     contentType(ContentType.Application.Json)
                     setBody(jsonMapper.writeValueAsString(request))
                 }.body() as String
             }.await()
         } catch (e: Exception) {
-            throw LLMClientException()
+            throw LLMClientException(e)
         }
 
         jsonMapper.readTree(response)
     }
 
-    class LLMClientException: RuntimeException("LLM request failed")
+    class LLMClientException(e: Exception) : RuntimeException("LLM request failed", e)
 
 }
