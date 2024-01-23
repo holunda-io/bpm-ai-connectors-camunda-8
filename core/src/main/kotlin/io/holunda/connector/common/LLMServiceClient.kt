@@ -11,8 +11,11 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import kotlinx.coroutines.*
+import mu.KLogging
 
 object LLMServiceClient {
+
+    val logger = KLogging().logger
 
     var llmServiceUrl = System.getenv("LLM_SERVICE_URL") ?: "http://localhost:9999"
 
@@ -39,8 +42,10 @@ object LLMServiceClient {
     val jsonMapper = jacksonObjectMapper()
 
     inline fun <reified T : Any> run(task: String, request: T): JsonNode = runBlocking {
+        logger.info("Entered run() in LLMServiceClient")
         val response: String = try {
             async(Dispatchers.Unconfined) {
+                logger.info("About to post request")
                 client.post("${llmServiceUrl}/$task") {
                     contentType(ContentType.Application.Json)
                     setBody(jsonMapper.writeValueAsString(request))
@@ -49,6 +54,7 @@ object LLMServiceClient {
         } catch (e: Exception) {
             throw LLMClientException(e)
         }
+        logger.info("Response received")
 
         jsonMapper.readTree(response)
     }
