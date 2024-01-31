@@ -3,13 +3,13 @@ version: "3.9"
 services:
 
   connectors:
-    container_name: camunda-8-gpt-connectors
-    image: holisticon/camunda-8-connector-gpt:develop
+    container_name: bpm-ai-connectors-camunda-8
+    image: holisticon/bpm-ai-connectors-camunda-8:latest
     build:
       dockerfile: Dockerfile
     networks:
       - connector-network
-    env_file: ./connector-secrets.txt
+    env_file: .env
 
 networks:
   connector-network:

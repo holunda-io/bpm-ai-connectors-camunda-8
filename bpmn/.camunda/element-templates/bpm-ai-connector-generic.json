@@ -1,0 +1,133 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "GPT Generic Connector",
+  "id": "io.holunda.connector.generic.v1",
+  "description": "Run any prompt against an LLM and get a JSON response",
+  "version": 2,
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0zLjUgMjAuNDk5OUM0LjMzIDIxLjMyOTkgNS42NyAyMS4zMjk5IDYuNSAyMC40OTk5TDE5LjUgNy40OTk5NEMyMC4zMyA2LjY2OTk0IDIwLjMzIDUuMzI5OTQgMTkuNSA0LjQ5OTk0QzE4LjY3IDMuNjY5OTQgMTcuMzMgMy42Njk5NCAxNi41IDQuNDk5OTRMMy41IDE3LjQ5OTlDMi42NyAxOC4zMjk5IDIuNjcgMTkuNjY5OSAzLjUgMjAuNDk5OVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjAxIDguOTg5OTlMMTUuMDEgNS45ODk5OSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNOC41IDIuNDRMMTAgMkw5LjU2IDMuNUwxMCA1TDguNSA0LjU2TDcgNUw3LjQ0IDMuNUw3IDJMOC41IDIuNDRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTQuNSA4LjQ0TDYgOEw1LjU2IDkuNUw2IDExTDQuNSAxMC41NkwzIDExTDMuNDQgOS41TDMgOEw0LjUgOC40NFoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuNSAxMy40NEwyMSAxM0wyMC41NiAxNC41TDIxIDE2TDE5LjUgMTUuNTZMMTggMTZMMTguNDQgMTQuNUwxOCAxM0wxOS41IDEzLjQ0WiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg=="
+  },
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": ["bpmn:Task"],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "model",
+      "label": "Model"
+    },
+    {
+      "id": "input",
+      "label": "Input"
+    },
+    {
+      "id": "task",
+      "label": "Task"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "io.holunda:connector-generic:2",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      }
+    },
+    {
+      "id": "llm",
+      "label": "LLM",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "gpt-4-turbo-preview",
+      "choices": [
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
+        { "name": "OpenAI GPT-4", "value": "gpt-4" },
+        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "llm"
+      }
+    },
+    {
+      "label": "Speech-to-Text Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "openai-whisper-1",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "stt"
+      }
+    },
+    {
+      "label": "Input Variables",
+      "group": "input",
+      "description": "Map of input variables to extract data from. Key should be the variable name. Value is the variable itself as FEEL expression.",
+      "type": "Text",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "inputJson"
+      },
+      "value": "={ \"myVariable\": myVariable }",
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Task Description",
+      "description": "Describe what the model should do.",
+      "group": "task",
+      "type": "Text",
+      "feel": "optional",
+      "value": "Perform task X and store the result in the result field. Also describe the reasoning behind your result.",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "taskDescription"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Output Schema",
+      "description": "JSON schema for the output",
+      "group": "task",
+      "type": "Text",
+      "feel": "optional",
+      "value": "={\n  result: \"the result of the task\",\n  reasoning: \"the reasoning behind the task result\"\n}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "outputFormat"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Result Expression",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>, with fields as specified in Output Format.",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "value": "={\"result\": result}",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    }
+  ]
+}

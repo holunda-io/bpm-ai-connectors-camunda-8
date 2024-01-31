@@ -1,0 +1,166 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "GPT Data Extraction Connector",
+  "id": "io.holunda.connector.extract.v1",
+  "description": "Extracts information from structured or unstructured input data",
+  "version": 2,
+  "documentationRef": "https://docs.camunda.io/docs/components/connectors/out-of-the-box-connectors/available-connectors-overview/",
+  "icon": {
+    "contents": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+"
+  },
+  "category": {
+    "id": "connectors",
+    "name": "Connectors"
+  },
+  "appliesTo": ["bpmn:Task"],
+  "elementType": {
+    "value": "bpmn:ServiceTask"
+  },
+  "groups": [
+    {
+      "id": "model",
+      "label": "Model"
+    },
+    {
+      "id": "input",
+      "label": "Input"
+    },
+    {
+      "id": "extract",
+      "label": "Data Extraction"
+    },
+    {
+      "id": "output",
+      "label": "Output Mapping"
+    },
+    {
+      "id": "errors",
+      "label": "Errors"
+    }
+  ],
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "io.holunda:connector-extract:2",
+      "binding": {
+        "type": "zeebe:taskDefinition:type"
+      }
+    },
+    {
+      "id": "llm",
+      "label": "LLM",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "gpt-4-turbo-preview",
+      "choices": [
+        { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
+        { "name": "OpenAI GPT-4", "value": "gpt-4" },
+        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "llm"
+      }
+    },
+    {
+      "label": "Speech-to-Text Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "openai-whisper-1",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "stt"
+      }
+    },
+    {
+      "label": "Input Variables",
+      "group": "input",
+      "description": "Map of input variables to extract data from. Key should be the variable name. Value is the variable itself as FEEL expression.",
+      "type": "Text",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "inputJson"
+      },
+      "value": "={ \"myVariable\": myVariable }",
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Output Schema",
+      "description": "JSON schema of what fields to extract from the input.",
+      "group": "extract",
+      "type": "Text",
+      "feel": "required",
+      "value": "={\n  name: \"full name\",\n  age: { type: \"integer\", description: \"age in years\" }\n}",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "extractionJson"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "id": "mode",
+      "label": "Extraction Mode",
+      "description": "Extract general information or multiple entities (e.g. persons, products, etc.)",
+      "group": "extract",
+      "type": "Dropdown",
+      "value": "SINGLE",
+      "choices": [
+        { "name": "Single", "value": "SINGLE" },
+        { "name": "Multiple Entities", "value": "REPEATED" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "mode"
+      }
+    },
+    {
+      "label": "Entities Description",
+      "description": "General description of the entity type to extract, if fields are not clear enough.",
+      "group": "extract",
+      "type": "String",
+      "feel": "optional",
+      "optional": true,
+      "binding": {
+        "type": "zeebe:input",
+        "name": "entitiesDescription"
+      },
+      "value": "Mentioned persons",
+      "condition": {
+        "property": "mode",
+        "equals": "REPEATED"
+      }
+    },
+    {
+      "label": "Result Expression",
+      "description": "Expression to map the result into process variables. Result is in a temporary variable <code>result</code>, with fields for every extracted field as specified in Extraction Fields.",
+      "group": "output",
+      "type": "Text",
+      "feel": "required",
+      "value": "={customerInfo: result}",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "resultExpression"
+      }
+    },
+    {
+      "label": "Error Expression",
+      "description": "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/#bpmn-errors\" target=\"_blank\">documentation</a>",
+      "group": "errors",
+      "type": "Text",
+      "feel": "required",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "errorExpression"
+      }
+    }
+  ]
+}

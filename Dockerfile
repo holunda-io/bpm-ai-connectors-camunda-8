@@ -1,41 +1,61 @@
-# ---- Build Maven Java Spring Boot App ----
-FROM maven:3.9.3-eclipse-temurin-17 AS build-java
-WORKDIR /build-java
+ARG TARGETARCH="arm64"
+ARG PYTHON_VERSION="3.12"
+###############################################################################
+# 1. build feel-engine-wrapper native executable using quarkus mandrel
+###############################################################################
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build-java
+ARG TARGETARCH
 
-# Copy only the POM file to leverage Docker cache for dependencies
-COPY pom.xml .
-COPY core/pom.xml core/
-COPY runtime/pom.xml runtime/
-RUN mvn dependency:go-offline
+COPY --chown=quarkus:quarkus feel-engine-wrapper/mvnw /code/mvnw
+COPY --chown=quarkus:quarkus feel-engine-wrapper/.mvn /code/.mvn
+COPY --chown=quarkus:quarkus feel-engine-wrapper/pom.xml /code/
+COPY --chown=quarkus:quarkus docker/upx_${TARGETARCH} /usr/bin/upx
 
-# Now, copy the source code and build the project
-COPY core/src/ core/src/
-COPY runtime/src/ runtime/src/
-RUN mvn clean package -DskipTests
+USER quarkus
+WORKDIR /code
+RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
+COPY feel-engine-wrapper/src /code/src
+RUN ./mvnw package -Dnative
 
-# ---- Final Image with Python as Base ----
-FROM python:3.11
+###############################################################################
+# 2. build python connectors as native executable using nuitka
+###############################################################################
+# poetry setup code copied from https://github.com/thehale/docker-python-poetry, due to missing multiarch images
+# POETRY BASE IMAGE - Provides environment variables for poetry
+FROM python:${PYTHON_VERSION}-slim AS python-poetry-base
+ARG POETRY_VERSION="1.6.1"
+ENV POETRY_VERSION=${POETRY_VERSION}
+ENV POETRY_HOME="/opt/poetry"
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV POETRY_NO_INTERACTION=1
+ENV PATH="$POETRY_HOME/bin:$PATH"
+# POETRY BUILDER IMAGE - Installs Poetry and dependencies
+FROM python-poetry-base AS python-poetry-builder
+RUN apt-get update && apt-get install -y --no-install-recommends curl
+# Install Poetry via the official installer: https://python-poetry.org/docs/master/#installing-with-the-official-installer
+# This script respects $POETRY_VERSION & $POETRY_HOME
+RUN curl -sSL https://install.python-poetry.org | python3 -
+# POETRY RUNTIME IMAGE - Copies the poetry installation into a smaller image and builds target app
+FROM python-poetry-base AS build-python
+COPY --from=python-poetry-builder $POETRY_HOME $POETRY_HOME
+# only install dependencies into project virtualenv
+COPY bpm-ai-connectors-c8/pyproject.toml bpm-ai-connectors-c8/poetry.lock ./app/
+WORKDIR /app
+RUN poetry install --without dev,test --no-root --no-cache
 
-# Install Java JRE and Python build dependencies in a single layer
-RUN apt-get update  \
-    && apt-get install -y openjdk-17-jre python3-dev build-essential libpq-dev default-libmysqlclient-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir --upgrade pip
+###############################################################################
+# 3. Final, minimal image
+###############################################################################
+FROM cgr.dev/chainguard/python:latest
 
-# Copy the Java app from the Maven build stage
-COPY --from=build-java /build-java/runtime/target/camunda-8-connector-gpt-runtime-0.1.2-SNAPSHOT.jar /java/connector-runtime.jar
+ARG PYTHON_VERSION
+ENV PYTHONUNBUFFERED=1
 
-# Install Python dependencies
-COPY legacy/requirements.txt /tmp/
-RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt
+WORKDIR /app
+COPY --from=build-java /code/target/*-runner feel-wrapper
+COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
+COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /home/nonroot/.local/lib/python${PYTHON_VERSION}/site-packages
 
-# Copy Python source and install it
-COPY legacy/src/ /python/src/
-RUN pip install -e /python/src
-
-# Install supervisord and copy config
-RUN pip3 install supervisor
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Run supervisord with Java and Python apps
-CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Run two processes: connector runtime + feel engine wrapper
+COPY docker/init.py .
+CMD ["init.py", "./feel-wrapper", "python -m bpm_ai_connectors_c8.main"]
