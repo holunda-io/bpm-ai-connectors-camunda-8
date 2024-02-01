@@ -1,4 +1,6 @@
+import logging
 import os
+from pathlib import Path
 
 import pytest
 from testcontainers.core.container import DockerContainer
@@ -23,15 +25,26 @@ def feel_mock_server(xprocess):
     xprocess.getinfo("feel_mock_server").terminate()
 
 
+def ensure_openai_key() -> str:
+    openai_key = os.environ.get("OPENAI_API_KEY")
+    if not openai_key:
+        raise Exception("OPENAI_API_KEY env variable not set!")
+    return openai_key
+
+
 @pytest.fixture
 def connector_runtime(xprocess, zeebe_test_engine):
+    ensure_openai_key()
     class Starter(ProcessStarter):
         pattern = "Starting connector worker"
         popen_kwargs = {"cwd": ".."}
         args = ['python', '-m' 'bpm_ai_connectors_c8.main', '--host', zeebe_test_engine.host, '--port', zeebe_test_engine.engine_port]
 
-    xprocess.ensure("connector_runtime", Starter)
+    _, log_path = xprocess.ensure("connector_runtime", Starter)
     yield
+    full_logs = Path(log_path).read_text().split("@@__xproc_block_delimiter__@@")
+    latest_logs = full_logs[-1] if full_logs else ""
+    logging.getLogger("test").info(latest_logs)
     xprocess.getinfo("connector_runtime").terminate()
 
 
@@ -52,7 +65,7 @@ def docker_runtime(zeebe_test_engine):
     """
     container = DockerContainer(DOCKER_IMAGE)
     container.with_env("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS", f"host.docker.internal:{zeebe_test_engine.engine_port}")
-    container.with_env("OPENAI_API_KEY", os.environ.get("OPENAI_API_KEY"))
+    container.with_env("OPENAI_API_KEY", ensure_openai_key())
     container.start()
     wait_for_logs(container, "Starting connector worker.")
     yield container

@@ -8,7 +8,7 @@ on:
       - bpm-ai
     paths:
       - 'bpm-ai-connectors-c8/**'
-      - '.github/**'
+      - '.github/workflows/connectors.yml'
 
 jobs:
   pytest:
