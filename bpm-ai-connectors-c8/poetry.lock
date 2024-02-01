@@ -1026,13 +1026,13 @@ pytest = ">=2.8"
 
 [[package]]
 name = "pytest-zeebe"
-version = "0.1.0"
+version = "0.1.1"
 description = "Pytest fixtures for testing Camunda 8 processes using a Zeebe test engine."
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "pytest_zeebe-0.1.0-py3-none-any.whl", hash = "sha256:63cc9c110771db4e268103197e7a0d26001448ff3c636e884246009249d471bb"},
-    {file = "pytest_zeebe-0.1.0.tar.gz", hash = "sha256:8c6a1bd551288254edc0577e3611a98b4a0aa6de592ff9388028678be4ec877f"},
+    {file = "pytest_zeebe-0.1.1-py3-none-any.whl", hash = "sha256:097c99ee38dcae74866aec8248dca59c0df81f328d2ffc9750663a77959a0c44"},
+    {file = "pytest_zeebe-0.1.1.tar.gz", hash = "sha256:41f8b72894209405c37974a9d7a1ad227bd11973a8cefb08f801047e4bbce4bf"},
 ]
 
 [package.dependencies]
@@ -1465,4 +1465,4 @@ protobuf = ">=3,<4"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ce80d2b149e0c4fa5c183d3b45748ea6455a3720be8679ce65010c2824aa3504"
+content-hash = "416eda2afb6991e4126eab6465a5a7433c48496c6de9fe0674bc27c89b804664"

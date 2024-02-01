@@ -32,4 +32,6 @@ jobs:
         run: poetry install --no-root --no-cache
       -
         name: Run pytest
-        run: poetry run pytest
+        run: |
+          export ZEEBE_TEST_IMAGE_TAG=8.4.0
+          poetry run pytest
