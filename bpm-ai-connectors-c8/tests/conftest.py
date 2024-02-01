@@ -27,8 +27,8 @@ def feel_mock_server(xprocess):
 def connector_runtime(xprocess, zeebe_test_engine):
     class Starter(ProcessStarter):
         pattern = "Starting connector worker"
-        popen_kwargs = {"cwd": "../bpm_ai_connectors_c8"}
-        args = ['python', 'main.py', '--host', zeebe_test_engine.host, '--port', zeebe_test_engine.engine_port]
+        popen_kwargs = {"cwd": ".."}
+        args = ['python', '-m' 'bpm_ai_connectors_c8.main', '--host', zeebe_test_engine.host, '--port', zeebe_test_engine.engine_port]
 
     xprocess.ensure("connector_runtime", Starter)
     yield

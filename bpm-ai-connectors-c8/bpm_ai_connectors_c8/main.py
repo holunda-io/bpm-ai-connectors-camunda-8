@@ -53,7 +53,7 @@ async def main(host=None, port=None):
 
     logger.debug(worker.tasks)
 
-    logger.info(f"Starting connector worker.")
+    logger.info("Starting connector worker.")
     await worker.work()
     logger.info("Exited connector worker.")
 
