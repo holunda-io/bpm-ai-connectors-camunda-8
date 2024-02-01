@@ -146,10 +146,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       -
-        name: Set up Python 3.11
+        name: Set up Python 3.12
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       -
         name: Set up poetry
         uses: abatilo/actions-poetry@v2
@@ -160,7 +160,7 @@ jobs:
         run: poetry install --only test --no-root --no-cache
       -
         name: Run pytest
-        run: TEST_RUNTIME=docker poetry run pytest
+        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} TEST_RUNTIME=docker poetry run pytest
 
   create-push-manifest:
     runs-on: ubuntu-latest
