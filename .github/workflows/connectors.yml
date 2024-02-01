@@ -16,13 +16,14 @@ jobs:
       run:
         working-directory: ./bpm-ai-connectors-c8/tests
     runs-on: ubuntu-latest
+    environment: integration
     steps:
       - uses: actions/checkout@v4
       -
-        name: Set up Python 3.11
+        name: Set up Python 3.12
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       -
         name: Set up poetry
         uses: abatilo/actions-poetry@v2
