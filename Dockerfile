@@ -15,7 +15,7 @@ USER quarkus
 WORKDIR /code
 RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
 COPY feel-engine-wrapper/src /code/src
-RUN ./mvnw package -Dnative
+RUN ./mvnw package -Dnative-compress
 
 ###############################################################################
 # 2. build python connectors as native executable using nuitka

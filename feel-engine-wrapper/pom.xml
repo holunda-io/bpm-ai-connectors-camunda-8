@@ -182,5 +182,18 @@
         <quarkus.package.type>native</quarkus.package.type>
       </properties>
     </profile>
+    <profile>
+      <id>native-compress</id>
+      <activation>
+        <property>
+          <name>native-compress</name>
+        </property>
+      </activation>
+      <properties>
+        <skipITs>false</skipITs>
+        <quarkus.package.type>native</quarkus.package.type>
+        <quarkus.native.compression.level>9</quarkus.native.compression.level>
+      </properties>
+    </profile>
   </profiles>
 </project>

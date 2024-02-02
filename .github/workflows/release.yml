@@ -65,13 +65,13 @@ jobs:
         run: poetry install --only main
       -
         name: Build
-        run: poetry build
+        run: poetry install
       -
         name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: bpm-ai-connectors-c8
-          path: dist/
+          path: bpm-ai-connectors-c8/dist/ # action does not respect working-directory...
           if-no-files-found: error
 
   build-push-amd64:
@@ -122,8 +122,9 @@ jobs:
         name: Setup docker (missing on MacOS)
         if: runner.os == 'macos'
         run: |
+          brew config
           brew install docker colima
-          colima start
+          colima start debug --arch aarch64
           # For testcontainers to find the Colima socket
           # https://github.com/abiosoft/colima/blob/main/docs/FAQ.md#cannot-connect-to-the-docker-daemon-at-unixvarrundockersock-is-the-docker-daemon-running
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock      
