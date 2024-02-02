@@ -16,8 +16,8 @@ jobs:
         include:
           - runner: ubuntu-latest
             arch: amd64
-          - runner: buildjet-8vcpu-ubuntu-2204-arm
-            arch: arm64
+          #- runner: buildjet-8vcpu-ubuntu-2204-arm
+          #  arch: arm64
     runs-on: ${{ matrix.runner }}
     defaults:
       run:
