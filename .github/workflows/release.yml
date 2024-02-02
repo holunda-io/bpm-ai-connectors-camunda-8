@@ -44,7 +44,7 @@ jobs:
         name: Install upx for executable compression
         run: |
           wget -O upx.tar.xz "https://github.com/upx/upx/releases/download/v4.2.2/upx-4.2.2-${{ matrix.arch }}_linux.tar.xz"
-          tar -xvf upx.tar.xz -C /usr/bin/ upx
+          tar -xvf upx.tar.xz -C /usr/bin/ upx-4.2.2-${{ matrix.arch }}_linux/upx
       -
         name: Prepare Maven Wrapper
         run: chmod +x ./mvnw
