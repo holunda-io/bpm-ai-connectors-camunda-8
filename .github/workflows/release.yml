@@ -42,10 +42,7 @@ jobs:
             ${{ matrix.runner }}-maven-
       -
         name: Install upx for executable compression
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: upx
-          version: 1.0
+        run: wget "https://github.com/upx/upx/releases/download/v4.2.2/upx-4.2.2-${{ matrix.arch }}_linux.tar.xz" -O - | tar -xj -C /usr/bin/ upx
       -
         name: Prepare Maven Wrapper
         run: chmod +x ./mvnw
