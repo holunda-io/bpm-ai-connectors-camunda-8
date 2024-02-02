@@ -6,15 +6,15 @@ ARG PYTHON_VERSION="3.12"
 FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build-java
 ARG TARGETARCH
 
-COPY --chown=quarkus:quarkus feel-engine-wrapper/mvnw /code/mvnw
-COPY --chown=quarkus:quarkus feel-engine-wrapper/.mvn /code/.mvn
-COPY --chown=quarkus:quarkus feel-engine-wrapper/pom.xml /code/
+COPY --chown=quarkus:quarkus feel-engine-wrapper/mvnw /app/mvnw
+COPY --chown=quarkus:quarkus feel-engine-wrapper/.mvn /app/.mvn
+COPY --chown=quarkus:quarkus feel-engine-wrapper/pom.xml /app/
 COPY --chown=quarkus:quarkus docker/upx_${TARGETARCH} /usr/bin/upx
 
 USER quarkus
-WORKDIR /code
+WORKDIR /app
 RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
-COPY feel-engine-wrapper/src /code/src
+COPY feel-engine-wrapper/src /app/src
 RUN ./mvnw package -Dnative-compress
 
 ###############################################################################
@@ -52,7 +52,7 @@ ARG PYTHON_VERSION
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY --from=build-java /code/target/*-runner feel-wrapper
+COPY --from=build-java /app/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
 COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /home/nonroot/.local/lib/python${PYTHON_VERSION}/site-packages
 

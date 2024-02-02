@@ -87,6 +87,9 @@
               <goal>generate-code</goal>
               <goal>generate-code-tests</goal>
             </goals>
+            <configuration>
+              <finalName>feel-engine-wrapper</finalName>
+            </configuration>
           </execution>
         </executions>
       </plugin>
