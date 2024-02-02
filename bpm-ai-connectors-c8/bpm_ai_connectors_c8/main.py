@@ -24,6 +24,7 @@ async def create_channel(host=None, port=None):
            os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER-ID"),
            os.environ.get("ZEEBE_CLIENT_CLOUD_REGION")
         )
+        logger.info(f"Created channel to cloud cluster {os.environ.get('ZEEBE_CLIENT_CLOUD_CLUSTER-ID')}")
     else:
         if os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS"):
             host, port = os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS").split(":")
@@ -31,6 +32,7 @@ async def create_channel(host=None, port=None):
             hostname=host,
             port=port
         )
+        logger.info(f"Created channel to local broker {host}:{port}")
     return channel
 
 

@@ -65,7 +65,7 @@ jobs:
         run: poetry install --only main
       -
         name: Build
-        run: poetry install
+        run: poetry build
       -
         name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -124,7 +124,8 @@ jobs:
         run: |
           brew config
           brew install docker colima
-          colima start debug --arch aarch64
+          colima delete
+          colima start debug --arch aarch64 --ssh-agent
           # For testcontainers to find the Colima socket
           # https://github.com/abiosoft/colima/blob/main/docs/FAQ.md#cannot-connect-to-the-docker-daemon-at-unixvarrundockersock-is-the-docker-daemon-running
           sudo ln -sf $HOME/.colima/default/docker.sock /var/run/docker.sock      
