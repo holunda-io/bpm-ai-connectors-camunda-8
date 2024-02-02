@@ -62,6 +62,7 @@ jobs:
         with:
           python-version: '3.12'
           cache: 'poetry'
+          cache-dependency-path: bpm-ai-connectors-c8/poetry.lock
       -
         name: Set up poetry
         uses: abatilo/actions-poetry@v2
@@ -189,6 +190,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: 'poetry'
+          cache-dependency-path: bpm-ai-connectors-c8/poetry.lock
       -
         name: Set up poetry
         uses: abatilo/actions-poetry@v2
