@@ -11,32 +11,36 @@ env:
 
 jobs:
   build-jvm:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ {name: ubuntu-latest, arch: amd64}, {name: macos-14, arch: arm64} ]
+    runs-on: ${{ matrix.os.name }}
     defaults:
       run:
         working-directory: ./feel-engine-wrapper
     steps:
-      - name: Checkout code
+      -
+        name: Checkout code
         uses: actions/checkout@v3
-
-      # Get GPG private key into GPG
-      - name: Import GPG Owner Trust
-        run: echo ${{ secrets.GPG_OWNERTRUST }} | base64 --decode | gpg --import-ownertrust
-
-      - name: Import GPG key
-        run: echo ${{ secrets.GPG_SECRET_KEYS }} | base64 --decode | gpg --import --no-tty --batch --yes
-
-      # Setup JDK and Maven
-      - uses: graalvm/setup-graalvm@v1
+      -
+        name: Setup GraalVM JDK 21
+        uses: graalvm/setup-graalvm@v1
         with:
           java-version: '21'
           distribution: 'graalvm'
-
-      - name: Prepare Maven Wrapper
+      -
+        name: Prepare Maven Wrapper
         run: chmod +x ./mvnw
-
-      - name: Build with Maven
+      -
+        name: Build native executable with Maven
         run: ./mvnw package -Dnative
+      -
+        name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: feel-engine-wrapper-${{ matrix.os.name }}-${{ matrix.os.arch }}
+          path: /target/*-runner
+          if-no-files-found: error
 
   build-python:
     runs-on: ubuntu-latest
@@ -62,9 +66,16 @@ jobs:
       -
         name: Build
         run: poetry build
+      -
+        name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bpm-ai-connectors-c8
+          path: dist/
+          if-no-files-found: error
 
   build-push-amd64:
-    needs: [build-jvm, build-python]
+    #needs: [build-jvm, build-python]
     runs-on: ubuntu-latest
     steps:
       -
@@ -101,7 +112,7 @@ jobs:
             ${{ env.REGISTRY_IMAGE }}:latest-amd64
 
   build-push-arm64:
-    needs: [build-jvm, build-python]
+    #needs: [build-jvm, build-python]
     runs-on: macos-14
     steps:
       -
@@ -111,7 +122,7 @@ jobs:
         name: Setup docker (missing on MacOS)
         if: runner.os == 'macos'
         run: |
-          brew install docker
+          brew install docker colima
           colima start
           # For testcontainers to find the Colima socket
           # https://github.com/abiosoft/colima/blob/main/docs/FAQ.md#cannot-connect-to-the-docker-daemon-at-unixvarrundockersock-is-the-docker-daemon-running

@@ -7,6 +7,8 @@ from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
 from xprocess import ProcessStarter
 
+logger = logging.getLogger("test")
+
 # specifically use the amd64 tag as the docker image test runs after the platform images are pushed,
 # but before the merged multiarch manifest (latest tag) is pushed.
 # ideally both platform images should be tested (and even better before anything is pushed at all...)
@@ -46,7 +48,7 @@ def connector_runtime(xprocess, zeebe_test_engine):
     yield
     full_logs = Path(log_path).read_text().split("@@__xproc_block_delimiter__@@")
     latest_logs = full_logs[-1] if full_logs else ""
-    logging.getLogger("test").info(latest_logs)
+    logger.info(latest_logs)
     xprocess.getinfo("connector_runtime").terminate()
 
 
@@ -71,6 +73,9 @@ def docker_runtime(zeebe_test_engine):
     container.start()
     wait_for_logs(container, "Starting connector worker.")
     yield container
+    stdout, stderr = container.get_logs()
+    logger.info(stdout)
+    logger.error(stderr)
     container.stop()
 
 
