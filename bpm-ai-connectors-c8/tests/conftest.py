@@ -35,10 +35,12 @@ def ensure_openai_key() -> str:
 @pytest.fixture
 def connector_runtime(xprocess, zeebe_test_engine):
     ensure_openai_key()
+
     class Starter(ProcessStarter):
         pattern = "Starting connector worker"
         popen_kwargs = {"cwd": ".."}
-        args = ['python', '-m' 'bpm_ai_connectors_c8.main', '--host', zeebe_test_engine.host, '--port', zeebe_test_engine.engine_port]
+        args = ['python', '-m' 'bpm_ai_connectors_c8.main', '--host', zeebe_test_engine.host, '--port',
+                zeebe_test_engine.engine_port]
 
     _, log_path = xprocess.ensure("connector_runtime", Starter)
     yield
