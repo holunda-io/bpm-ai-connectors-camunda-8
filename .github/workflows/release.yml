@@ -11,7 +11,6 @@ env:
 
 jobs:
   build-jvm:
-    if: ${{ false }}  # disable for now
     strategy:
       matrix:
         include:
@@ -33,15 +32,14 @@ jobs:
         with:
           java-version: '21'
           distribution: 'graalvm'
-          #cache: 'maven'
       -
         name: Cache local Maven repository
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: ${{ matrix.runner }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-maven-
+            ${{ matrix.runner }}-maven-
       -
         name: Prepare Maven Wrapper
         run: chmod +x ./mvnw
