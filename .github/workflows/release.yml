@@ -16,8 +16,8 @@ jobs:
         include:
           - runner: ubuntu-latest
             arch: amd64
-          #- runner: buildjet-8vcpu-ubuntu-2204-arm
-          #  arch: arm64
+          - runner: buildjet-8vcpu-ubuntu-2204-arm
+            arch: arm64
     runs-on: ${{ matrix.runner }}
     defaults:
       run:
@@ -104,7 +104,7 @@ jobs:
       matrix:
         include:
           - arch: amd64
-          #- arch: arm64
+          - arch: arm64
     runs-on: ubuntu-latest
     steps:
       -
@@ -205,14 +205,23 @@ jobs:
         name: Set up Python 3.12
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
-          cache: 'poetry'
-          cache-dependency-path: bpm-ai-connectors-c8/poetry.lock
+          python-version: '3.12'
       -
         name: Set up poetry
         uses: abatilo/actions-poetry@v2
         with:
           poetry-version: "1.6.1"
+      -
+        name: Create local environment in project for caching
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      -
+        uses: actions/cache@v3
+        name: Set up cache based on dependencies lock file
+        with:
+          path: ./bpm-ai-connectors-c8/.venv
+          key: venv-${{ hashFiles('**/poetry.lock') }}
       -
         name: Install dependencies
         run: poetry install --only test --no-root --no-cache
