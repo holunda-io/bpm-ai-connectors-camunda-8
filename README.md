@@ -1,6 +1,6 @@
 # BPM AI Connectors for Camunda 🤖
 
-*Boost automation in your Camunda BPMN processes using pre-configured, task-specific AI solutions 🚀*
+*Boost automation in your Camunda BPMN processes using pre-configured, task-specific AI solutions - wrapped in easy-to-use connectors 🚀*
 
 ![Compatible with: Camunda Platform 8](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%208-26d07c)
 [![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-RED.svg)](https://holisticon.de/)
@@ -70,6 +70,22 @@ After starting the connector workers in their runtime, you also need to make the
   * place them besides your .bpmn file
   * or add them to the `resources/element-templates` directory of your Modeler. 
 
+## 🕵 Logging & Tracing
+
+The connectors support logging traces of all task runs into [Langfuse](https://langfuse.com).
+
+This makes it easy to debug problems, monitor latency and cost, analyze task performance and even curate and export datasets from your past runs.
+
+To configure tracing, add your keys to the `.env` file:
+
+```bash
+LANGFUSE_SECRET_KEY=<put your secret key here>
+LANGFUSE_PUBLIC_KEY=<put your public key here>
+
+# only if self-hosted:
+#LANGFUSE_HOST=host:port
+```
+
 ## 📚 Connectors Documentation
 
 * [Getting Started](docs/getting-started.md)
@@ -81,78 +97,71 @@ After starting the connector workers in their runtime, you also need to make the
 
 The connector workers are written in Python based on [pyzeebe](https://github.com/camunda-community-hub/pyzeebe).
 They are a thin wrapper around the core logic and AI abstractions, 
-which are independent of the specific workflow engine (or can even be used from normal code directly) and placed 
+which are independent of the specific workflow engine (or can even be integrated in a plain Python project directly) and placed 
 in a separate repository: [bpm-ai](https://github.com/holunda-io/bpm-ai)
 
 All connectors make use of feel expressions to flexibly map the task result into one or multiple result variables and/or define error expressions. 
-Therefore, a feel engine is required, which is only available as a Scala implementation. 
-To keep the runtime and docker image overhead of needing an accompanying JVM app as low as possible,
+Therefore, a feel engine is required - which is only available as a Scala implementation. 
+To keep the runtime and Docker image overhead of needing an accompanying JVM app as low as possible,
 [feel-engine-wrapper](/feel-engine-wrapper) is a small, native-compiled Quarkus server wrapping the [connector-sdk/feel-wrapper](https://github.com/camunda/connectors/tree/main/connector-sdk/feel-wrapper), which itself wraps the feel engine for use in connectors.
 
 
 For convenience, both apps can be packaged into a single Docker image using the top-level Dockerfile or docker-compose.yml.
 
-Alternatively, the Python connector runtime can be run directly (see below) and the feel-engine-wrapper has multiple Dockerfiles (native or JVM) in [src/main/docker](feel-engine-wrapper/src/main/docker).
-
-
+Alternatively, the Python connector runtime can be started directly (see below) and the feel-engine-wrapper has multiple Dockerfiles (native or JVM) in [src/main/docker](feel-engine-wrapper/src/main/docker).
 
 ### Build
-#### Connectors
 
-
-```bash
-
-```
-
-
-#### Python 
-
-Python 3.11+ is required.
-
-Install the Python dependencies using the following command:
-
-```bash
-
-```
-
-Install the Python app:
-```bash
-
-```
-
+#### Connectors 
 ```bash
 cd bpm-ai-connectors-c8
+```
+Python 3.11+ and Poetry 1.6.1 is required.
+
+Install the dependencies using the following command:
+```bash
+poetry install
+```
+Run the connectors:
+```bash
 python -m bpm_ai_connectors_c8.main
 ```
-### Configuration
 
-In order to run, the connectors will require connection details to connect to Camunda 8 platform, and (if you want to use OpenAI models) an OpenAI API key.
-These parameters must be available to the connector runtime as environment variables. Create an `.env` file (check the `env.sample` file) with the following variables:
-
-If your connector runs locally from your host machine (command line or IDE) and connects to locally running Zeebe Cluster:
+#### Feel Engine Wrapper
+```bash
+cd feel-engine-wrapper
 ```
-OPENAI_API_KEY=<put your key here>
-ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=localhost:26500
+Build native executable:
+```bash
+./mvnw package -Dnative
 ```
-
-If your connector runs using docker compose together with Zeebe Cluster:
-```
-OPENAI_API_KEY=<put your key here>
-ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
+Run it:
+```bash
+./target/feel-engine-wrapper-runner
 ```
 
-If you want to connect to Camunda 8 Cloud, please use the following configuration (independently of run mode); 
+### Tests
+
+Run integration test:
+
+```bash
+export ZEEBE_TEST_IMAGE_TAG=8.4.0 
+export OPENAI_API_KEY=<put your key here> 
+poetry run pytest
 ```
-OPENAI_API_KEY=<put your key here>
-ZEEBE_CLIENT_CLOUD_CLUSTER-ID=<cluster-id>
-ZEEBE_CLIENT_CLOUD_CLIENT-ID=<client-id>
-ZEEBE_CLIENT_CLOUD_CLIENT-SECRET=<client-secret>
-ZEEBE_CLIENT_CLOUD_REGION=bru-2
-```
+
+The tests will:
+* spin up a Zeebe test engine using [pytest-zeebe](https://github.com/holunda-io/pytest-zeebe)
+* start a mocked feel engine wrapper server
+* deploy and run a small test process for each connector, using the actual OpenAI API
+
+The CI/CD pipeline additionally runs these tests against the actual built Docker image before pushing the `latest` tag to Docker Hub.
+
+---
 
 ## License
 
-This library is developed under
+This project is developed under
 
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 

@@ -48,7 +48,8 @@ def ai_task(
 
 
 async def job_activate(job: Job) -> Job:
-    logger.info(f"Running task '{job.type}' with variables {job.variables} and headers {job.custom_headers}")
+    vars_to_log = {k: v for k, v in job.variables.items() if k != 'job'}
+    logger.info(f"Running task '{job.type}' with variables {vars_to_log} and headers {job.custom_headers}")
     job.custom_headers["connector_vars"] = set(job.variables.keys())
     return job
 

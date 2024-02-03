@@ -92,7 +92,7 @@
     "unsafeAllocated": true
   },
   {
-    "name": "io.camunda.connector.api.error.BpmnError",
+    "name": "io.holunda.feel.core.BpmnError",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -101,7 +101,7 @@
     "allPublicFields" : true
   },
   {
-    "name": "io.camunda.connector.api.error.JobError",
+    "name": "io.holunda.feel.core.JobError",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -110,7 +110,7 @@
     "allPublicFields" : true
   },
   {
-    "name": "io.camunda.connector.api.error.ConnectorError",
+    "name": "io.holunda.feel.core.ConnectorError",
     "allDeclaredConstructors" : true,
     "allPublicConstructors" : true,
     "allDeclaredMethods" : true,
@@ -204,7 +204,7 @@
     "fields":[{"name":"0bitmap$1"}]
   },
   {
-    "name":"io.camunda.connector.api.error.BpmnError",
+    "name":"io.holunda.feel.core.BpmnError",
     "allDeclaredFields":true,
     "queryAllDeclaredMethods":true,
     "queryAllDeclaredConstructors":true,
@@ -2112,13 +2112,6 @@
     "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"build","parameterTypes":["io.quarkus.deployment.annotations.BuildProducer","io.quarkus.deployment.annotations.BuildProducer","io.quarkus.deployment.annotations.BuildProducer"] }]
   },
   {
-    "name":"io.quarkus.kotlin.deployment.KotlinProcessor",
-    "allDeclaredFields":true,
-    "queryAllDeclaredMethods":true,
-    "queryAllDeclaredConstructors":true,
-    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"dataClassPredicate","parameterTypes":[] }, {"name":"feature","parameterTypes":[] }, {"name":"registerKotlinJacksonModule","parameterTypes":["io.quarkus.deployment.annotations.BuildProducer"] }, {"name":"registerKotlinReflection","parameterTypes":["io.quarkus.deployment.annotations.BuildProducer","io.quarkus.deployment.annotations.BuildProducer"] }]
-  },
-  {
     "name":"io.quarkus.mutiny.deployment.MutinyProcessor",
     "allDeclaredFields":true,
     "queryAllDeclaredMethods":true,
@@ -2243,13 +2236,6 @@
   },
   {
     "name":"io.quarkus.resteasy.reactive.jackson.runtime.serialisers.vertx.VertxJsonObjectMessageBodyWriter"
-  },
-  {
-    "name":"io.quarkus.resteasy.reactive.kotlin.deployment.KotlinCoroutineIntegrationProcessor",
-    "allDeclaredFields":true,
-    "queryAllDeclaredMethods":true,
-    "queryAllDeclaredConstructors":true,
-    "methods":[{"name":"<init>","parameterTypes":[] }, {"name":"flowSupport","parameterTypes":[] }, {"name":"produceCoroutineScope","parameterTypes":["io.quarkus.deployment.annotations.BuildProducer"] }, {"name":"scanner","parameterTypes":[] }]
   },
   {
     "name":"io.quarkus.resteasy.reactive.server.Closer"
@@ -3766,9 +3752,6 @@
     "methods":[{"name":"getUnsafe","parameterTypes":[] }]
   },
   {
-    "name":"kotlinx.coroutines.CoroutineScope"
-  },
-  {
     "name":"org.aesh.command.impl.completer.BooleanOptionCompleter",
     "methods":[{"name":"<init>","parameterTypes":[] }]
   },
@@ -4103,12 +4086,6 @@
   },
   {
     "name":"org.jboss.resteasy.reactive.server.providers.serialisers.StreamingOutputMessageBodyWriter"
-  },
-  {
-    "name":"org.jboss.resteasy.reactive.server.runtime.kotlin.ApplicationCoroutineScope"
-  },
-  {
-    "name":"org.jboss.resteasy.reactive.server.runtime.kotlin.CoroutineInvocationHandlerFactory"
   },
   {
     "name":"org.jboss.resteasy.reactive.server.spi.ResteasyReactiveAsyncExceptionMapper"
