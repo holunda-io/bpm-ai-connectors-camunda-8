@@ -146,6 +146,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           platforms: linux/${{ matrix.arch }}
+          provenance: false # otherwise a manifest list is created and create-push-manifest job fails
           context: .
           file: ./Dockerfile.prebuilt
           push: true
