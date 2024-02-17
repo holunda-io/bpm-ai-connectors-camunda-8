@@ -87,7 +87,7 @@ docker compose --profile inference --profile platform up -d
 There are two different types of Docker images published on [DockerHub](https://hub.docker.com/r/holisticon/bpm-ai-connectors-camunda-8):
 * the light (**~60mb** compressed), default image that you should take if you only want to use the OpenAI API (and other future API-based services)
   * use `latest` tag (multiarch)
-* the more heavy-weight (~1GB) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
+* the more heavy-weight (~500mb) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
 allowing you to use the `decide`, `extract` and `translate` connectors 100% locally without any API key needed
   * use `latest-inference` tag (multiarch)
   
