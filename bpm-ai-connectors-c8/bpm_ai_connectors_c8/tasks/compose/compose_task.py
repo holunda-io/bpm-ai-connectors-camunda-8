@@ -1,8 +1,8 @@
 from typing import TypedDict
 
-from bpm_ai.compose.compose import run_compose
+from bpm_ai.compose.compose import compose_llm
 from bpm_ai_core.llm.common.llm import LLM
-from bpm_ai_core.speech.stt.stt import STTModel
+from bpm_ai_core.speech_recognition.asr import ASRModel
 from pyzeebe import ZeebeTaskRouter
 
 from bpm_ai_connectors_c8.decorators import ai_task
@@ -22,15 +22,15 @@ class TextProperties(TypedDict):
 @ai_task(compose_router, "compose", 2)
 async def compose(
     llm: LLM,
-    stt: STTModel | None,
-    inputJson: dict,
+    asr: ASRModel | None,
+    input_json: dict,
     properties: TextProperties,
     template: str,
 ):
-    return run_compose(
+    return await compose_llm(
         llm=llm,
-        stt=stt,
-        input_data=inputJson,
+        asr=asr,
+        input_data=input_json,
         template=template,
         properties=properties,
     )

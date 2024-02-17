@@ -27,9 +27,33 @@ These connectors automate activities in business processes that previously requi
 
 ---
 
-## 🚀 How to Run Using Docker
+## 🚀 How to Run
 
-Create an `.env` file (use `env.sample` as a template) and fill in your Zeebe cluster information (for either cloud or a local cluster) and your OpenAI API key (if needed):
+### ▶️ Quickstart with Wizard
+
+Start everything you need in one command (cloud or automatically started local cluster):
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/holunda-io/camunda-8-connector-gpt/develop/wizard.sh)
+```
+
+On Windows, use WSL to run the command.
+
+The Wizard will prompt you for your preferences, create an .env file and download and start the docker-compose.yml.
+
+### 🖱 Use Element Templates in your Processes
+
+After starting the connector workers in their runtime, you also need to make the connectors known to the Modeler in order to actually model processes with them:
+
+* Upload the element templates from [/bpmn/.camunda/element-templates](/bpmn/.camunda/element-templates) to your project in Camunda Cloud Modeler
+  * Click `publish` on each one
+* Or, if you're working locally:
+  * place them in a `.camunda/element-templates` folder next to your .bpmn file
+  * or add them to the `resources/element-templates` directory of your Modeler ([details](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/configuring-templates/#global-templates)).
+
+### Manual Docker Configuration
+
+Create an `.env` file (use `env.sample` as a template) and fill in your cluster information and your OpenAI API key:
 
 ```bash
 OPENAI_API_KEY=<put your key here>
@@ -44,32 +68,29 @@ ZEEBE_CLIENT_CLOUD_REGION=<cluster-region>
 ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
 ```
 
-### (Optional): Run local zeebe cluster
-
-If you are not using Camunda Cloud, start a local cluster:
+Run the connector runtime with a local zeebe cluster:
 
 ```bash 
-docker compose -f docker-compose.camunda-platform.yml up -d
+docker compose --profile default --profile platform up -d
 ```
 
-### ▶️ Run connectors
+For Camunda Cloud, remove the platform profile.
 
-Run the connector runtime using a pre-built image from DockerHub:
+To use the larger **inference** image that includes dependencies to run local AI model inference for decide, extract and translate, use the inference profile instead of default: 
 
 ```bash 
-docker run --env-file .env holisticon/bpm-ai-connectors-camunda-8:latest 
+docker compose --profile inference --profile platform up -d
 ```
 
-### Use Element Templates in your Processes
+#### Available Image Tags
 
-After starting the connector workers in their runtime, you also need to make the connectors known to the Modeler in order to actually model processes with them:
-
-* Upload the element templates from [/bpmn/.camunda/element-templates](/bpmn/.camunda/element-templates) to your project in Camunda Cloud Modeler 
-  * Click `publish` on each one
-* Or, if you're working locally:
-  * place them besides your .bpmn file
-  * or add them to the `resources/element-templates` directory of your Modeler. 
-
+There are two different types of Docker images published on [DockerHub](https://hub.docker.com/r/holisticon/bpm-ai-connectors-camunda-8):
+* the light (**~60mb** compressed), default image that you should take if you only want to use the OpenAI API (and other future API-based services)
+  * use `latest` tag (multiarch)
+* the more heavy-weight (~1GB) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
+allowing you to use the `decide`, `extract` and `translate` connectors 100% locally without any API key needed
+  * use `latest-inference` tag (multiarch)
+  
 ## 🕵 Logging & Tracing
 
 The connectors support logging traces of all task runs into [Langfuse](https://langfuse.com).
@@ -86,14 +107,15 @@ LANGFUSE_PUBLIC_KEY=<put your public key here>
 #LANGFUSE_HOST=host:port
 ```
 
-## 📚 Connectors Documentation
+## 📚 Connector Documentation
 
 * [Getting Started](docs/getting-started.md)
-* [Connectors](docs/foundational-connectors.md)
+* [Connectors](docs/base-connectors.md)
+* [Use Local Models](docs/local-models.md)
 
 ---
 
-## 🏗 Development & Project Setup
+## 🛠️ Development & Project Setup
 
 The connector workers are written in Python based on [pyzeebe](https://github.com/camunda-community-hub/pyzeebe).
 They are a thin wrapper around the core logic and AI abstractions, 
@@ -116,9 +138,11 @@ Alternatively, the Python connector runtime can be started directly (see below) 
 ```bash
 cd bpm-ai-connectors-c8
 ```
-Python 3.11+ and Poetry 1.6.1 is required.
+Python 3.11 and Poetry 1.6.1 is required. 
 
-Install the dependencies using the following command:
+The project itself also works with Python 3.12, but some dependencies of the bpm-ai[inference] extra don't compile in the python:3.12 docker image as of yet.
+
+Install the dependencies:
 ```bash
 poetry install
 ```
@@ -126,6 +150,14 @@ Run the connectors:
 ```bash
 python -m bpm_ai_connectors_c8.main
 ```
+
+Note that some dependencies are listed as dev dependencies which will be installed by `poetry install` as well. 
+These are the full dependencies required to also run the parts of the application (and tests) referred to by _inference_.
+Meaning, all heavy-weight dependencies for local model inference (torch, transformers, etc.) are included. 
+Since poetry does not allow selectively installing extras of dependencies (only with environment markers), the Dockerfile 
+only installs the main dependency block from the pyproject.toml and then manually installs the dependencies from 
+[requirements.default.txt](bpm-ai-connectors-c8/requirements.default.txt) or [requirements.inference.txt](bpm-ai-connectors-c8/requirements.inference.txt),
+depending on the image to build.
 
 #### Feel Engine Wrapper
 ```bash

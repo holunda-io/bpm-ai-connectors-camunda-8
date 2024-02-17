@@ -55,7 +55,8 @@
       "choices": [
         { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
         { "name": "OpenAI GPT-4", "value": "gpt-4" },
-        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" }
+        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" },
+        { "name": "None", "value": "none" }
       ],
       "binding": {
         "type": "zeebe:input",
@@ -63,17 +64,58 @@
       }
     },
     {
-      "label": "Speech-to-Text Model",
+      "id": "extractive_qa",
+      "label": "Extractive QA Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "deepset/deberta-v3-large-squad2",
+      "choices": [
+        { "name": "DeBERTa Large English (local)", "value": "deepset/deberta-v3-large-squad2" },
+        { "name": "DeBERTa Base English (local)", "value": "deepset/deberta-v3-base-squad2" },
+        { "name": "DeBERTa Large Multilingual (local)", "value": "deepset/xlm-roberta-large-squad2" },
+        { "name": "DeBERTa Base Multilingual (local)", "value": "deepset/xlm-roberta-base-squad2" },
+        { "name": "Custom HuggingFace Transformer (local)", "value": "custom" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "extractive_qa"
+      },
+      "condition": {
+        "property": "llm",
+        "equals": "none"
+      }
+    },
+    {
+      "label": "HuggingFace Hub Extractive QA Model",
+      "description": "Must support <code>question-answering</code> task.",
+      "group": "model",
+      "type": "String",
+      "value": "deepset/deberta-v3-large-squad2",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "custom_extractive_qa"
+      },
+      "condition": {
+        "property": "extractive_qa",
+        "equals": "custom"
+      }
+    },
+    {
+      "label": "Speech Recognition Model",
       "group": "model",
       "type": "Dropdown",
       "value": "openai-whisper-1",
       "choices": [
         { "name": "None", "value": "none" },
-        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+        { "name": "OpenAI Whisper API", "value": "openai-whisper-1" },
+        { "name": "OpenAI Whisper Small (local)", "value": "faster_whisper-small" },
+        { "name": "OpenAI Whisper Medium (local)", "value": "faster_whisper-medium" },
+        { "name": "OpenAI Whisper Large (local)", "value": "faster_whisper-large" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "stt"
+        "name": "asr"
       }
     },
     {
@@ -84,7 +126,7 @@
       "feel": "optional",
       "binding": {
         "type": "zeebe:input",
-        "name": "inputJson"
+        "name": "input_json"
       },
       "value": "={ \"myVariable\": myVariable }",
       "constraints": {
@@ -100,7 +142,7 @@
       "value": "={\n  name: \"full name\",\n  age: { type: \"integer\", description: \"age in years\" }\n}",
       "binding": {
         "type": "zeebe:input",
-        "name": "extractionJson"
+        "name": "output_schema"
       },
       "constraints": {
         "notEmpty": true
@@ -109,13 +151,13 @@
     {
       "id": "mode",
       "label": "Extraction Mode",
-      "description": "Extract general information or multiple entities (e.g. persons, products, etc.)",
+      "description": "Extract general information or list of multiple entities (e.g. persons, products, etc.)",
       "group": "extract",
       "type": "Dropdown",
       "value": "SINGLE",
       "choices": [
         { "name": "Single", "value": "SINGLE" },
-        { "name": "Multiple Entities", "value": "REPEATED" }
+        { "name": "Multiple Entities", "value": "MULTIPLE" }
       ],
       "binding": {
         "type": "zeebe:input",
@@ -131,12 +173,12 @@
       "optional": true,
       "binding": {
         "type": "zeebe:input",
-        "name": "entitiesDescription"
+        "name": "entities_description"
       },
-      "value": "Mentioned persons",
+      "value": "Person",
       "condition": {
         "property": "mode",
-        "equals": "REPEATED"
+        "equals": "MULTIPLE"
       }
     },
     {
@@ -148,7 +190,7 @@
       "value": "={customerInfo: result}",
       "binding": {
         "type": "zeebe:taskHeader",
-        "key": "resultExpression"
+        "key": "result_expression"
       }
     },
     {
@@ -159,7 +201,7 @@
       "feel": "required",
       "binding": {
         "type": "zeebe:taskHeader",
-        "key": "errorExpression"
+        "key": "error_expression"
       }
     }
   ]

@@ -6,9 +6,9 @@ from pyzeebe.errors import BusinessError
 from pyzeebe.function_tools import parameter_tools
 from pyzeebe.task import task_builder
 
+from bpm_ai_connectors_c8.connector_secrets import replace_secrets_in_dict
 from bpm_ai_connectors_c8.feel import create_output_variables, examine_error_expression
-from bpm_ai_connectors_c8.models import model_id_to_llm, model_id_to_stt
-from bpm_ai_connectors_c8.secrets import replace_secrets_in_dict
+from bpm_ai_connectors_c8.models import model_ids_to_models, CUSTOM_MODEL_VARS
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,9 @@ def ai_task(
             timeout_ms,
             max_jobs_to_activate,
             max_running_jobs,
-            parameter_tools.get_parameters_from_function(task_function),
+            # fetch variables defined by the task function + any possible custom model definitions, as we don't want
+            # those as task function parameters. Instead, only the final model object (custom or not) is injected
+            parameter_tools.get_parameters_from_function(task_function) + CUSTOM_MODEL_VARS,
             False,
             "",
             [],
@@ -55,12 +57,11 @@ async def job_activate(job: Job) -> Job:
 
 
 def wrap(task_function: Callable):
-    async def handle_job(job: Job, llm: str, stt: str, **kwargs):
-        llm = model_id_to_llm(llm)
-        stt = model_id_to_stt(stt)
+    async def handle_job(job: Job, **kwargs):
+        kwargs = model_ids_to_models(kwargs)
         kwargs = filter_vars_to_fetch(kwargs)
         kwargs = replace_secrets_in_dict(kwargs)
-        result = await task_function(llm=llm, stt=stt, **kwargs)
+        result = await task_function(**kwargs)
         output_variables = await prepare_output_variables(job, result)
         return output_variables
 
@@ -75,11 +76,11 @@ def wrap(task_function: Callable):
 async def prepare_output_variables(job: Job, task_result: dict | list) -> dict:
     output_variables = create_output_variables(
         {"result": task_result},
-        job.custom_headers.get("resultExpression", "")
+        job.custom_headers.get("result_expression", "")
     )
     error = examine_error_expression(
         output_variables,
-        job.custom_headers.get("errorExpression", "")
+        job.custom_headers.get("error_expression", "")
     )
     if error:
         logger.info(f"Aborting task '{job.type}' because error expression returned bpmnError: {error}")

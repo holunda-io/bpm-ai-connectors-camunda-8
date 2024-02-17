@@ -51,7 +51,8 @@
       "choices": [
         { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
         { "name": "OpenAI GPT-4", "value": "gpt-4" },
-        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" }
+        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" },
+        { "name": "None", "value": "none" }
       ],
       "binding": {
         "type": "zeebe:input",
@@ -59,17 +60,57 @@
       }
     },
     {
-      "label": "Speech-to-Text Model",
+      "id": "classifier",
+      "label": "Classifier",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33",
+      "choices": [
+        { "name": "DeBERTa Large English (local)", "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33" },
+        { "name": "DeBERTa Base English (local)", "value": "MoritzLaurer/deberta-v3-base-zeroshot-v1.1-all-33" },
+        { "name": "DeBERTa Base Multilingual (local)", "value": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli" },
+        { "name": "Custom HuggingFace Transformer (local)", "value": "custom" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "classifier"
+      },
+      "condition": {
+        "property": "llm",
+        "equals": "none"
+      }
+    },
+    {
+      "label": "HuggingFace Hub Classification Model",
+      "description": "Must support <code>zero-shot-classification</code> task.",
+      "group": "model",
+      "type": "String",
+      "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "custom_classifier"
+      },
+      "condition": {
+        "property": "classifier",
+        "equals": "custom"
+      }
+    },
+    {
+      "label": "Speech Recognition Model",
       "group": "model",
       "type": "Dropdown",
       "value": "openai-whisper-1",
       "choices": [
         { "name": "None", "value": "none" },
-        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+        { "name": "OpenAI Whisper API", "value": "openai-whisper-1" },
+        { "name": "OpenAI Whisper Small (local)", "value": "faster_whisper-small" },
+        { "name": "OpenAI Whisper Medium (local)", "value": "faster_whisper-medium" },
+        { "name": "OpenAI Whisper Large (local)", "value": "faster_whisper-large" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "stt"
+        "name": "asr"
       }
     },
     {
@@ -80,7 +121,7 @@
       "feel": "optional",
       "binding": {
         "type": "zeebe:input",
-        "name": "inputJson"
+        "name": "input_json"
       },
       "value": "={ \"myVariable\": myVariable }",
       "constraints": {
@@ -103,26 +144,26 @@
       },
       "condition": {
         "property": "llm",
-        "oneOf": ["gpt-3.5-turbo", "gpt-4"]
+        "oneOf": ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo-preview"]
       }
     },
     {
-      "label": "Instructions",
-      "description": "Instructions on what and how to decide.",
+      "label": "Question / Task",
+      "description": "Question to decide. For LLMs, this can also be a more complex task.",
       "group": "decision",
       "type": "Text",
       "feel": "optional",
-      "value": "Decide ...",
+      "value": "What ...?",
       "binding": {
         "type": "zeebe:input",
-        "name": "instructions"
+        "name": "question"
       },
       "constraints": {
         "notEmpty": true
       }
     },
     {
-      "id": "outputType",
+      "id": "output_type",
       "label": "Output Type",
       "group": "decision",
       "type": "Dropdown",
@@ -135,12 +176,12 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "outputType"
+        "name": "output_type"
       }
     },
     {
       "label": "Possible Values",
-      "description": "Optional list of possible output values. If not provided, the model can output any value of the given type.",
+      "description": "List of possible output values. If not provided, the model can output any value of the given type. Required for non-LLM classifiers.",
       "group": "decision",
       "type": "Text",
       "feel": "optional",
@@ -148,11 +189,11 @@
       "value": "=[\n  \"OPTION_1\",\n  \"OPTION_2\",\n  \"OPTION_3\",\n  \"OTHER\"\n]",
       "binding": {
         "type": "zeebe:input",
-        "name": "possibleValues"
+        "name": "possible_values"
       },
       "condition": {
-        "property": "outputType",
-        "oneOf": ["integer", "string"]
+        "property": "output_type",
+        "oneOf": ["integer", "float", "string"]
       }
     },
     {
@@ -164,7 +205,7 @@
       "value": "={\n  decision: result.decision,\n  reasoning: result.reasoning\n}",
       "binding": {
         "type": "zeebe:taskHeader",
-        "key": "resultExpression"
+        "key": "result_expression"
       }
     }
   ]

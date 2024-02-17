@@ -11,13 +11,26 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 pyzeebe = "^3.0.4"
-bpm-ai = "1.0.4"
 pydantic = "^2.5.3"
 argparse = "^1.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
 setuptools = "^68.2.2"
+bpm-ai = { version="1.1.4", extras=["inference"] }
+torch = [
+    { version = "=2.2.0", source="pypi", markers = "sys_platform == 'darwin'" },
+    { version = "=2.2.0+cpu", source = "torch-cpu", markers = "sys_platform != 'darwin'" },
+]
+spacy = [
+    { version = "=3.7.2", markers = "sys_platform != 'darwin'" },
+    { version = "=3.7.2", extras = ["apple"], markers = "sys_platform == 'darwin' and platform_machine == 'arm64'" },
+]
+
+[[tool.poetry.source]]
+name = "torch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.2"

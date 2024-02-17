@@ -13,8 +13,9 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.holunda:connector-translate:2" />
         <zeebe:ioMapping>
-          <zeebe:input source="gpt-3.5-turbo" target="llm" />
+          <zeebe:input source="none" target="llm" />
           <zeebe:input source="none" target="asr" />
+          <zeebe:input source="Helsinki-NLP/opus-mt-{}-{}" target="nmt" />
           <zeebe:input source="={ &#10;  &#34;text1&#34;: text1,&#10;  &#34;text2&#34;: text2&#10;}" target="input_json" />
           <zeebe:input source="=target_lang" target="language" />
         </zeebe:ioMapping>

@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from pathlib import Path
 
 import pytest
@@ -9,10 +10,9 @@ from xprocess import ProcessStarter
 
 logger = logging.getLogger("test")
 
-# specifically use the amd64 tag as the docker image test runs after the platform images are pushed,
-# but before the merged multiarch manifest (latest tag) is pushed.
-# ideally both platform images should be tested (and even better before anything is pushed at all...)
-DOCKER_IMAGE = "holisticon/bpm-ai-connectors-camunda-8:latest-amd64"
+
+def _docker_host() -> str:
+    return "172.17.0.1" if sys.platform == "linux" else "host.docker.internal"
 
 
 @pytest.fixture
@@ -41,8 +41,9 @@ def connector_runtime(xprocess, zeebe_test_engine):
     class Starter(ProcessStarter):
         pattern = "Starting connector worker"
         popen_kwargs = {"cwd": ".."}
-        args = ['python', '-m' 'bpm_ai_connectors_c8.main', '--host', zeebe_test_engine.host, '--port',
-                zeebe_test_engine.engine_port]
+        args = ['python', '-m' 'bpm_ai_connectors_c8.main',
+                '--host', zeebe_test_engine.host,
+                '--port', zeebe_test_engine.engine_port]
 
     _, log_path = xprocess.ensure("connector_runtime", Starter)
     yield
@@ -67,8 +68,8 @@ def docker_runtime(zeebe_test_engine):
     """
     Runtime based on actual docker image with connectors and real feel engine wrapper.
     """
-    container = DockerContainer(DOCKER_IMAGE)
-    container.with_env("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS", f"172.17.0.1:{zeebe_test_engine.engine_port}")
+    container = DockerContainer(os.environ.get('CONNECTOR_IMAGE'))
+    container.with_env("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS", f"{_docker_host()}:{zeebe_test_engine.engine_port}")
     container.with_env("OPENAI_API_KEY", ensure_openai_key())
     container.start()
     wait_for_logs(container, "Starting connector worker.")
@@ -81,8 +82,15 @@ def docker_runtime(zeebe_test_engine):
 
 @pytest.fixture
 def runtime_selector(request):
-    runtime = os.environ.get('TEST_RUNTIME', 'python')
-    if runtime == 'docker':
+    if os.environ.get('CONNECTOR_IMAGE', None):
         return request.getfixturevalue('docker_runtime')
     else:
         return request.getfixturevalue('python_runtime')
+
+
+def requires_inference():
+    image = os.environ.get('CONNECTOR_IMAGE', None)
+    return pytest.mark.skipif(
+        image and "inference" not in image,
+        reason=f"Skipping test requiring inference image"
+    )

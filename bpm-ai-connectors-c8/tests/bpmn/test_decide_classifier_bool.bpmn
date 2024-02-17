@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_18twitp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
-  <bpmn:process id="test_decide_string" isExecutable="true">
+  <bpmn:process id="test_decide_bool" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_0vkxixc</bpmn:outgoing>
     </bpmn:startEvent>
@@ -13,13 +13,12 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.holunda:connector-decide:2" />
         <zeebe:ioMapping>
-          <zeebe:input source="gpt-3.5-turbo" target="llm" />
+          <zeebe:input source="none" target="llm" />
           <zeebe:input source="none" target="asr" />
+          <zeebe:input source="MoritzLaurer/deberta-v3-xsmall-zeroshot-v1.1-all-33" target="classifier" />
           <zeebe:input source="={ &#10;  &#34;text&#34;: text&#10;}" target="input_json" />
-          <zeebe:input source="direct" target="strategy" />
           <zeebe:input source="=instruction" target="question" />
-          <zeebe:input source="string" target="output_type" />
-          <zeebe:input source="=options" target="possible_values" />
+          <zeebe:input source="boolean" target="output_type" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="result_expression" value="={&#10;  result: result&#10;}" />
@@ -30,7 +29,7 @@
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="test_decide_string">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="test_decide_bool">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="179" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>

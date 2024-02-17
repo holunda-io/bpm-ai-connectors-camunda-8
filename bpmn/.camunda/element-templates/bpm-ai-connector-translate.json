@@ -51,7 +51,8 @@
       "choices": [
         { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
         { "name": "OpenAI GPT-4", "value": "gpt-4" },
-        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" }
+        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" },
+        { "name": "None", "value": "none" }
       ],
       "binding": {
         "type": "zeebe:input",
@@ -59,17 +60,53 @@
       }
     },
     {
-      "label": "Speech-to-Text Model",
+      "id": "translation",
+      "label": "Translation Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "Helsinki-NLP/opus-mt-{}-{}",
+      "choices": [
+        { "name": "Opus-MT (local)", "value": "Helsinki-NLP/opus-mt-{}-{}" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "nmt"
+      },
+      "condition": {
+        "property": "llm",
+        "equals": "none"
+      }
+    },
+    {
+      "label": "HuggingFace Hub Translation Model",
+      "group": "model",
+      "type": "String",
+      "value": "Helsinki-NLP/opus-mt-{}-{}",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "custom_nmt"
+      },
+      "condition": {
+        "property": "translation",
+        "equals": "custom"
+      }
+    },
+    {
+      "label": "Speech Recognition Model",
       "group": "model",
       "type": "Dropdown",
       "value": "openai-whisper-1",
       "choices": [
         { "name": "None", "value": "none" },
-        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+        { "name": "OpenAI Whisper API", "value": "openai-whisper-1" },
+        { "name": "OpenAI Whisper Small (local)", "value": "faster_whisper-small" },
+        { "name": "OpenAI Whisper Medium (local)", "value": "faster_whisper-medium" },
+        { "name": "OpenAI Whisper Large (local)", "value": "faster_whisper-large" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "stt"
+        "name": "asr"
       }
     },
     {
@@ -80,7 +117,7 @@
       "feel": "optional",
       "binding": {
         "type": "zeebe:input",
-        "name": "inputJson"
+        "name": "input_json"
       },
       "value": "={ \"myVariable\": myVariable }",
       "constraints": {
@@ -110,7 +147,7 @@
       "value": "={myVariableTranslated: result.myVariable}",
       "binding": {
         "type": "zeebe:taskHeader",
-        "key": "resultExpression"
+        "key": "result_expression"
       }
     }
   ]

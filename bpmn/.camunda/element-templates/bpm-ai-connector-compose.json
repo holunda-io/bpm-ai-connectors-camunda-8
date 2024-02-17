@@ -51,7 +51,8 @@
       "choices": [
         { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
         { "name": "OpenAI GPT-4", "value": "gpt-4" },
-        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" }
+        { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" },
+        { "name": "None", "value": "none" }
       ],
       "binding": {
         "type": "zeebe:input",
@@ -59,17 +60,20 @@
       }
     },
     {
-      "label": "Speech-to-Text Model",
+      "label": "Speech Recognition Model",
       "group": "model",
       "type": "Dropdown",
       "value": "openai-whisper-1",
       "choices": [
         { "name": "None", "value": "none" },
-        { "name": "OpenAI Whisper", "value": "openai-whisper-1" }
+        { "name": "OpenAI Whisper API", "value": "openai-whisper-1" },
+        { "name": "OpenAI Whisper Small (local)", "value": "faster_whisper-small" },
+        { "name": "OpenAI Whisper Medium (local)", "value": "faster_whisper-medium" },
+        { "name": "OpenAI Whisper Large (local)", "value": "faster_whisper-large" }
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "stt"
+        "name": "asr"
       }
     },
     {
@@ -80,7 +84,7 @@
       "feel": "optional",
       "binding": {
         "type": "zeebe:input",
-        "name": "inputJson"
+        "name": "input_json"
       },
       "value": "={ \"myVariable\": myVariable }",
       "constraints": {
@@ -205,7 +209,7 @@
       "value": "={\"text\": result.text}",
       "binding": {
         "type": "zeebe:taskHeader",
-        "key": "resultExpression"
+        "key": "result_expression"
       }
     }
   ]
