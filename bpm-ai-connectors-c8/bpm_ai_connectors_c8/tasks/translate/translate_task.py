@@ -1,5 +1,6 @@
 from bpm_ai.translate.translate import translate_llm, translate_nmt
 from bpm_ai_core.llm.common.llm import LLM
+from bpm_ai_core.ocr.ocr import OCR
 from bpm_ai_core.speech_recognition.asr import ASRModel
 from bpm_ai_core.translation.nmt import NMTModel
 from pyzeebe import ZeebeTaskRouter
@@ -13,6 +14,7 @@ translate_router = ZeebeTaskRouter()
 async def translate(
     llm: LLM | None,
     asr: ASRModel | None,
+    ocr: OCR | None,
     input_json: dict,
     language: str,
     nmt: NMTModel | None = None
@@ -21,6 +23,7 @@ async def translate(
         return await translate_llm(
             llm=llm,
             asr=asr,
+            ocr=ocr,
             input_data=input_json,
             target_language=language
         )
@@ -28,6 +31,7 @@ async def translate(
         return await translate_nmt(
             nmt=nmt,
             asr=asr,
+            ocr=ocr,
             input_data=input_json,
             target_language=language
         )

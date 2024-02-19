@@ -30,7 +30,11 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 ENV POETRY_NO_INTERACTION=1
 ENV PATH="$POETRY_HOME/bin:$PATH"
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl
+RUN if [ "$FLAVOR" = "inference" ]; then \
+        apt-get update && apt-get install -y --no-install-recommends curl tesseract-ocr poppler-utils; \
+    else \
+        apt-get update && apt-get install -y --no-install-recommends curl; \
+    fi
 # Install Poetry via the official installer: https://python-poetry.org/docs/master/#installing-with-the-official-installer
 # This script respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://install.python-poetry.org | python3 -
@@ -70,6 +74,8 @@ WORKDIR /app
 COPY --from=build-jvm /app/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
 COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /usr/local/lib/python${PYTHON_VERSION}/site-packages
+COPY --from=build-python /usr/bin/tesseract /usr/bin/tesseract
+COPY --from=build-python /usr/bin/pdftocairo /usr/bin/pdftocairo
 
 # Run two processes: connector runtime + feel engine wrapper
 COPY init.py .

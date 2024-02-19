@@ -2,6 +2,7 @@ from typing import TypedDict
 
 from bpm_ai.compose.compose import compose_llm
 from bpm_ai_core.llm.common.llm import LLM
+from bpm_ai_core.ocr.ocr import OCR
 from bpm_ai_core.speech_recognition.asr import ASRModel
 from pyzeebe import ZeebeTaskRouter
 
@@ -23,6 +24,7 @@ class TextProperties(TypedDict):
 async def compose(
     llm: LLM,
     asr: ASRModel | None,
+    ocr: OCR | None,
     input_json: dict,
     properties: TextProperties,
     template: str,
@@ -30,6 +32,7 @@ async def compose(
     return await compose_llm(
         llm=llm,
         asr=asr,
+        ocr=ocr,
         input_data=input_json,
         template=template,
         properties=properties,

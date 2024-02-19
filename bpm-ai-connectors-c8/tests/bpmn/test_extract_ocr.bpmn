@@ -13,11 +13,10 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.holunda:connector-extract:2" />
         <zeebe:ioMapping>
-          <zeebe:input source="none" target="llm" />
+          <zeebe:input source="gpt-3.5-turbo" target="llm" />
           <zeebe:input source="none" target="asr" />
           <zeebe:input source="tesseract" target="ocr" />
-          <zeebe:input source="deepset/deberta-v3-base-squad2" target="qa" />
-          <zeebe:input source="={ &#10;  &#34;myVariable&#34;: text1,&#10;  &#34;text&#34;: text2&#10;}" target="input_json" />
+          <zeebe:input source="={ &#10;  &#34;text&#34;: invoice&#10;}" target="input_json" />
           <zeebe:input source="=schema" target="output_schema" />
           <zeebe:input source="SINGLE" target="mode" />
         </zeebe:ioMapping>

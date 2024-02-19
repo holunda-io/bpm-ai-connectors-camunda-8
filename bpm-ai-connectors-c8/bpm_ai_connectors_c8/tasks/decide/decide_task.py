@@ -3,6 +3,7 @@ from typing import Any
 from bpm_ai.decide.decide import decide_llm, decide_classifier
 from bpm_ai_core.classification.zero_shot_classifier import ZeroShotClassifier
 from bpm_ai_core.llm.common.llm import LLM
+from bpm_ai_core.ocr.ocr import OCR
 from bpm_ai_core.speech_recognition.asr import ASRModel
 from pyzeebe import ZeebeTaskRouter
 
@@ -15,6 +16,7 @@ decide_router = ZeebeTaskRouter()
 async def decide(
         llm: LLM | None,
         asr: ASRModel | None,
+        ocr: OCR | None,
         input_json: dict,
         question: str,
         output_type: str,
@@ -26,6 +28,7 @@ async def decide(
         return await decide_llm(
             llm=llm,
             asr=asr,
+            ocr=ocr,
             input_data=input_json,
             instructions=question,
             output_type=output_type,
@@ -36,6 +39,7 @@ async def decide(
         return await decide_classifier(
             classifier=classifier,
             asr=asr,
+            ocr=ocr,
             input_data=input_json,
             question=question,
             output_type=output_type,

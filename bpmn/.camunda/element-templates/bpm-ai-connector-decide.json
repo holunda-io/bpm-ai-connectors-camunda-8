@@ -97,6 +97,20 @@
       }
     },
     {
+      "label": "OCR Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "none",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "Tesseract (local)", "value": "tesseract" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "ocr"
+      }
+    },
+    {
       "label": "Speech Recognition Model",
       "group": "model",
       "type": "Dropdown",

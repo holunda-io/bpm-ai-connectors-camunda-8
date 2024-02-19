@@ -24,13 +24,13 @@ files = [
 
 [[package]]
 name = "anyio"
-version = "4.2.0"
+version = "4.3.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "anyio-4.2.0-py3-none-any.whl", hash = "sha256:745843b39e829e108e518c489b31dc757de7d2131d53fac32bd8df268227bfee"},
-    {file = "anyio-4.2.0.tar.gz", hash = "sha256:e1875bb4b4e2de1669f4bc7869b6d3f54231cdced71605e6e64c9be77e3be50f"},
+    {file = "anyio-4.3.0-py3-none-any.whl", hash = "sha256:048e05d0f6caeed70d731f3db756d35dcc1f35747c8c403364a8332c630441b8"},
+    {file = "anyio-4.3.0.tar.gz", hash = "sha256:f75253795a87df48568485fd18cdd2a3fa5c4f7c5be8e5e36637733fce06fed6"},
 ]
 
 [package.dependencies]
@@ -176,43 +176,45 @@ numpy = {version = ">=1.19.0", markers = "python_version >= \"3.9\""}
 
 [[package]]
 name = "bpm-ai"
-version = "1.1.4"
+version = "1.2.0"
 description = "AI task automation for BPM engines."
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "bpm_ai-1.1.4-py3-none-any.whl", hash = "sha256:613c194a59b6d2e355e7e9a6dd29afc07c32d1ca92b1537886bd0fbb14b20677"},
-    {file = "bpm_ai-1.1.4.tar.gz", hash = "sha256:fbde2663ae8070c2e9028978ef4f63fe1cef352e9ccf36ba78d5838022ff379f"},
+    {file = "bpm_ai-1.2.0-py3-none-any.whl", hash = "sha256:8eb728811bb1eb7b04adbdda261970393833b82c1e142058da3d2d748844abc8"},
+    {file = "bpm_ai-1.2.0.tar.gz", hash = "sha256:892e497c413350188eb4ce4e6e608bb2c04759352d9eec70e1d6f01646276611"},
 ]
 
 [package.dependencies]
-bpm-ai-core = "1.1.6"
+bpm-ai-core = "1.2.0"
 faster-whisper = {version = ">=0.10.0,<0.11.0", optional = true, markers = "extra == \"inference\""}
 langcodes = {version = ">=3.3.0,<4.0.0", extras = ["data"], optional = true, markers = "extra == \"inference\""}
 langfuse = ">=2.13.3,<3.0.0"
 lingua-language-detector = {version = ">=2.0.2,<3.0.0", optional = true, markers = "extra == \"inference\""}
 nltk = {version = ">=3.8.1,<4.0.0", optional = true, markers = "extra == \"inference\""}
 openai = ">=1.11.0,<2.0.0"
+pytesseract = {version = ">=0.3.10,<0.4.0", optional = true, markers = "extra == \"inference\""}
 sacremoses = {version = ">=0.1.1,<0.2.0", optional = true, markers = "extra == \"inference\""}
 sentencepiece = {version = ">=0.1.99,<0.2.0", optional = true, markers = "extra == \"inference\""}
 transformers = {version = ">=4.37.2,<5.0.0", optional = true, markers = "extra == \"inference\""}
 
 [package.extras]
-inference = ["faster-whisper (>=0.10.0,<0.11.0)", "langcodes[data] (>=3.3.0,<4.0.0)", "lingua-language-detector (>=2.0.2,<3.0.0)", "nltk (>=3.8.1,<4.0.0)", "sacremoses (>=0.1.1,<0.2.0)", "sentencepiece (>=0.1.99,<0.2.0)", "transformers (>=4.37.2,<5.0.0)"]
+inference = ["faster-whisper (>=0.10.0,<0.11.0)", "langcodes[data] (>=3.3.0,<4.0.0)", "lingua-language-detector (>=2.0.2,<3.0.0)", "nltk (>=3.8.1,<4.0.0)", "pytesseract (>=0.3.10,<0.4.0)", "sacremoses (>=0.1.1,<0.2.0)", "sentencepiece (>=0.1.99,<0.2.0)", "transformers (>=4.37.2,<5.0.0)"]
 
 [[package]]
 name = "bpm-ai-core"
-version = "1.1.6"
+version = "1.2.0"
 description = "Core AI abstractions and helpers."
 optional = false
 python-versions = ">=3.11,<4.0"
 files = [
-    {file = "bpm_ai_core-1.1.6-py3-none-any.whl", hash = "sha256:c2378dc59d3a43fdaebbe474330e66b98e5b7db664f1407abb414e5af08a0625"},
-    {file = "bpm_ai_core-1.1.6.tar.gz", hash = "sha256:864090b780f168fe0e7fc071f05ca7afe85c7aa56aa107e300baf64ba627d01e"},
+    {file = "bpm_ai_core-1.2.0-py3-none-any.whl", hash = "sha256:70be86825e8399cfb4b4a0caa8f3514ae710cdb060b041f5a4e3d44178737bd3"},
+    {file = "bpm_ai_core-1.2.0.tar.gz", hash = "sha256:4ab7788a3c56bb58ad32e7823a479792491b35674a0e9be4699dd03f8d26adab"},
 ]
 
 [package.dependencies]
 jinja2 = ">=3.1.3,<4.0.0"
+pdf2image = ">=1.17.0,<2.0.0"
 pillow = ">=10.1.0,<11.0.0"
 pydantic = ">=2.5.2,<3.0.0"
 requests = ">=2.31.0,<3.0.0"
@@ -1529,6 +1531,20 @@ files = [
 ]
 
 [[package]]
+name = "pdf2image"
+version = "1.17.0"
+description = "A wrapper around the pdftoppm and pdftocairo command line tools to convert PDF to a PIL Image list."
+optional = false
+python-versions = "*"
+files = [
+    {file = "pdf2image-1.17.0-py3-none-any.whl", hash = "sha256:ecdd58d7afb810dffe21ef2b1bbc057ef434dabbac6c33778a38a3f7744a27e2"},
+    {file = "pdf2image-1.17.0.tar.gz", hash = "sha256:eaa959bc116b420dd7ec415fcae49b98100dda3dd18cd2fdfa86d09f112f6d57"},
+]
+
+[package.dependencies]
+pillow = "*"
+
+[[package]]
 name = "pillow"
 version = "10.2.0"
 description = "Python Imaging Library (Fork)"
@@ -1853,6 +1869,21 @@ files = [
     {file = "pyreadline3-3.4.1-py3-none-any.whl", hash = "sha256:b0efb6516fd4fb07b45949053826a62fa4cb353db5be2bbb4a7aa1fdd1e345fb"},
     {file = "pyreadline3-3.4.1.tar.gz", hash = "sha256:6f3d1f7b8a31ba32b73917cefc1f28cc660562f39aea8646d30bd6eff21f7bae"},
 ]
+
+[[package]]
+name = "pytesseract"
+version = "0.3.10"
+description = "Python-tesseract is a python wrapper for Google's Tesseract-OCR"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pytesseract-0.3.10-py3-none-any.whl", hash = "sha256:8f22cc98f765bf13517ead0c70effedb46c153540d25783e04014f28b55a5fc6"},
+    {file = "pytesseract-0.3.10.tar.gz", hash = "sha256:f1c3a8b0f07fd01a1085d451f5b8315be6eec1d5577a6796d46dc7a62bd4120f"},
+]
+
+[package.dependencies]
+packaging = ">=21.3"
+Pillow = ">=8.0.0"
 
 [[package]]
 name = "pytest"
@@ -3149,13 +3180,13 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.2.0"
+version = "2.2.1"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "urllib3-2.2.0-py3-none-any.whl", hash = "sha256:ce3711610ddce217e6d113a2732fafad960a03fd0318c91faa79481e35c11224"},
-    {file = "urllib3-2.2.0.tar.gz", hash = "sha256:051d961ad0c62a94e50ecf1af379c3aba230c66c710493493560c0c223c49f20"},
+    {file = "urllib3-2.2.1-py3-none-any.whl", hash = "sha256:450b20ec296a467077128bff42b73080516e71b56ff59a60a02bef2232c4fa9d"},
+    {file = "urllib3-2.2.1.tar.gz", hash = "sha256:d0570876c61ab9e520d776c38acbbb5b05a776d3f9ff98a5c8fd5162a444cf19"},
 ]
 
 [package.extras]
@@ -3305,4 +3336,4 @@ protobuf = ">=3,<4"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4a5b0bbbb7cb7d95bb18c2f40e6f660ba0ade30eb47bd67eb2b31311611944e3"
+content-hash = "bbdbd1403ff4f8d70428da0acd53fecd44cb52c3d99a20c765732bc926f73e25"

@@ -7,23 +7,28 @@
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
 
-These connectors automate activities in business processes that previously required user tasks or specialized AI models, like:
-* 🔍 **Information extraction** from unstructured data (emails, letters, documents, ...)
-* ⚖  Informed **decision-making** before gateways
-* ✍🏼 Creative **content generation** (emails, letters, ...)
+The connectors automate activities in business processes that previously required user tasks or specialized AI models, including:
+* 🔍 **Information Extraction** from unstructured data such as emails, letters, documents, etc.
+* ⚖  **Decision-Making** based on process variables
+* ✍🏼 **Text Generation** for emails, letters, etc.
 * 🌍 **Translation**
 
-... and soon (experimental):
-* 📄 **Answering questions** over documents, wikis and other unstructured knowledge-bases
-* 🗄 Querying **SQL Databases**
-* 🌐 Interacting with **REST APIs**
-* ...and more
+<figure>
+  <img src="docs/example.png" width="90%" alt="Example usage">
+  <figcaption>Example process using the Decide, Extract and Translate connectors.</figcaption>
+</figure>
 
-**Just provide input and output variable mappings** and configure what you want to achieve - the connectors will do the heavy lifting:
-1. Crafting tested, task- and model-specific prompts (for LLMs)
-2. Interfacing with the AI model provider or runtime (like OpenAI GPT or Huggingface Transformers)
-3. Parsing the output into process variables
-4. Handling and automatically fixing common error cases
+## 🆕 What's New in 1.0 
+* Option to use small, efficient **AI models that can run 100% locally on the CPU** - no API key or expensive GPU needed!
+* Multimodal support:
+  * **audio** input (voice messages, call recordings, ...)
+  * **image / document** input (document scans, PDFs, ...)
+* Ultra slim docker image (**60mb** without local AI)
+* Logging & Tracing support with [Langfuse](https://langfuse.com)
+
+## 🔜 Upcoming
+* higher quality local and API-based OCR
+* support for local, open-access LLMs
 
 ---
 
@@ -31,7 +36,7 @@ These connectors automate activities in business processes that previously requi
 
 ### ▶️ Quickstart with Wizard
 
-Start everything you need in one command (cloud or automatically started local cluster):
+Launch everything you need with a single command (cloud or automatically started local cluster):
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/holunda-io/camunda-8-connector-gpt/develop/wizard.sh)
@@ -39,7 +44,7 @@ bash <(curl -s https://raw.githubusercontent.com/holunda-io/camunda-8-connector-
 
 On Windows, use WSL to run the command.
 
-The Wizard will prompt you for your preferences, create an .env file and download and start the docker-compose.yml.
+The Wizard will guide you through your preferences, create an .env file, and download and start the docker-compose.yml.
 
 ### 🖱 Use Element Templates in your Processes
 
@@ -48,8 +53,8 @@ After starting the connector workers in their runtime, you also need to make the
 * Upload the element templates from [/bpmn/.camunda/element-templates](/bpmn/.camunda/element-templates) to your project in Camunda Cloud Modeler
   * Click `publish` on each one
 * Or, if you're working locally:
-  * place them in a `.camunda/element-templates` folder next to your .bpmn file
-  * or add them to the `resources/element-templates` directory of your Modeler ([details](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/configuring-templates/#global-templates)).
+  * Place them in a `.camunda/element-templates` folder next to your .bpmn file
+  * Or add them to the `resources/element-templates` directory of your Modeler ([details](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/configuring-templates/#global-templates)).
 
 ### Manual Docker Configuration
 
@@ -68,7 +73,7 @@ ZEEBE_CLIENT_CLOUD_REGION=<cluster-region>
 ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
 ```
 
-Run the connector runtime with a local zeebe cluster:
+Launch the connector runtime with a local zeebe cluster:
 
 ```bash 
 docker compose --profile default --profile platform up -d
@@ -84,18 +89,18 @@ docker compose --profile inference --profile platform up -d
 
 #### Available Image Tags
 
-There are two different types of Docker images published on [DockerHub](https://hub.docker.com/r/holisticon/bpm-ai-connectors-camunda-8):
-* the light (**~60mb** compressed), default image that you should take if you only want to use the OpenAI API (and other future API-based services)
-  * use `latest` tag (multiarch)
-* the more heavy-weight (~1GB) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
+Two types of Docker images are available on [DockerHub](https://hub.docker.com/r/holisticon/bpm-ai-connectors-camunda-8):
+* The lightweight (**~60mb** compressed) default image suitable for users only needing the OpenAI API (and other future API-based services)
+  * Use `latest` tag (multiarch)
+* The more heavy-weight (~500mb) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
 allowing you to use the `decide`, `extract` and `translate` connectors 100% locally without any API key needed
-  * use `latest-inference` tag (multiarch)
+  * Use `latest-inference` tag (multiarch)
   
 ## 🕵 Logging & Tracing
 
-The connectors support logging traces of all task runs into [Langfuse](https://langfuse.com).
+Our connectors support logging traces of all task runs into [Langfuse](https://langfuse.com).
 
-This makes it easy to debug problems, monitor latency and cost, analyze task performance and even curate and export datasets from your past runs.
+This allows for easy debugging, latency and cost monitoring, task performance analysis, and even curation and export of datasets from your past runs.
 
 To configure tracing, add your keys to the `.env` file:
 
@@ -189,6 +194,18 @@ The tests will:
 
 The CI/CD pipeline additionally runs these tests against the actual built Docker image before pushing the `latest` tag to Docker Hub.
 
+### Docker Images
+Build default image:
+
+```bash
+docker build -t bpm-ai-connectors-camunda-8:latest .
+```
+
+Build inference image:
+
+```bash
+docker build --build-arg="FLAVOR=inference" --build-arg="PYTHON_VERSION=3.11" -t bpm-ai-connectors-camunda-8:latest-inference .
+```
 ---
 
 ## License

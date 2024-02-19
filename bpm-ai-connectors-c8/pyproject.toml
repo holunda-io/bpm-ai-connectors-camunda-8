@@ -17,7 +17,7 @@ argparse = "^1.4.0"
 
 [tool.poetry.group.dev.dependencies]
 setuptools = "^68.2.2"
-bpm-ai = { version="1.1.4", extras=["inference"] }
+bpm-ai = { version="1.2.0", extras=["inference"] }
 torch = [
     { version = "=2.2.0", source="pypi", markers = "sys_platform == 'darwin'" },
     { version = "=2.2.0+cpu", source = "torch-cpu", markers = "sys_platform != 'darwin'" },

@@ -15,6 +15,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="gpt-3.5-turbo" target="llm" />
           <zeebe:input source="none" target="asr" />
+          <zeebe:input source="tesseract" target="ocr" />
           <zeebe:input source="={ &#10;  &#34;friends1&#34;: friends1,&#10;  &#34;friends2&#34;: friends2&#10;}" target="input_json" />
           <zeebe:input source="=schema" target="output_schema" />
           <zeebe:input source="MULTIPLE" target="mode" />

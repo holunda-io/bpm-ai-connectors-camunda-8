@@ -64,7 +64,7 @@
       }
     },
     {
-      "id": "extractive_qa",
+      "id": "qa",
       "label": "Extractive QA Model",
       "group": "model",
       "type": "Dropdown",
@@ -78,7 +78,7 @@
       ],
       "binding": {
         "type": "zeebe:input",
-        "name": "extractive_qa"
+        "name": "qa"
       },
       "condition": {
         "property": "llm",
@@ -94,11 +94,25 @@
       "feel": "optional",
       "binding": {
         "type": "zeebe:input",
-        "name": "custom_extractive_qa"
+        "name": "custom_qa"
       },
       "condition": {
-        "property": "extractive_qa",
+        "property": "qa",
         "equals": "custom"
+      }
+    },
+    {
+      "label": "OCR Model",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "none",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "Tesseract (local)", "value": "tesseract" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "ocr"
       }
     },
     {

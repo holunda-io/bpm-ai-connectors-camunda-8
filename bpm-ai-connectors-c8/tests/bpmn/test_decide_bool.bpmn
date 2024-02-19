@@ -15,6 +15,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="gpt-3.5-turbo" target="llm" />
           <zeebe:input source="none" target="asr" />
+          <zeebe:input source="tesseract" target="ocr" />
           <zeebe:input source="={ &#10;  &#34;text&#34;: text&#10;}" target="input_json" />
           <zeebe:input source="direct" target="strategy" />
           <zeebe:input source="=instruction" target="question" />
