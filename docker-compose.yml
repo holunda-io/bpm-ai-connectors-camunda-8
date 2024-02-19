@@ -3,7 +3,7 @@ services:
   connectors:
     profiles: [default]
     container_name: bpm-ai-connectors-camunda-8
-    image: bpm-ai-connectors-camunda-8:inference           #holisticon/bpm-ai-connectors-camunda-8:latest
+    image: holisticon/bpm-ai-connectors-camunda-8:latest
     build:
       dockerfile: Dockerfile
     networks:
