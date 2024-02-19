@@ -3,11 +3,16 @@ services:
   connectors:
     profiles: [default]
     container_name: bpm-ai-connectors-camunda-8
-    image: holisticon/bpm-ai-connectors-camunda-8:latest
+    image: bpm-ai-connectors-camunda-8:inference           #holisticon/bpm-ai-connectors-camunda-8:latest
     build:
       dockerfile: Dockerfile
     networks:
       - camunda-platform
+    volumes:
+      - type: bind
+        source: ./data
+        target: /opt/bpm-ai
+        read_only: true
     env_file:
       - path: ./.env
         required: false

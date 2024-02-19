@@ -1,6 +1,8 @@
 #!/bin/sh
 echo "[bpm.ai Wizard]"
 
+mkdir -p bpm-ai/data && cd bpm-ai || exit
+
 # download docker-compose.yml
 curl -sSL https://raw.githubusercontent.com/holunda-io/camunda-8-connector-gpt/bpm-ai/docker-compose.yml -o docker-compose.yml
 

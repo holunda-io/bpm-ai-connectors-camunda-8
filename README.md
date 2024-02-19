@@ -14,15 +14,15 @@ The connectors automate activities in business processes that previously require
 * 🌍 **Translation**
 
 <figure>
-  <img src="docs/example.png" width="90%" alt="Example usage">
+  <img src="docs/example.png" width="100%" alt="Example usage">
   <figcaption>Example process using the Decide, Extract and Translate connectors.</figcaption>
 </figure>
 
 ## 🆕 What's New in 1.0 
 * Option to use small, efficient **AI models that can run 100% locally on the CPU** - no API key or expensive GPU needed!
-* Multimodal support:
-  * **audio** input (voice messages, call recordings, ...)
-  * **image / document** input (document scans, PDFs, ...)
+* Multimodal input:
+  * **Audio** (voice messages, call recordings, ...) using local or API-based transcription
+  * **Images / Documents** (document scans, PDFs, ...) using local OCR or multimodal AI models
 * Ultra slim docker image (**60mb** without local AI)
 * Logging & Tracing support with [Langfuse](https://langfuse.com)
 
