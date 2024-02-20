@@ -66,4 +66,35 @@ else
   profile_flags="$profile_flags --profile default"
 fi
 
+if [ "$cluster_type" = "local" ]; then
+  modeler_path="/Applications/Camunda Modeler.app/Contents/MacOS"
+  templates_url="https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/main/bpmn/.camunda/element-templates"
+  templates_target="$modeler_path/resources/element-templates"
+
+  if [ -d "$modeler_path" ]; then
+    echo "Camunda Modeler detected. Installing element templates..."
+
+    # Ensure the target directory exists
+    mkdir -p "$templates_target"
+
+    # List of element template files to download
+    templates=(
+      "bpm-ai-connector-compose.json"
+      "bpm-ai-connector-decide.json"
+      "bpm-ai-connector-extract.json"
+      "bpm-ai-connector-generic.json"
+      "bpm-ai-connector-translate.json"
+    )
+
+    # Download each template
+    for template in "${templates[@]}"; do
+      curl -sSL "$templates_url/$template" -o "$templates_target/$template"
+    done
+
+    echo "Element templates installed successfully."
+  else
+    echo "Camunda Modeler not detected. Skipping element templates installation. Please refer to readme."
+  fi
+fi
+
 eval "docker compose$profile_flags up -d"
