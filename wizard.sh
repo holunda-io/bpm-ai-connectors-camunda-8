@@ -55,4 +55,4 @@ else
   profile_flags="$profile_flags --profile default"
 fi
 
-docker compose "$profile_flags" up -d
+eval "docker compose$profile_flags up -d"
