@@ -13,24 +13,43 @@ The connectors automate activities in business processes that previously require
 * ✍🏼 **Text Generation** for emails, letters, etc.
 * 🌍 **Translation**
 
+Use API-based LLMs and AI services like OpenAI GPT-4 or go **100% local with open-access AI models** from [HuggingFace Hub](https://huggingface.co/models), 
+local OCR with tesseract and local audio transcription with Whisper. All running CPU-only, no GPU required.
+
 <figure>
-  <img src="docs/example.png" width="100%" alt="Example usage">
+  <img src="assets/screenshots/example.png" width="100%" alt="Example usage">
   <figcaption>Example process using the Decide, Extract and Translate connectors.</figcaption>
 </figure>
 
-## 🆕 What's New in 1.0 
-* Option to use small, efficient **AI models that can run 100% locally on the CPU** - no API key or expensive GPU needed!
+### 🆕 What's New in 1.0 
+* Option to use small **AI models running 100% locally on the CPU** - no API key or GPU needed!
+  * Pre-selected models known to work well, just select from dropdown
+  * Or use any compatible model from [HuggingFace Hub](https://huggingface.co/models)
 * Multimodal input:
   * **Audio** (voice messages, call recordings, ...) using local or API-based transcription
   * **Images / Documents** (document scans, PDFs, ...) using local OCR or multimodal AI models
 * Ultra slim docker image (**60mb** without local AI)
 * Logging & Tracing support with [Langfuse](https://langfuse.com)
 
-## 🔜 Upcoming
+### 🔜 Upcoming
 * higher quality local and API-based OCR
 * support for local, open-access LLMs
 
 ---
+
+# Table of Contents
+
+* 🚀 [How to Run](#-how-to-run)
+  * ▶️ [Quicksstart](#-quickstart-with-wizard)
+  * [Manual Setup](#manual-docker-configuration)
+* 🕵 [Logging & Tracing](#-logging--tracing)
+* 📚 [Connector Documentation](#-connector-documentation)
+  * [Getting Started](docs/getting-started.md)
+  * [Connectors](docs/base-connectors.md)
+  * [Use Local Models](docs/local-models.md)
+  * [Use Images & Audio](docs/multi-modality.md)
+  * [Example Usecases & HowTos](docs/usecases.md)
+* 🛠️ [Development & Project Setup](#-development--project-setup)
 
 ## 🚀 How to Run
 
