@@ -9,13 +9,13 @@
       <bpmn:incoming>Flow_1olfydr</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1olfydr" sourceRef="compose_task" targetRef="Event_1lfglrq" />
-    <bpmn:serviceTask id="compose_task" name="Compose" zeebe:modelerTemplate="io.holunda.connector.compose.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMiAyMC41SDdDNCAyMC41IDIgMTkgMiAxNS41VjguNUMyIDUgNCAzLjUgNyAzLjVIMTdDMjAgMy41IDIyIDUgMjIgOC41VjExLjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTcgOUwxMy44NyAxMS41QzEyLjg0IDEyLjMyIDExLjE1IDEyLjMyIDEwLjEyIDExLjVMNyA5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE5LjIxIDE0Ljc3TDE1LjY3MDEgMTguMzFDMTUuNTMwMSAxOC40NSAxNS40IDE4LjcxIDE1LjM3IDE4LjlMMTUuMTggMjAuMjVDMTUuMTEgMjAuNzQgMTUuNDUgMjEuMDgwMSAxNS45NCAyMS4wMTAxTDE3LjI5IDIwLjgyQzE3LjQ4IDIwLjc5IDE3Ljc1IDIwLjY2IDE3Ljg4IDIwLjUyTDIxLjQyMDEgMTYuOTgwMUMyMi4wMzAxIDE2LjM3MDEgMjIuMzIwMSAxNS42NjAxIDIxLjQyMDEgMTQuNzYwMUMyMC41MzAxIDEzLjg3MDEgMTkuODIgMTQuMTYgMTkuMjEgMTQuNzdaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE4LjcwMDEgMTUuMjhDMTkuMDAwMSAxNi4zNiAxOS44NDAxIDE3LjIgMjAuOTIwMSAxNy41IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+    <bpmn:serviceTask id="compose_task" name="Compose" zeebe:modelerTemplate="io.holunda.connector.compose.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMSAySDlDNCAyIDIgNCAyIDlWMTVDMiAyMCA0IDIyIDkgMjJIMTVDMjAgMjIgMjIgMjAgMjIgMTVWMTMiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE2LjA0IDMuMDIwMDFMOC4xNiAxMC45QzcuODYgMTEuMiA3LjU2IDExLjc5IDcuNSAxMi4yMkw3LjA3IDE1LjIzQzYuOTEgMTYuMzIgNy42OCAxNy4wOCA4Ljc3IDE2LjkzTDExLjc4IDE2LjVDMTIuMiAxNi40NCAxMi43OSAxNi4xNCAxMy4xIDE1Ljg0TDIwLjk4IDcuOTYwMDFDMjIuMzQgNi42MDAwMSAyMi45OCA1LjAyMDAxIDIwLjk4IDMuMDIwMDFDMTguOTggMS4wMjAwMSAxNy40IDEuNjYwMDEgMTYuMDQgMy4wMjAwMVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTQuOTEgNC4xNDk5QzE1LjU4IDYuNTM5OSAxNy40NSA4LjQwOTkgMTkuODUgOS4wODk5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="io.holunda:connector-compose:2" />
         <zeebe:ioMapping>
           <zeebe:input source="gpt-3.5-turbo" target="llm" />
-          <zeebe:input source="none" target="asr" />
           <zeebe:input source="none" target="ocr" />
+          <zeebe:input source="none" target="asr" />
           <zeebe:input source="={ &#10;  &#34;customerName&#34;: customer_name,&#10;  &#34;companyName&#34;: company_name&#10;}" target="input_json" />
           <zeebe:input source="letter" target="properties.type" />
           <zeebe:input source="formal" target="properties.style" />
@@ -41,9 +41,8 @@
       <bpmndi:BPMNShape id="Event_1lfglrq_di" bpmnElement="Event_1lfglrq">
         <dc:Bounds x="432" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1asjpxx_di" bpmnElement="compose_task">
+      <bpmndi:BPMNShape id="Activity_1gpv63c_di" bpmnElement="compose_task">
         <dc:Bounds x="270" y="77" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0vkxixc_di" bpmnElement="Flow_0vkxixc">
         <di:waypoint x="215" y="117" />

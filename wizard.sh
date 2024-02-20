@@ -4,7 +4,7 @@ echo "[bpm.ai Wizard]"
 mkdir -p bpm-ai/data && cd bpm-ai || exit
 
 # download docker-compose.yml
-curl -sSL https://raw.githubusercontent.com/holunda-io/camunda-8-connector-gpt/bpm-ai/docker-compose.yml -o docker-compose.yml
+curl -sSL https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/bpm-ai/docker-compose.yml -o docker-compose.yml
 
 # create .env file if it doesn't exist
 touch .env

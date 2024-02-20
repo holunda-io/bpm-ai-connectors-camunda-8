@@ -18,7 +18,6 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 
 <figure>
   <img src="assets/screenshots/example.png" width="100%" alt="Example usage">
-  <figcaption>Example process using the Decide, Extract and Translate connectors.</figcaption>
 </figure>
 
 ### 🆕 What's New in 1.0 
@@ -58,7 +57,7 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 Launch everything you need with a single command (cloud or automatically started local cluster):
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/holunda-io/camunda-8-connector-gpt/develop/wizard.sh)
+bash <(curl -s https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/main/wizard.sh)
 ```
 
 On Windows, use WSL to run the command.
