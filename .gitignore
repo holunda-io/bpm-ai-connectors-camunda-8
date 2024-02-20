@@ -5,5 +5,7 @@ target/
 .DS_Store
 
 connector-secrets.txt
+.env
+.venv
 
 postgres-data

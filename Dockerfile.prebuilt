@@ -2,22 +2,7 @@ ARG FLAVOR=default
 ARG PYTHON_VERSION="3.12"
 
 ###############################################################################
-# 1. Build feel-engine-wrapper native executable using quarkus mandrel
-###############################################################################
-FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build-jvm
-
-COPY --chown=quarkus:quarkus feel-engine-wrapper/mvnw /app/mvnw
-COPY --chown=quarkus:quarkus feel-engine-wrapper/.mvn /app/.mvn
-COPY --chown=quarkus:quarkus feel-engine-wrapper/pom.xml /app/
-
-USER quarkus
-WORKDIR /app
-RUN ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
-COPY feel-engine-wrapper/src /app/src
-RUN ./mvnw package -Dnative
-
-###############################################################################
-# 2. Install python connector dependencies
+# 1. Install python connector dependencies
 ###############################################################################
 # poetry setup code based on https://github.com/thehale/docker-python-poetry (does not provide multiarch images)
 FROM python:${PYTHON_VERSION} AS build-python
@@ -52,7 +37,7 @@ ARG PYTHON_VERSION
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY --from=build-jvm /app/target/feel-engine-wrapper-runner feel-wrapper
+COPY --chmod=755 ./feel-engine-wrapper/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
 COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /home/nonroot/.local/lib/python3.12/site-packages
 
@@ -67,7 +52,7 @@ ARG PYTHON_VERSION
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-COPY --from=build-jvm /app/target/feel-engine-wrapper-runner feel-wrapper
+COPY --chmod=755 ./feel-engine-wrapper/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
 COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /usr/local/lib/python${PYTHON_VERSION}/site-packages
 RUN apt-get update  \

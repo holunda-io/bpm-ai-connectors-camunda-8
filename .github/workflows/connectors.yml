@@ -1,0 +1,50 @@
+name: CI bpm-ai-connectors-c8
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+      - bpm-ai
+    paths:
+      - 'bpm-ai-connectors-c8/**'
+      - '.github/workflows/connectors.yml'
+
+jobs:
+  pytest:
+    defaults:
+      run:
+        working-directory: ./bpm-ai-connectors-c8/tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      -
+        run: sudo apt-get install -y tesseract-ocr poppler-utils
+      -
+        name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      -
+        name: Set up poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: "1.6.1"
+      -
+        name: Create local environment in project for caching
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      -
+        uses: actions/cache@v3
+        name: Set up cache based on dependencies lock file
+        with:
+          path: ./bpm-ai-connectors-c8/.venv
+          key: venv-${{ hashFiles('**/poetry.lock') }}
+      -
+        name: Install dependencies
+        run: poetry install --no-root --no-cache
+      -
+        name: Run pytest
+        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest

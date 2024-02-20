@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "bpm-ai-connectors-c8"
+version = "1.0.0"
+description = "AI connectors for Camunda 8 based on bpm-ai."
+authors = ["Bennet Krause <bennet.krause@holisticon.de>"]
+repository = "https://github.com/holunda-io/bpm-ai"
+homepage = "https://www.holisticon.de/"
+license = "Apache-2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyzeebe = "^3.0.4"
+pydantic = "^2.5.3"
+argparse = "^1.4.0"
+
+
+[tool.poetry.group.dev.dependencies]
+setuptools = "^68.2.2"
+bpm-ai = { version="1.2.0", extras=["inference"] }
+torch = [
+    { version = "=2.2.0", source="pypi", markers = "sys_platform == 'darwin'" },
+    { version = "=2.2.0+cpu", source = "torch-cpu", markers = "sys_platform != 'darwin'" },
+]
+spacy = [
+    { version = "=3.7.2", markers = "sys_platform != 'darwin'" },
+    { version = "=3.7.2", extras = ["apple"], markers = "sys_platform == 'darwin' and platform_machine == 'arm64'" },
+]
+
+[[tool.poetry.source]]
+name = "torch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.2"
+pytest-dotenv = "^0.5.2"
+pytest-asyncio = "^0.23.3"
+pytest-zeebe = "^0.1.1"
+protobuf = "^3.20.3"
+pytest-timeout = "^2.2.0"
+pytest-xprocess = "^0.23.0"
+testcontainers = "^3.7.1"
+flask = "^3.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

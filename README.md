@@ -1,34 +1,82 @@
-# Camunda 8 GPT AI Connectors 🤖
+# BPM AI Connectors for Camunda 🤖
 
-*Task specific connectors for Camunda 8 powered by large language models (LLMs) like OpenAI GPT-4.*
+*Boost automation in your Camunda BPMN processes using pre-configured, task-specific AI solutions - wrapped in easy-to-use connectors 🚀*
 
 ![Compatible with: Camunda Platform 8](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%208-26d07c)
 [![sponsored](https://img.shields.io/badge/sponsoredBy-Holisticon-RED.svg)](https://holisticon.de/)
+[![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 
 
-These connectors can automatically perform activities that previously required user tasks or specialized AI models, like:
-* 🔍 **Information extraction** from unstructured data (emails, letters, documents, ...)
-* ⚖  Informed **decision-making** before gateways
-* ✍🏼 Creative **content generation** (emails, letters, ...)
+The connectors automate activities in business processes that previously required user tasks or specialized AI models, including:
+* 🔍 **Information Extraction** from unstructured data such as emails, letters, documents, etc.
+* ⚖  **Decision-Making** based on process variables
+* ✍🏼 **Text Generation** for emails, letters, etc.
 * 🌍 **Translation**
-* 📄 **Answering questions** over documents, wikis and other unstructured knowledge-bases
-* 🗄 Querying **SQL Databases**
-* 🌐 Interacting with **REST APIs**
-* ...and more
 
-Just provide input and output variable mappings and configure what you want to achieve - the connectors will do the heavy lifting:
-1. Crafting tested, task- and model-specific prompts to get the most out of the LLM
-2. Interfacing with the LLM provider (like OpenAI GPT-4 or 3.5)
-3. Parsing the response into local process variables
-4. Handling and automatically fixing common error cases
+Use API-based LLMs and AI services like OpenAI GPT-4 or go **100% local with open-access AI models** from [HuggingFace Hub](https://huggingface.co/models), 
+local OCR with tesseract and local audio transcription with Whisper. All running CPU-only, no GPU required.
+
+<figure>
+  <img src="assets/screenshots/example.png" width="100%" alt="Example usage">
+</figure>
+
+### 🆕 What's New in 1.0 
+* Option to use small **AI models running 100% locally on the CPU** - no API key or GPU needed!
+  * Pre-selected models known to work well, just select from dropdown
+  * Or use any compatible model from [HuggingFace Hub](https://huggingface.co/models)
+* Multimodal input:
+  * **Audio** (voice messages, call recordings, ...) using local or API-based transcription
+  * **Images / Documents** (document scans, PDFs, ...) using local OCR or multimodal AI models
+* Ultra slim docker image (**60mb** without local AI)
+* Logging & Tracing support with [Langfuse](https://langfuse.com)
+
+### 🔜 Upcoming
+* higher quality local and API-based OCR
+* support for local, open-access LLMs
 
 ---
 
-> :warning: **Experimental**: This project is not meant for production use as of today, but to evaluate and demonstrate LLMs in BPM use-cases.
+# Table of Contents
 
-## 🚀 How to Run Using Docker
+* 🚀 [How to Run](#-how-to-run)
+  * ▶️ [Quicksstart](#-quickstart-with-wizard)
+  * [Manual Setup](#manual-docker-configuration)
+* 🕵 [Logging & Tracing](#-logging--tracing)
+* 📚 [Connector Documentation](#-connector-documentation)
+  * [Getting Started](docs/getting-started.md)
+  * [Connectors](docs/base-connectors.md)
+  * [Use Local Models](docs/local-models.md)
+  * [Use Images & Audio](docs/multi-modality.md)
+  * [Example Usecases & HowTos](docs/usecases.md)
+* 🛠️ [Development & Project Setup](#-development--project-setup)
 
-Create a `connector-secrets.txt` file (use `connector-secrets.txt.sample` as a template) and fill in your OpenAI API key and Zeebe cluster information for either Cloud or a local cluster:
+## 🚀 How to Run
+
+### ▶️ Quickstart with Wizard
+
+Launch everything you need with a single command (cloud or automatically started local cluster):
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/main/wizard.sh)
+```
+
+On Windows, use WSL to run the command.
+
+The Wizard will guide you through your preferences, create an .env file, and download and start the docker-compose.yml.
+
+### 🖱 Use Element Templates in your Processes
+
+After starting the connector workers in their runtime, you also need to make the connectors known to the Modeler in order to actually model processes with them:
+
+* Upload the element templates from [/bpmn/.camunda/element-templates](/bpmn/.camunda/element-templates) to your project in Camunda Cloud Modeler
+  * Click `publish` on each one
+* Or, if you're working locally:
+  * Place them in a `.camunda/element-templates` folder next to your .bpmn file
+  * Or add them to the `resources/element-templates` directory of your Modeler ([details](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/configuring-templates/#global-templates)).
+
+### Manual Docker Configuration
+
+Create an `.env` file (use `env.sample` as a template) and fill in your cluster information and your OpenAI API key:
 
 ```bash
 OPENAI_API_KEY=<put your key here>
@@ -41,122 +89,146 @@ ZEEBE_CLIENT_CLOUD_REGION=<cluster-region>
 # OR
 
 ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
-ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
 ```
 
-### (Optional): Run local zeebe cluster
-
-If you are not using Camunda Cloud, start a local cluster:
+Launch the connector runtime with a local zeebe cluster:
 
 ```bash 
-docker compose -f docker-compose.camunda-platform.yml up -d
+docker compose --profile default --profile platform up -d
 ```
 
-### ▶️ Run connectors
+For Camunda Cloud, remove the platform profile.
 
-Run the connector runtime using a pre-built image from DockerHub:
+To use the larger **inference** image that includes dependencies to run local AI model inference for decide, extract and translate, use the inference profile instead of default: 
 
 ```bash 
-docker run --env-file connector-secrets.txt holisticon/camunda-8-connector-gpt:develop
+docker compose --profile inference --profile platform up -d
 ```
 
-### Use Element Templates
+#### Available Image Tags
 
-1. Upload the element templates from [/element-templates](/element-templates) to your project in Camunda Cloud and publish them individually, or if you're working locally, place them besides your .bpmn file. 
-2. Start modeling or try the example processes from [/example](/example).
+Two types of Docker images are available on [DockerHub](https://hub.docker.com/r/holisticon/bpm-ai-connectors-camunda-8):
+* The lightweight (**~60mb** compressed) default image suitable for users only needing the OpenAI API (and other future API-based services)
+  * Use `latest` tag (multiarch)
+* The more heavy-weight (~500mb) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
+allowing you to use the `decide`, `extract` and `translate` connectors 100% locally without any API key needed
+  * Use `latest-inference` tag (multiarch)
+  
+## 🕵 Logging & Tracing
 
-## 📚 Connectors Documentation
+Our connectors support logging traces of all task runs into [Langfuse](https://langfuse.com).
+
+This allows for easy debugging, latency and cost monitoring, task performance analysis, and even curation and export of datasets from your past runs.
+
+To configure tracing, add your keys to the `.env` file:
+
+```bash
+LANGFUSE_SECRET_KEY=<put your secret key here>
+LANGFUSE_PUBLIC_KEY=<put your public key here>
+
+# only if self-hosted:
+#LANGFUSE_HOST=host:port
+```
+
+## 📚 Connector Documentation
 
 * [Getting Started](docs/getting-started.md)
-* [Foundational Connectors](docs/foundational-connectors.md)
-* [Agentic Connectors](docs/agentic-connectors.md)
-* [Custom LLMs](docs/custom-models.md)
+* [Connectors](docs/base-connectors.md)
+* [Use Local Models](docs/local-models.md)
 
-## 🏗 Development & Project Setup
+---
 
-The connectors currently use the Java Connector API (implemented in Kotlin) for the connector workers (`core` module). 
-All LLM specific code (LLM model interfaces, chains, agents, prompts, ...) are implemented in Python using the Langchain framework (`python` folder). 
-The Python app serves a REST API for the core to use.
+## 🛠️ Development & Project Setup
+
+The connector workers are written in Python based on [pyzeebe](https://github.com/camunda-community-hub/pyzeebe).
+They are a thin wrapper around the core logic and AI abstractions, 
+which are independent of the specific workflow engine (or can even be integrated in a plain Python project directly) and placed 
+in a separate repository: [bpm-ai](https://github.com/holunda-io/bpm-ai)
+
+All connectors make use of feel expressions to flexibly map the task result into one or multiple result variables and/or define error expressions. 
+Therefore, a feel engine is required - which is only available as a Scala implementation. 
+To keep the runtime and Docker image overhead of needing an accompanying JVM app as low as possible,
+[feel-engine-wrapper](/feel-engine-wrapper) is a small, native-compiled Quarkus server wrapping the [connector-sdk/feel-wrapper](https://github.com/camunda/connectors/tree/main/connector-sdk/feel-wrapper), which itself wraps the feel engine for use in connectors.
+
 
 For convenience, both apps can be packaged into a single Docker image using the top-level Dockerfile or docker-compose.yml.
 
-Alternatively, the Python app has its own Dockerfile (or the main.py can be run directly) and the `runtime` module can be dockerized using `spring-boot:build-image` (or run via the IDE, see below).
+Alternatively, the Python connector runtime can be started directly (see below) and the feel-engine-wrapper has multiple Dockerfiles (native or JVM) in [src/main/docker](feel-engine-wrapper/src/main/docker).
 
 ### Build
-#### Connectors
-You can package the Connectors by running the following command:
+
+#### Connectors 
+```bash
+cd bpm-ai-connectors-c8
+```
+Python 3.11 and Poetry 1.6.1 is required. 
+
+The project itself also works with Python 3.12, but some dependencies of the bpm-ai[inference] extra don't compile in the python:3.12 docker image as of yet.
+
+Install the dependencies:
+```bash
+poetry install
+```
+Run the connectors:
+```bash
+python -m bpm_ai_connectors_c8.main
+```
+
+Note that some dependencies are listed as dev dependencies which will be installed by `poetry install` as well. 
+These are the full dependencies required to also run the parts of the application (and tests) referred to by _inference_.
+Meaning, all heavy-weight dependencies for local model inference (torch, transformers, etc.) are included. 
+Since poetry does not allow selectively installing extras of dependencies (only with environment markers), the Dockerfile 
+only installs the main dependency block from the pyproject.toml and then manually installs the dependencies from 
+[requirements.default.txt](bpm-ai-connectors-c8/requirements.default.txt) or [requirements.inference.txt](bpm-ai-connectors-c8/requirements.inference.txt),
+depending on the image to build.
+
+#### Feel Engine Wrapper
+```bash
+cd feel-engine-wrapper
+```
+Build native executable:
+```bash
+./mvnw package -Dnative
+```
+Run it:
+```bash
+./target/feel-engine-wrapper-runner
+```
+
+### Tests
+
+Run integration test:
 
 ```bash
-mvn clean package
+export ZEEBE_TEST_IMAGE_TAG=8.4.0 
+export OPENAI_API_KEY=<put your key here> 
+poetry run pytest
 ```
 
-This will create JAR-artifacts for the two modules:
+The tests will:
+* spin up a Zeebe test engine using [pytest-zeebe](https://github.com/holunda-io/pytest-zeebe)
+* start a mocked feel engine wrapper server
+* deploy and run a small test process for each connector, using the actual OpenAI API
 
-- `camunda-8-connector-gpt-core-x.x.x-with-dependencies.jar`
-  - The connector worker implementations
-- `camunda-8-connector-gpt-runtime-x.x.x.jar`
-  - A Spring Boot connector runtime using the core module
+The CI/CD pipeline additionally runs these tests against the actual built Docker image before pushing the `latest` tag to Docker Hub.
 
-#### Python LLM Service
-
-Python 3.10 is required. A virtual environment is advised.
-
-Install the Python dependencies using the following command:
+### Docker Images
+Build default image:
 
 ```bash
-python -m pip install --upgrade -r python/requirements.txt
+docker build -t bpm-ai-connectors-camunda-8:latest .
 ```
 
-Install the Python app:
-```bash
-python -m pip install -e python/src
-```
-
-Start the Python service with:
+Build inference image:
 
 ```bash
-python python/src/gpt/main.py
+docker build --build-arg="FLAVOR=inference" --build-arg="PYTHON_VERSION=3.11" -t bpm-ai-connectors-camunda-8:latest-inference .
 ```
-
-### Configuration
-
-In order to run, the connectors will require an API key to OpenAI and connection details to connect to Camunda 8 platform.
-All these settings should be performed using the file called `connector-secrets.txt` (check the sample file). 
-
-If your connector runs locally from your host machine (command line or IDE) and connects to locally running Zeebe Cluster:
-```
-OPENAI_API_KEY=<put your key here>
-CAMUNDA_OPERATE_CLIENT_URL=localhost:8080
-ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=localhost:26500
-ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
-```
-
-If your connector runs using docker compose together with Zeebe Cluster:
-```
-OPENAI_API_KEY=<put your key here>
-CAMUNDA_OPERATE_CLIENT_URL=operate:8080
-ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
-ZEEBE_CLIENT_SECURITY_PLAINTEXT=true
-```
-
-If you want to connect to Camunda 8 Cloud, please use the following configuration (independently of run mode); 
-```
-OPENAI_API_KEY=<put your key here>
-ZEEBE_CLIENT_CLOUD_CLUSTER-ID=<cluster-id>
-ZEEBE_CLIENT_CLOUD_CLIENT-ID=<client-id>
-ZEEBE_CLIENT_CLOUD_CLIENT-SECRET=<client-secret>
-ZEEBE_CLIENT_CLOUD_REGION=bru-2
-```
-
-### Run from IDE
-
-In your IDE you can also simply navigate to the `LocalContainerRuntime` class in the `runtime` module and run it via your IDE.
-Please include the values from the configuration block as environment variables of your runtime either by copying the
-values manually or using the [EnvFile Plugin for IntelliJ](https://plugins.jetbrains.com/plugin/7861-envfile).
+---
 
 ## License
 
-This library is developed under
+This project is developed under
 
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/LICENSE)
 

@@ -1,0 +1,4 @@
+bpm-ai[inference]==1.2.0
+spacy==3.7.2
+torch==2.2.0
+--extra-index-url https://download.pytorch.org/whl/cpu

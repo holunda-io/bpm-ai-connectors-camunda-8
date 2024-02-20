@@ -1,7 +1,0 @@
--------------------------------------------------------------------------------
-Local Camunda 8 Connector Runtime
-
-Spring Boot      : ${spring-boot.version}
-Zeebe Broker     : ${zeebe.client.broker.gateway-address:}
-Cloud Cluster Id : ${zeebe.client.cloud.cluster-id:}
--------------------------------------------------------------------------------
