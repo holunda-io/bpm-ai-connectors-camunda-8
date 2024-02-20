@@ -9,12 +9,22 @@ curl -sSL https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda
 # create .env file if it doesn't exist
 touch .env
 
-# Initialize profile flags
-profile_flags=""
+# Determine cluster_type based on existing .env settings
+if grep -q "ZEEBE_CLIENT_CLOUD_CLUSTER-ID" .env; then
+  cluster_type="cloud"
+elif grep -q "ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS" .env; then
+  cluster_type="local"
+else
+  cluster_type=""
+fi
 
-read -rp "Use Camunda Cloud or local cluster (started automatically)? [cloud/local] (default: local): " cluster_type
-# Set 'local' as the default choice if the user just hits enter
-cluster_type=${cluster_type:-local}
+# Ask for cluster_type if not determined by .env
+if [ -z "$cluster_type" ]; then
+  read -rp "Use Camunda Cloud or local cluster (started automatically)? [cloud/local] (default: local): " input_cluster_type
+  cluster_type=${input_cluster_type:-local}
+fi
+
+echo "Using cluster type: $cluster_type"
 
 if [ "$cluster_type" = "cloud" ]; then
   if ! grep -q "ZEEBE_CLIENT_CLOUD_CLUSTER-ID" .env; then
