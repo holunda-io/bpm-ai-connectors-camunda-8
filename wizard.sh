@@ -4,7 +4,7 @@ echo "[bpm.ai Wizard]"
 mkdir -p bpm-ai/data && cd bpm-ai || exit
 
 # download docker-compose.yml
-curl -sSL https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/bpm-ai/docker-compose.yml -o docker-compose.yml
+curl -sSL https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/main/docker-compose.yml -o docker-compose.yml
 
 # create .env file if it doesn't exist
 touch .env
@@ -56,7 +56,7 @@ if [ "$cluster_type" = "local" ]; then
   profile_flags="$profile_flags --profile platform"
 fi
 
-read -rp "Enable local, non-LLM AI models for decision/extraction/translation (up to 2GB addtional download and higher RAM requirement)? [y/n] (default: n): " inference
+read -rp "Enable local AI models for decide/extract/translate and OCR (larger download)? [y/n] (default: n): " inference
 # Set 'n' as the default choice if the user just hits enter
 inference=${inference:-n}
 
