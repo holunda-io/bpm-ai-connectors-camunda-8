@@ -135,6 +135,8 @@ LANGFUSE_PUBLIC_KEY=<put your public key here>
 * [Getting Started](docs/getting-started.md)
 * [Connectors](docs/base-connectors.md)
 * [Use Local Models](docs/local-models.md)
+* [Use Images & Audio](docs/multi-modality.md)
+* [Example Usecases & HowTos](docs/usecases.md)
 
 ---
 
