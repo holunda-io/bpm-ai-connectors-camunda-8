@@ -37,6 +37,7 @@ if [ "$cluster_type" = "cloud" ]; then
 
   if ! grep -q "ZEEBE_CLIENT_CLOUD_CLIENT-SECRET" .env; then
     read -s -rp "ZEEBE_CLIENT_CLOUD_CLIENT-SECRET: " x && echo "ZEEBE_CLIENT_CLOUD_CLIENT-SECRET=$x" >> .env
+    echo ""
   fi
 elif [ "$cluster_type" = "local" ]; then
   if ! grep -q "ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS" .env; then
