@@ -8,10 +8,11 @@ from tests.conftest import requires_inference
 logger = logging.getLogger(__name__)
 
 
+@requires_inference()
 def test_extract_ocr(runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     variables = {
-        "invoice": "tests/sample-invoice.webp",
+        "invoice": "https://github.com/holunda-io/camunda-8-connector-gpt/raw/bpm-ai/bpm-ai-connectors-c8/tests/data/sample-invoice.webp",
         "schema": {
             "invoice_number": "What is the invoice number?",
             "total": {

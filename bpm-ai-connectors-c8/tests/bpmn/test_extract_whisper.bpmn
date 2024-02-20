@@ -15,7 +15,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="gpt-3.5-turbo" target="llm" />
           <zeebe:input source="openai-whisper-1" target="asr" />
-          <zeebe:input source="tesseract" target="ocr" />
+          <zeebe:input source="none" target="ocr" />
           <zeebe:input source="={ &#10;  &#34;quote&#34;: &#34;https://upload.wikimedia.org/wikipedia/commons/d/dd/Armstrong_Small_Step.ogg&#34;&#10;}" target="input_json" />
           <zeebe:input source="=schema" target="output_schema" />
           <zeebe:input source="SINGLE" target="mode" />
