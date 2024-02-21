@@ -41,7 +41,7 @@ if [ "$cluster_type" = "cloud" ]; then
   fi
 elif [ "$cluster_type" = "local" ]; then
   if ! grep -q "ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS" .env; then
-    echo "ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=localhost:26500" >> .env
+    echo "ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500" >> .env
   fi
 else
   echo "Unknown option ${cluster_type}"
