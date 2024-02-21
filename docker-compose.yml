@@ -1,11 +1,19 @@
 services:
 
+  #####################################################################################################################
+  # Default AI Connectors - enabled by profile `--profile default`                                                   #
+  #####################################################################################################################
+
   connectors:
     profiles: [default]
     container_name: bpm-ai-connectors-camunda-8
     image: holisticon/bpm-ai-connectors-camunda-8:latest
     build:
       dockerfile: Dockerfile
+    depends_on:
+      zeebe:
+        condition: service_healthy
+        required: false
     networks:
       - camunda-platform
     volumes:
@@ -17,12 +25,20 @@ services:
       - path: ./.env
         required: false
 
+  #####################################################################################################################
+  # Connectors with optional local AI inference - enabled by profile `--profile inference`                                                   #
+  #####################################################################################################################
+
   connectors-inference:
     profiles: [inference]
     container_name: bpm-ai-connectors-camunda-8
     image: holisticon/bpm-ai-connectors-camunda-8:latest-inference
     build:
       dockerfile: Dockerfile
+    depends_on:
+      zeebe:
+        condition: service_healthy
+        required: false
     networks:
       - camunda-platform
     env_file:
