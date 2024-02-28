@@ -91,7 +91,12 @@ ZEEBE_CLIENT_CLOUD_REGION=<cluster-region>
 ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
 ```
 
-Launch the connector runtime with a local zeebe cluster:
+Create a data directory for the connector volume
+
+```bash
+mkdir ./data
+```
+and launch the connector runtime with a local zeebe cluster:
 
 ```bash 
 docker compose --profile default --profile platform up -d
