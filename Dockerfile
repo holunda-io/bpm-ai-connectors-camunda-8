@@ -4,7 +4,7 @@ ARG PYTHON_VERSION="3.12"
 ###############################################################################
 # 1. Build feel-engine-wrapper native executable using quarkus mandrel
 ###############################################################################
-FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-21 AS build-jvm
+FROM quay.io/quarkus/ubi-quarkus-mandrel-builder-image:jdk-22 AS build-jvm
 
 COPY --chown=quarkus:quarkus feel-engine-wrapper/mvnw /app/mvnw
 COPY --chown=quarkus:quarkus feel-engine-wrapper/.mvn /app/.mvn
