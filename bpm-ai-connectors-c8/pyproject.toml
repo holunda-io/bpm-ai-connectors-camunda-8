@@ -14,6 +14,7 @@ pyzeebe = "^3.0.4"
 pydantic = "^2.5.3"
 argparse = "^1.4.0"
 pyro5 = "^5.15"
+av = "12.0.0"
 bpm-ai = "1.4.0"
 
 
