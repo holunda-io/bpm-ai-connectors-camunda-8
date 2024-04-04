@@ -78,8 +78,6 @@ inference=${inference:-n}
 
 if [ "$inference" = "y" ]; then
   profile_flags="$profile_flags --profile inference"
-else
-  profile_flags="$profile_flags --profile default"
 fi
 
 ##############################################################################################################################
