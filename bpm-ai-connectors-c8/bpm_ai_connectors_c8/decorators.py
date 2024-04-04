@@ -8,7 +8,7 @@ from pyzeebe.task import task_builder
 
 from bpm_ai_connectors_c8.connector_secrets import replace_secrets_in_dict
 from bpm_ai_connectors_c8.feel import create_output_variables, examine_error_expression
-from bpm_ai_connectors_c8.models import model_ids_to_models, CUSTOM_MODEL_VARS
+from bpm_ai_connectors_c8.models import model_ids_to_models, EXTRA_VARS
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +34,9 @@ def ai_task(
             timeout_ms,
             max_jobs_to_activate,
             max_running_jobs,
-            # fetch variables defined by the task function + any possible custom model definitions, as we don't want
-            # those as task function parameters. Instead, only the final model object (custom or not) is injected
-            parameter_tools.get_parameters_from_function(task_function) + CUSTOM_MODEL_VARS,
+            # fetch variables defined by the task function + any possible extra variables associated with a model,
+            # as we don't want those as task function parameters. Instead, only the final model object is injected
+            parameter_tools.get_parameters_from_function(task_function) + EXTRA_VARS,
             False,
             "",
             [],

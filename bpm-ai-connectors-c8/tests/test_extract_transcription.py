@@ -1,9 +1,8 @@
 import logging
 
-import pytest
 from pytest_zeebe.client.zeebe_test_client import ZeebeTestClient
 
-from tests.conftest import requires_inference
+from tests.conftest import local_inference
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +23,7 @@ def test_extract_whisper(runtime_selector, zeebe_test_client: ZeebeTestClient):
     assert result['result']['leap_size'].lower() == "giant"
 
 
-@requires_inference()
+@local_inference()
 def test_extract_faster_whisper(runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_extract_faster_whisper.bpmn")

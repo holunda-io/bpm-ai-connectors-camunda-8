@@ -11,6 +11,8 @@ services:
     build:
       dockerfile: Dockerfile
     depends_on:
+      bpm-ai-inference:
+        condition: service_started
       zeebe:
         condition: service_healthy
         required: false
@@ -24,23 +26,23 @@ services:
     env_file:
       - path: ./.env
         required: false
+    environment:
+      - INFERENCE_SERVER_ADDRESS=bpm-ai-inference:6666
 
   #####################################################################################################################
-  # Connectors with optional local AI inference - enabled by profile `--profile inference`                                                   #
+  # Optional extension for local AI inference - enabled by profile `--profile inference`                                                   #
   #####################################################################################################################
 
-  connectors-inference:
+  bpm-ai-inference:
     profiles: [inference]
-    container_name: bpm-ai-connectors-camunda-8
-    image: holisticon/bpm-ai-connectors-camunda-8:latest-inference
+    container_name: bpm-ai-inference
+    image: holisticon/bpm-ai-inference:latest-cpu
     build:
       dockerfile: Dockerfile
-    depends_on:
-      zeebe:
-        condition: service_healthy
-        required: false
     networks:
       - camunda-platform
+    ports:
+      - "6666:6666"
     env_file:
       - path: ./.env
         required: false

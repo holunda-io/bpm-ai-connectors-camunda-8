@@ -44,4 +44,4 @@ jobs:
         run: poetry install --no-root --no-cache
       -
         name: Run pytest
-        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest
+        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 INFERENCE_IMAGE=holisticon/bpm-ai-inference:latest-cpu OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest

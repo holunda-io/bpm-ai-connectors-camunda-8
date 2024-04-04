@@ -6,6 +6,7 @@ from bpm_ai_core.speech_recognition.asr import ASRModel
 from pyzeebe import ZeebeTaskRouter
 
 from bpm_ai_connectors_c8.decorators import ai_task
+from bpm_ai_connectors_c8.models import remote_model
 
 extract_router = ZeebeTaskRouter()
 
@@ -19,7 +20,8 @@ async def extract(
     output_schema: dict,
     mode: str,
     entities_description="",
-    qa: QuestionAnswering | None = None
+    qa: QuestionAnswering | None = None,
+    vqa: QuestionAnswering | None = None
 ):
     multiple = (mode == 'MULTIPLE')
     if llm:
@@ -35,6 +37,9 @@ async def extract(
     else:
         return await extract_qa(
             qa=qa,
+            vqa=vqa,
+            classifier=remote_model("TransformersClassifier"),  # non-configurable right now
+            token_classifier=remote_model("TransformersTokenClassifier"),  # non-configurable right now
             asr=asr,
             ocr=ocr,
             input_data=input_json,

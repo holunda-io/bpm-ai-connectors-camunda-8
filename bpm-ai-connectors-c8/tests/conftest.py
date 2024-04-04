@@ -35,8 +35,12 @@ def ensure_openai_key() -> str:
 
 
 @pytest.fixture
-def connector_runtime(xprocess, zeebe_test_engine):
+def connector_runtime(xprocess, zeebe_test_engine, request):
     ensure_openai_key()
+
+    if os.environ.get('INFERENCE_IMAGE', None):
+        inference_container = request.getfixturevalue('docker_inference_runtime')
+        os.environ['INFERENCE_SERVER_ADDRESS'] = f"localhost:{inference_container.get_exposed_port(6666)}"
 
     class Starter(ProcessStarter):
         pattern = "Starting connector worker"
@@ -64,15 +68,36 @@ def python_runtime(connector_runtime, feel_mock_server):
 
 
 @pytest.fixture
-def docker_runtime(zeebe_test_engine):
+def docker_runtime(zeebe_test_engine, request):
     """
     Runtime based on actual docker image with connectors and real feel engine wrapper.
     """
     container = DockerContainer(os.environ.get('CONNECTOR_IMAGE'))
     container.with_env("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS", f"{_docker_host()}:{zeebe_test_engine.engine_port}")
     container.with_env("OPENAI_API_KEY", ensure_openai_key())
+
+    if os.environ.get('INFERENCE_IMAGE', None):
+        inference_container = request.getfixturevalue('docker_inference_runtime')
+        container.with_env("INFERENCE_SERVER_ADDRESS", f"{_docker_host()}:{inference_container.get_exposed_port(6666)}")
+
     container.start()
     wait_for_logs(container, "Starting connector worker.")
+    yield container
+    stdout, stderr = container.get_logs()
+    logger.info(stdout)
+    logger.error(stderr)
+    container.stop()
+
+
+@pytest.fixture
+def docker_inference_runtime():
+    """
+    Local inference extension container.
+    """
+    container = DockerContainer(os.environ.get('INFERENCE_IMAGE'))
+    container.with_exposed_ports(6666)
+    container.start()
+    wait_for_logs(container, "Object daemon created for 0.0.0.0:6666")
     yield container
     stdout, stderr = container.get_logs()
     logger.info(stdout)
@@ -88,9 +113,9 @@ def runtime_selector(request):
         return request.getfixturevalue('python_runtime')
 
 
-def requires_inference():
-    image = os.environ.get('CONNECTOR_IMAGE', None)
+def local_inference():
+    image = os.environ.get('INFERENCE_IMAGE', None)
     return pytest.mark.skipif(
-        image and "inference" not in image,
-        reason=f"Skipping test requiring inference image"
+        not image,
+        reason=f"Skipping test requiring inference container as INFERENCE_IMAGE env var not provided."
     )

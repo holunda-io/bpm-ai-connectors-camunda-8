@@ -44,7 +44,7 @@ The following types are supported:
 * array
 
 > [!NOTE]
-> The non-LLM models do not support the array type.
+> The non-LLM models currently do not support the array type.
 > 
 > For details, see [here](local-models.md).
 
@@ -80,6 +80,9 @@ This is equivalent to:
 
 Select Extraction Mode `Multiple Entities` to extract a list of multiple entity objects, each conforming to the configured schema.
 You can provide an optional description for the entities to extract. 
+
+> [!NOTE]
+> For non-LLM models, extracting multiple entities is experimental and requires the entity description.
 
 The result will be a list of objects or an empty list.
 

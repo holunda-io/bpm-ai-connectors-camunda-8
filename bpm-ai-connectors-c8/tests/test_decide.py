@@ -3,7 +3,7 @@ import logging
 import pytest
 from pytest_zeebe.client.zeebe_test_client import ZeebeTestClient
 
-from tests.conftest import requires_inference
+from tests.conftest import local_inference
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ def test_decide_boolean(vars_decide_boolean, runtime_selector, zeebe_test_client
     assert result['result']['decision'] is True
 
 
-@requires_inference()
+@local_inference()
 def test_decide_classifier_string(vars_decide_string, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_decide_classifier_string.bpmn")
@@ -73,7 +73,7 @@ def test_decide_classifier_string(vars_decide_string, runtime_selector, zeebe_te
     assert result['result']['decision'] == 'CANCEL_ORDER'
 
 
-@requires_inference()
+@local_inference()
 def test_decide_classifier_boolean(vars_decide_boolean, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_decide_classifier_bool.bpmn")

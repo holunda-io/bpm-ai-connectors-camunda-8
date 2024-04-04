@@ -3,7 +3,7 @@ import logging
 import pytest
 from pytest_zeebe.client.zeebe_test_client import ZeebeTestClient
 
-from tests.conftest import requires_inference
+from tests.conftest import local_inference
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +15,7 @@ def vars():
         "text2": "My dog is called Bob.",
         "target_lang": "German"
     }
+
 
 def test_translate(vars, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
@@ -31,7 +32,7 @@ def test_translate(vars, runtime_selector, zeebe_test_client: ZeebeTestClient):
     assert result['result']['text2'] == 'Mein Hund heißt Bob.'
 
 
-@requires_inference()
+@local_inference()
 def test_translate_nmt(vars, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_translate_nmt.bpmn")

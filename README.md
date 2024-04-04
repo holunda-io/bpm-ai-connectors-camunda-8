@@ -22,11 +22,11 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 
 ### 🆕 What's New in 1.0 
 * Option to use small **AI models running 100% locally on the CPU** - no API key or GPU needed!
-  * Pre-selected models known to work well, just select from dropdown
+  * Curated models known to work well, just select from dropdown
   * Or use any compatible model from [HuggingFace Hub](https://huggingface.co/models)
 * Multimodal input:
   * **Audio** (voice messages, call recordings, ...) using local or API-based transcription
-  * **Images / Documents** (document scans, PDFs, ...) using local OCR or multimodal AI models
+  * **Images / Documents** (document scans, PDFs, ...) using local or API-based OCR or multimodal AI models
 * Ultra slim docker image (**60mb** without local AI)
 * Logging & Tracing support with [Langfuse](https://langfuse.com)
 
@@ -41,14 +41,16 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 * 🚀 [How to Run](#-how-to-run)
   * ▶️ [Quicksstart](#-quickstart-with-wizard)
   * [Manual Setup](#manual-docker-configuration)
-* 🕵 [Logging & Tracing](#-logging--tracing)
 * 📚 [Connector Documentation](#-connector-documentation)
   * [Getting Started](docs/getting-started.md)
   * [Connectors](docs/base-connectors.md)
   * [Use Local Models](docs/local-models.md)
   * [Use Images & Audio](docs/multi-modality.md)
   * [Example Usecases & HowTos](docs/usecases.md)
-* 🛠️ [Development & Project Setup](#-development--project-setup)
+* 🕵 [Logging & Tracing](#-logging--tracing)
+* 🛠️ [Development & Project Setup](docs/development.md)
+
+---
 
 ## 🚀 How to Run
 
@@ -60,7 +62,7 @@ Launch everything you need with a single command (cloud or automatically started
 bash <(curl -s https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/main/wizard.sh)
 ```
 
-On Windows, use WSL to run the command.
+On Windows, use WSL2 (with a proper distribution like ubuntu) to run the command.
 
 The Wizard will guide you through your preferences, create an .env file, and download and start the docker-compose.yml.
 
@@ -74,7 +76,7 @@ After starting the connector workers in their runtime, you also need to make the
   * Place them in a `.camunda/element-templates` folder next to your .bpmn file
   * Or add them to the `resources/element-templates` directory of your Modeler ([details](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/configuring-templates/#global-templates)).
 
-### Manual Docker Configuration
+### 🔧 Manual Docker Configuration
 
 Create an `.env` file (use `env.sample` as a template) and fill in your cluster information and your OpenAI API key:
 
@@ -113,7 +115,19 @@ Two types of Docker images are available on [DockerHub](https://hub.docker.com/r
 * The more heavy-weight (~500mb) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
 allowing you to use the `decide`, `extract` and `translate` connectors 100% locally without any API key needed
   * Use `latest-inference` tag (multiarch)
-  
+
+## 📚 Connector Documentation
+
+Learn how to effectively use the connectors in your processes, use fully local AI, different input modalities like PDFs, images, or audio files, and more.
+
+* [Getting Started](docs/getting-started.md)
+* [Connectors](docs/base-connectors.md)
+* [Use Local Models](docs/local-models.md)
+* [Use Images & Audio](docs/multi-modality.md)
+* [Example Usecases & HowTos](docs/usecases.md)
+
+---
+
 ## 🕵 Logging & Tracing
 
 Our connectors support logging traces of all task runs into [Langfuse](https://langfuse.com).
@@ -130,102 +144,11 @@ LANGFUSE_PUBLIC_KEY=<put your public key here>
 #LANGFUSE_HOST=host:port
 ```
 
-## 📚 Connector Documentation
-
-* [Getting Started](docs/getting-started.md)
-* [Connectors](docs/base-connectors.md)
-* [Use Local Models](docs/local-models.md)
-* [Use Images & Audio](docs/multi-modality.md)
-* [Example Usecases & HowTos](docs/usecases.md)
-
 ---
 
 ## 🛠️ Development & Project Setup
+Read more [here](docs/development.md).
 
-The connector workers are written in Python based on [pyzeebe](https://github.com/camunda-community-hub/pyzeebe).
-They are a thin wrapper around the core logic and AI abstractions, 
-which are independent of the specific workflow engine (or can even be integrated in a plain Python project directly) and placed 
-in a separate repository: [bpm-ai](https://github.com/holunda-io/bpm-ai)
-
-All connectors make use of feel expressions to flexibly map the task result into one or multiple result variables and/or define error expressions. 
-Therefore, a feel engine is required - which is only available as a Scala implementation. 
-To keep the runtime and Docker image overhead of needing an accompanying JVM app as low as possible,
-[feel-engine-wrapper](/feel-engine-wrapper) is a small, native-compiled Quarkus server wrapping the [connector-sdk/feel-wrapper](https://github.com/camunda/connectors/tree/main/connector-sdk/feel-wrapper), which itself wraps the feel engine for use in connectors.
-
-
-For convenience, both apps can be packaged into a single Docker image using the top-level Dockerfile or docker-compose.yml.
-
-Alternatively, the Python connector runtime can be started directly (see below) and the feel-engine-wrapper has multiple Dockerfiles (native or JVM) in [src/main/docker](feel-engine-wrapper/src/main/docker).
-
-### Build
-
-#### Connectors 
-```bash
-cd bpm-ai-connectors-c8
-```
-Python 3.11 and Poetry 1.6.1 is required. 
-
-The project itself also works with Python 3.12, but some dependencies of the bpm-ai[inference] extra don't compile in the python:3.12 docker image as of yet.
-
-Install the dependencies:
-```bash
-poetry install
-```
-Run the connectors:
-```bash
-python -m bpm_ai_connectors_c8.main
-```
-
-Note that some dependencies are listed as dev dependencies which will be installed by `poetry install` as well. 
-These are the full dependencies required to also run the parts of the application (and tests) referred to by _inference_.
-Meaning, all heavy-weight dependencies for local model inference (torch, transformers, etc.) are included. 
-Since poetry does not allow selectively installing extras of dependencies (only with environment markers), the Dockerfile 
-only installs the main dependency block from the pyproject.toml and then manually installs the dependencies from 
-[requirements.default.txt](bpm-ai-connectors-c8/requirements.default.txt) or [requirements.inference.txt](bpm-ai-connectors-c8/requirements.inference.txt),
-depending on the image to build.
-
-#### Feel Engine Wrapper
-```bash
-cd feel-engine-wrapper
-```
-Build native executable:
-```bash
-./mvnw package -Dnative
-```
-Run it:
-```bash
-./target/feel-engine-wrapper-runner
-```
-
-### Tests
-
-Run integration test:
-
-```bash
-export ZEEBE_TEST_IMAGE_TAG=8.4.0 
-export OPENAI_API_KEY=<put your key here> 
-poetry run pytest
-```
-
-The tests will:
-* spin up a Zeebe test engine using [pytest-zeebe](https://github.com/holunda-io/pytest-zeebe)
-* start a mocked feel engine wrapper server
-* deploy and run a small test process for each connector, using the actual OpenAI API
-
-The CI/CD pipeline additionally runs these tests against the actual built Docker image before pushing the `latest` tag to Docker Hub.
-
-### Docker Images
-Build default image:
-
-```bash
-docker build -t bpm-ai-connectors-camunda-8:latest .
-```
-
-Build inference image:
-
-```bash
-docker build --build-arg="FLAVOR=inference" --build-arg="PYTHON_VERSION=3.11" -t bpm-ai-connectors-camunda-8:latest-inference .
-```
 ---
 
 ## License

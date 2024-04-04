@@ -48,15 +48,20 @@
     },
     {
       "id": "llm",
-      "label": "LLM",
+      "label": "LLM / Model",
       "group": "model",
       "type": "Dropdown",
       "value": "gpt-4-turbo-preview",
       "choices": [
+        { "name": "Anthropic Claude 3 Opus (best)", "value": "claude-3-opus-20240229" },
+        { "name": "Anthropic Claude 3 Sonnet", "value": "claude-3-sonnet-20240229" },
+        { "name": "Anthropic Claude 3 Haiku (fastest)", "value": "claude-3-haiku-20240307" },
         { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
         { "name": "OpenAI GPT-4", "value": "gpt-4" },
         { "name": "OpenAI GPT-4 Turbo Preview", "value": "gpt-4-turbo-preview" },
-        { "name": "None", "value": "none" }
+        { "name": "Azure OpenAI", "value": "azure-openai" },
+        { "name": "OpenAI Compatible Server", "value": "openai-compatible" },
+        { "name": "Text Extraction Model", "value": "none" }
       ],
       "binding": {
         "type": "zeebe:input",
@@ -64,8 +69,23 @@
       }
     },
     {
+      "label": "Endpoint",
+      "group": "model",
+      "type": "String",
+      "value": "",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "model_endpoint"
+      },
+      "condition": {
+        "property": "llm",
+        "oneOf": ["azure-openai", "openai-compatible"]
+      }
+    },
+    {
       "id": "qa",
-      "label": "Extractive QA Model",
+      "label": "Text Extraction Model",
       "group": "model",
       "type": "Dropdown",
       "value": "deepset/deberta-v3-large-squad2",
@@ -86,7 +106,7 @@
       }
     },
     {
-      "label": "HuggingFace Hub Extractive QA Model",
+      "label": "HuggingFace Hub QA Model",
       "description": "Must support <code>question-answering</code> task.",
       "group": "model",
       "type": "String",
@@ -102,24 +122,66 @@
       }
     },
     {
-      "label": "OCR Model",
+      "id": "vqa",
+      "label": "Visual Document Extraction Model",
+      "description": "If selected, this will be used for images or PDFs while the LLM or Text Extraction Model will be used for text inputs.",
       "group": "model",
       "type": "Dropdown",
       "value": "none",
       "choices": [
         { "name": "None", "value": "none" },
+        { "name": "Amazon Textract", "value": "amazon-textract" },
+        { "name": "Azure Document Intelligence", "value": "azure-document-intelligence" },
+        { "name": "Donut Base (local)", "value": "naver-clova-ix/donut-base-finetuned-docvqa" },
+        { "name": "Custom HuggingFace Transformer (local)", "value": "custom" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "vqa"
+      }
+    },
+    {
+      "label": "HuggingFace Hub DocVQA Model",
+      "description": "Must support <code>document-question-answering</code> task.",
+      "group": "model",
+      "type": "String",
+      "value": "naver-clova-ix/donut-base-finetuned-docvqa",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "custom_vqa"
+      },
+      "condition": {
+        "property": "vqa",
+        "equals": "custom"
+      }
+    },
+    {
+      "label": "OCR Model",
+      "description": "Can be used to enable text-only LLMs and models to work with images or PDFs.",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "none",
+      "choices": [
+        { "name": "None", "value": "none" },
+        { "name": "Amazon Textract", "value": "amazon-textract" },
+        { "name": "Azure Document Intelligence", "value": "azure-document-intelligence" },
         { "name": "Tesseract (local)", "value": "tesseract" }
       ],
       "binding": {
         "type": "zeebe:input",
         "name": "ocr"
+      },
+      "condition": {
+        "property": "vqa",
+        "equals": "none"
       }
     },
     {
       "label": "Speech Recognition Model",
       "group": "model",
       "type": "Dropdown",
-      "value": "openai-whisper-1",
+      "value": "none",
       "choices": [
         { "name": "None", "value": "none" },
         { "name": "OpenAI Whisper API", "value": "openai-whisper-1" },

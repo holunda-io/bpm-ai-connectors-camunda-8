@@ -1,14 +1,13 @@
 import logging
 
-import pytest
 from pytest_zeebe.client.zeebe_test_client import ZeebeTestClient
 
-from tests.conftest import requires_inference
+from tests.conftest import local_inference
 
 logger = logging.getLogger(__name__)
 
 
-@requires_inference()
+@local_inference()
 def test_extract_ocr(runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     variables = {

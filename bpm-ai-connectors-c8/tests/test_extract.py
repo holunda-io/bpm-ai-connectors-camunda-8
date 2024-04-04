@@ -3,7 +3,7 @@ import logging
 import pytest
 from pytest_zeebe.client.zeebe_test_client import ZeebeTestClient
 
-from tests.conftest import requires_inference
+from tests.conftest import local_inference
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +59,7 @@ def test_extract_multiple(vars_extract_multiple, runtime_selector, zeebe_test_cl
     ]
 
 
-@requires_inference()
+@local_inference()
 def test_extract_qa_single(vars_extract_single, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_extract_qa_single.bpmn")
@@ -74,7 +74,7 @@ def test_extract_qa_single(vars_extract_single, runtime_selector, zeebe_test_cli
     assert result['result'] == {'name': 'John Watts', 'age': 20}
 
 
-@requires_inference()
+@local_inference()
 def test_extract_qa_multiple(vars_extract_multiple, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     variables = {
