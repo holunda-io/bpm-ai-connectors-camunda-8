@@ -5,7 +5,6 @@ services:
   #####################################################################################################################
 
   connectors:
-    profiles: [default]
     container_name: bpm-ai-connectors-camunda-8
     image: holisticon/bpm-ai-connectors-camunda-8:latest
     build:
