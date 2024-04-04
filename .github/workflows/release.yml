@@ -226,7 +226,7 @@ jobs:
       - name: Install dependencies
         run: poetry install --only test --no-root --no-cache
       - name: Run pytest
-        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 CONNECTOR_IMAGE=${{ needs.build-push-inference.outputs.image }}-amd64 INFERENCE_IMAGE=holisticon/bpm-ai-inference:latest-cpu OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest
+        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 CONNECTOR_IMAGE=${{ needs.build-push.outputs.image }}-amd64 INFERENCE_IMAGE=holisticon/bpm-ai-inference:latest-cpu OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest
 
   create-push-manifest:
     runs-on: ubuntu-latest
