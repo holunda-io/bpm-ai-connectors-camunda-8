@@ -12,11 +12,11 @@ generic_router = ZeebeTaskRouter()
 @ai_task(generic_router, "generic", 2)
 async def generic(
     llm: LLM,
-    asr: ASRModel | None,
-    ocr: OCR | None,
     input_json: dict,
     task_description: str,
-    output_schema: dict
+    output_schema: dict,
+    asr: ASRModel | None = None,
+    ocr: OCR | None = None,
 ):
     return await generic_llm(
         llm=llm,

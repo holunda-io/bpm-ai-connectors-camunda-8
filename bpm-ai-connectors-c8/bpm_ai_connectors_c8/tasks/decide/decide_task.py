@@ -15,11 +15,11 @@ decide_router = ZeebeTaskRouter()
 @ai_task(decide_router, "decide", 2)
 async def decide(
         llm: LLM | None,
-        asr: ASRModel | None,
-        ocr: OCR | None,
         input_json: dict,
         question: str,
         output_type: str,
+        asr: ASRModel | None = None,
+        ocr: OCR | None = None,
         classifier: ZeroShotClassifier | None = None,
         possible_values: list[Any] | None = None,
         strategy: str | None = None

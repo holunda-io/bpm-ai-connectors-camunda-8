@@ -23,11 +23,11 @@ class TextProperties(TypedDict):
 @ai_task(compose_router, "compose", 2)
 async def compose(
     llm: LLM,
-    asr: ASRModel | None,
-    ocr: OCR | None,
     input_json: dict,
     properties: TextProperties,
     template: str,
+    asr: ASRModel | None = None,
+    ocr: OCR | None = None,
 ):
     return await compose_llm(
         llm=llm,

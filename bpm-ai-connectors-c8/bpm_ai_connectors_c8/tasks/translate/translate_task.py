@@ -13,11 +13,11 @@ translate_router = ZeebeTaskRouter()
 @ai_task(translate_router, "translate", 2)
 async def translate(
     llm: LLM | None,
-    asr: ASRModel | None,
-    ocr: OCR | None,
     input_json: dict,
     language: str,
-    nmt: NMTModel | None = None
+    nmt: NMTModel | None = None,
+    asr: ASRModel | None = None,
+    ocr: OCR | None = None,
 ):
     if llm:
         return await translate_llm(

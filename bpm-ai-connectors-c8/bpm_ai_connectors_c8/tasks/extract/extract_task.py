@@ -14,12 +14,12 @@ extract_router = ZeebeTaskRouter()
 @ai_task(extract_router, "extract", 2)
 async def extract(
     llm: LLM | None,
-    asr: ASRModel | None,
-    ocr: OCR | None,
     input_json: dict,
     output_schema: dict,
     mode: str,
     entities_description="",
+    asr: ASRModel | None = None,
+    ocr: OCR | None = None,
     qa: QuestionAnswering | None = None,
     vqa: QuestionAnswering | None = None
 ):
