@@ -165,7 +165,7 @@ Translates multiple input variables to any given language and stores the result 
 Enter the target language (e.g. `English`).
 
 > [!NOTE]
-> The non-LLM translation model currently supports the following languages: DANISH, DUTCH, ENGLISH, FINNISH, FRENCH, GERMAN, ITALIAN, NYNORSK, POLISH, PORTUGUESE, SPANISH, SWEDISH, UKRAINIAN
+> The non-LLM translation model currently supports the following languages: DANISH, DUTCH, ENGLISH, FINNISH, FRENCH, GERMAN, ITALIAN, NORWEGIAN, POLISH, PORTUGUESE, SPANISH, SWEDISH, UKRAINIAN
 > 
 > For details, see [here](local-models.md).
 

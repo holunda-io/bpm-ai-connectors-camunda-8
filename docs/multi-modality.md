@@ -76,6 +76,10 @@ AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT=https://westeurope.api.cognitive.microsoft.
 #### tesseract
 Local OCR model that requires the local inference extension container. Only suitable for simple, single column documents.
 
+> [!TIP]
+> **When to use what?**
+> The native image capability of LLMs is great for general image understanding or when working with documents that can't be captured well by OCR, e.g. containing graphs and images. For document classification OCR is usually enough and extraction - especially with long documents - is usually more accurate when using a good OCR model in tandem with a long context LLM like Anthropic Claude or OpenAI GPT-4 Turbo. 
+
 ## Audio
 
 The following audio file types are supported by all connectors:
