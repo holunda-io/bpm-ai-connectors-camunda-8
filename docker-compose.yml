@@ -12,6 +12,7 @@ services:
     depends_on:
       bpm-ai-inference:
         condition: service_started
+        required: false
       zeebe:
         condition: service_healthy
         required: false
