@@ -84,14 +84,14 @@ Create an `.env` file (use `env.sample` as a template) and fill in your cluster 
 ```bash
 OPENAI_API_KEY=<put your key here>
 
-ZEEBE_CLIENT_CLOUD_CLUSTER-ID=<cluster-id>
-ZEEBE_CLIENT_CLOUD_CLIENT-ID=<client-id>
-ZEEBE_CLIENT_CLOUD_CLIENT-SECRET=<client-secret>
+ZEEBE_CLIENT_CLOUD_CLUSTER_ID=<cluster-id>
+ZEEBE_CLIENT_CLOUD_CLIENT_ID=<client-id>
+ZEEBE_CLIENT_CLOUD_CLIENT_SECRET=<client-secret>
 ZEEBE_CLIENT_CLOUD_REGION=<cluster-region>
 
 # OR
 
-ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS=zeebe:26500
+ZEEBE_CLIENT_BROKER_GATEWAY_ADDRESS=zeebe:26500
 ```
 
 Create a data directory for the connector volume

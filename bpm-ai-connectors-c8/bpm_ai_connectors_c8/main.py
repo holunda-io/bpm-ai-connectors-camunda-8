@@ -20,17 +20,19 @@ logger = logging.getLogger(__name__)
 
 
 async def create_channel(host=None, port=None):
-    if os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER-ID"):
+    cluster_id = os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER_ID") or os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER-ID")
+    if cluster_id:
         channel = create_camunda_cloud_channel(
-           os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-ID"),
-           os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-SECRET"),
-           os.environ.get("ZEEBE_CLIENT_CLOUD_CLUSTER-ID"),
+           os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT_ID") or os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-ID"),
+           os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT_SECRET") or os.environ.get("ZEEBE_CLIENT_CLOUD_CLIENT-SECRET"),
+           cluster_id,
            os.environ.get("ZEEBE_CLIENT_CLOUD_REGION", "bru-2")
         )
-        logger.info(f"Created channel to cloud cluster {os.environ.get('ZEEBE_CLIENT_CLOUD_CLUSTER-ID')}")
+        logger.info(f"Created channel to cloud cluster {cluster_id}")
     else:
-        if os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS"):
-            host, port = os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS").split(":")
+        broker_gateway = os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY_ADDRESS") or os.environ.get("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS")
+        if broker_gateway:
+            host, port = broker_gateway.split(":")
         channel = create_insecure_channel(
             hostname=host,
             port=port

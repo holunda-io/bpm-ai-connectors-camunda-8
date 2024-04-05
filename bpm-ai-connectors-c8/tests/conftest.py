@@ -73,7 +73,7 @@ def docker_runtime(zeebe_test_engine, request):
     Runtime based on actual docker image with connectors and real feel engine wrapper.
     """
     container = DockerContainer(os.environ.get('CONNECTOR_IMAGE'))
-    container.with_env("ZEEBE_CLIENT_BROKER_GATEWAY-ADDRESS", f"{_docker_host()}:{zeebe_test_engine.engine_port}")
+    container.with_env("ZEEBE_CLIENT_BROKER_GATEWAY_ADDRESS", f"{_docker_host()}:{zeebe_test_engine.engine_port}")
     container.with_env("OPENAI_API_KEY", ensure_openai_key())
 
     if os.environ.get('INFERENCE_IMAGE', None):
