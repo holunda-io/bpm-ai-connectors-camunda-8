@@ -1,11 +1,10 @@
 services:
 
   #####################################################################################################################
-  # Default AI Connectors - enabled by profile `--profile default`                                                   #
+  # AI Connectors                                              #
   #####################################################################################################################
 
   connectors:
-    profiles: [default]
     container_name: bpm-ai-connectors-camunda-8
     image: holisticon/bpm-ai-connectors-camunda-8:latest
     build:
@@ -13,6 +12,7 @@ services:
     depends_on:
       bpm-ai-inference:
         condition: service_started
+        required: false
       zeebe:
         condition: service_healthy
         required: false

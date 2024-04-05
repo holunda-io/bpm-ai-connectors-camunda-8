@@ -20,18 +20,19 @@ local OCR with tesseract and local audio transcription with Whisper. All running
   <img src="assets/screenshots/example.png" width="100%" alt="Example usage">
 </figure>
 
-### 🆕 What's New in 1.0 
+### 🆕 What's New
+* Anthropic Claude 3 model options
 * Option to use small **AI models running 100% locally on the CPU** - no API key or GPU needed!
   * Curated models known to work well, just select from dropdown
   * Or use any compatible model from [HuggingFace Hub](https://huggingface.co/models)
 * Multimodal input:
   * **Audio** (voice messages, call recordings, ...) using local or API-based transcription
   * **Images / Documents** (document scans, PDFs, ...) using local or API-based OCR or multimodal AI models
-* Ultra slim docker image (**60mb** without local AI)
+* Use files from Amazon S3 or Azure Blob Storage
 * Logging & Tracing support with [Langfuse](https://langfuse.com)
 
 ### 🔜 Upcoming
-* higher quality local and API-based OCR
+* higher quality local OCR
 * support for local, open-access LLMs
 
 ---
@@ -101,25 +102,23 @@ mkdir ./data
 and launch the connector runtime with a local zeebe cluster:
 
 ```bash 
-docker compose --profile default --profile platform up -d
+docker compose --profile platform up -d
 ```
 
 For Camunda Cloud, remove the platform profile.
 
-To use the larger **inference** image that includes dependencies to run local AI model inference for decide, extract and translate, use the inference profile instead of default: 
+To use the **inference** extension container that includes local AI model inference implementations for decide, extract and translate, as well as local OCR, additionally use the inference profile: 
 
 ```bash 
 docker compose --profile inference --profile platform up -d
 ```
 
-#### Available Image Tags
+#### Available Images
 
 Two types of Docker images are available on [DockerHub](https://hub.docker.com/r/holisticon/bpm-ai-connectors-camunda-8):
-* The lightweight (**~60mb** compressed) default image suitable for users only needing the OpenAI API (and other future API-based services)
-  * Use `latest` tag (multiarch)
-* The more heavy-weight (~500mb) inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
-allowing you to use the `decide`, `extract` and `translate` connectors 100% locally without any API key needed
-  * Use `latest-inference` tag (multiarch)
+* The main image suitable for users only needing the Anthropic/OpenAI and Azure/Amazon APIs (and other future API-based services)
+* An optional inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
+allowing you to use the `decide`, `extract` and `translate` connectors 100% locally and perform OCR without any API key needed
 
 ## 📚 Connector Documentation
 
