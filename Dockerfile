@@ -1,4 +1,4 @@
-ARG PYTHON_VERSION="3.12"
+ARG PYTHON_VERSION="3.11"
 
 ###############################################################################
 # 1. Build feel-engine-wrapper native executable using quarkus mandrel
@@ -41,15 +41,14 @@ RUN poetry install --only main --no-root --no-cache
 ###############################################################################
 # 3. Final, minimal image that starts the connectors and feel engine process
 ###############################################################################
-FROM cgr.dev/chainguard/python:latest
-ARG PYTHON_VERSION
+FROM python:${PYTHON_VERSION}-slim
 
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 COPY --from=build-jvm /app/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
-COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /home/nonroot/.local/lib/python3.12/site-packages
+COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /home/nonroot/.local/lib/python${PYTHON_VERSION}/site-packages
 
 # Run two processes: connector runtime + feel engine wrapper
 COPY init.py .
