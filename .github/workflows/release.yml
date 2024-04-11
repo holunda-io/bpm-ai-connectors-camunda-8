@@ -157,7 +157,7 @@ jobs:
             ${{ env.REGISTRY_IMAGE }}:latest-${{ matrix.arch }}
       -
         id: image
-        run: echo "::set-output name=image::$(echo ${{ env.REGISTRY_IMAGE }}:latest)"
+        run: echo "::set-output name=image::$(echo ${{ env.REGISTRY_IMAGE }}:${{ steps.vars.outputs.tag }}-${{ matrix.arch }})"
 
   pytest-docker:
     needs: [build-push]

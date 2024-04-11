@@ -41,11 +41,17 @@ services:
       dockerfile: Dockerfile
     networks:
       - camunda-platform
+    volumes:
+      - type: bind
+        source: ./.cache
+        target: /var/cache/bpm-ai
     ports:
       - "6666:6666"
     env_file:
       - path: ./.env
         required: false
+    environment:
+      - HF_HOME=/var/cache/bpm-ai/hf
 
   #####################################################################################################################
   # Core Camunda Platform - enabled by profile `--profile platform`                                                   #

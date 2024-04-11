@@ -13,6 +13,13 @@ Here are some general notes and limitations:
 * Most models work best with English. We try to provide multilingual alternatives, but mileage may vary
 * The models are usually less flexible and behave a bit differently than LLMs, the connectors try to mask that as good as possible. See details for specific connectors below
 
+Start the inference container manually:
+```bash 
+docker compose --profile inference up -d
+```
+
+... or select the appropriate option in the wizard setup script.
+
 ## Decide Connector
 
 Select `Classifier` as `LLM / Model`.
@@ -37,7 +44,7 @@ You can also use any model from the HuggingFace Hub that supports the `question-
 #### Usage Differences to LLMs
 * Extraction field descriptions are best provided as fully formed questions
 * Extraction Mode `Multiple Entities` is experimental and may not yield good results in all cases
-* Fields are extracted one-by-one so different to an LLM the model lacks the context of already extracted fields, which may lead to wrong or duplicate extraction. To mitigate that, you can include template variables (e.g. {alreadyExtractedFieldName}`) in your descriptions referencing already extracted fields (use dot notation for nested objects). All in all, the extracting schema needs more tuning and engineering for more complex cases than it would be necessary with an LLM.
+* Fields are extracted one-by-one so different to an LLM the model lacks the context of already extracted fields, which may lead to wrong or duplicate extraction. To mitigate that, you can include template variables (e.g. `{alreadyExtractedFieldName}`) in your descriptions referencing already extracted fields (use dot notation for nested objects). All in all, the extracting schema needs more tuning and engineering for more complex cases than would be necessary with an LLM.
 
 ## Translate Connector
 

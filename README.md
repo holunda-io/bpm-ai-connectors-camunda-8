@@ -21,7 +21,9 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 </figure>
 
 ### 🆕 What's New
-* Anthropic Claude 3 model options
+* Anthropic Claude 3 model options (all support images/PDFs)
+* New GPT-4 Turbo (supports images/PDFs)
+* Use any OpenAI compatible LLM API
 * Option to use small **AI models running 100% locally on the CPU** - no API key or GPU needed!
   * Curated models known to work well, just select from dropdown
   * Or use any compatible model from [HuggingFace Hub](https://huggingface.co/models)
@@ -63,7 +65,7 @@ Launch everything you need with a single command (cloud or automatically started
 bash <(curl -s https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/main/wizard.sh)
 ```
 
-On Windows, use WSL2 (with a proper distribution like ubuntu) to run the command.
+On Windows, use WSL2.
 
 The Wizard will guide you through your preferences, create an .env file, and download and start the docker-compose.yml.
 
@@ -76,6 +78,7 @@ After starting the connector workers in their runtime, you also need to make the
 * Or, if you're working locally:
   * Place them in a `.camunda/element-templates` folder next to your .bpmn file
   * Or add them to the `resources/element-templates` directory of your Modeler ([details](https://docs.camunda.io/docs/components/modeler/desktop-modeler/element-templates/configuring-templates/#global-templates)).
+  * Or let the wizard copy them automatically, if your Modeler is found in a typical location
 
 ### 🔧 Manual Docker Configuration
 
@@ -94,10 +97,10 @@ ZEEBE_CLIENT_CLOUD_REGION=<cluster-region>
 ZEEBE_CLIENT_BROKER_GATEWAY_ADDRESS=zeebe:26500
 ```
 
-Create a data directory for the connector volume
+Create a data and .cache directory for the connector volume
 
 ```bash
-mkdir ./data
+mkdir ./data ./.cache
 ```
 and launch the connector runtime with a local zeebe cluster:
 

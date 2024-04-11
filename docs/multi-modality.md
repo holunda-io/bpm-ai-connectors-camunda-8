@@ -28,7 +28,7 @@ Additionally, the connectors accept URLs to files in Amazon S3 buckets or Azure 
 ```
 { 
     documentS3: "s3://test-bucket/pdfs/dummy.pdf",
-    documentAzure: "http://localhost:8080/audio.wav"
+    documentAzure: "https://myaccount.blob.core.windows.net/mycontainer/doc.jpg"
 }
 ```
 #### Amazon S3
@@ -55,9 +55,8 @@ The following LLMs support images natively and do not require conversion:
 - Anthropic Claude 3 Opus
 - Anthropic Claude 3 Sonnet
 - Anthropic Claude 3 Haiku
+- OpenAI GPT-4 Turbo
 - All `Visual Document Extraction Models` in the extract connector
-
-(OpenAI GPT-4 Vision is still not stable yet and GPT-4-Turbo is not multimodal)
 
 ### OCR
 You can use any text-only model with images or documents by selecting an OCR model in the dropdown.
