@@ -1,10 +1,10 @@
-ARG PYTHON_VERSION="3.11"
+ARG PYTHON="3.11"
 
 ###############################################################################
 # 2. Install python connector dependencies
 ###############################################################################
 # poetry setup code based on https://github.com/thehale/docker-python-poetry (does not provide multiarch images)
-FROM python:${PYTHON_VERSION} AS build-python
+FROM python:${PYTHON} AS build-python
 ARG POETRY_VERSION="1.6.1"
 
 ENV POETRY_VERSION=${POETRY_VERSION}
@@ -26,14 +26,14 @@ RUN poetry install --only main --no-root --no-cache
 ###############################################################################
 # 3. Final, minimal image that starts the connectors and feel engine process
 ###############################################################################
-FROM python:${PYTHON_VERSION}-slim
+FROM python:${PYTHON}-slim
 
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 COPY --chmod=755 ./feel-engine-wrapper/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
-COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /home/nonroot/.local/lib/python${PYTHON_VERSION}/site-packages
+COPY --from=build-python /app/.venv/lib/python${PYTHON}/site-packages /home/nonroot/.local/lib/python${PYTHON}/site-packages
 
 # Run two processes: connector runtime + feel engine wrapper
 COPY init.py .
