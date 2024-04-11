@@ -27,6 +27,7 @@ RUN poetry install --only main --no-root --no-cache
 # 3. Final, minimal image that starts the connectors and feel engine process
 ###############################################################################
 FROM python:${PYTHON}-slim
+ARG PYTHON
 
 ENV PYTHONUNBUFFERED=1
 
