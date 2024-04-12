@@ -35,6 +35,9 @@ WORKDIR /app
 COPY --chmod=755 ./feel-engine-wrapper/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
 COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /usr/local/lib/python${PYTHON_VERSION}/site-packages
+RUN apt-get update  \
+    && apt-get install -y --no-install-recommends poppler-utils  \
+    && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Run two processes: connector runtime + feel engine wrapper
 COPY init.py .
