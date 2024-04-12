@@ -52,4 +52,4 @@ COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /h
 
 # Run two processes: connector runtime + feel engine wrapper
 COPY init.py .
-CMD ["init.py", "./feel-wrapper", "python -m bpm_ai_connectors_c8.main"]
+CMD ["python3", "init.py", "./feel-wrapper", "python -m bpm_ai_connectors_c8.main"]
