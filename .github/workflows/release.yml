@@ -155,9 +155,6 @@ jobs:
           tags: |
             ${{ env.REGISTRY_IMAGE }}:${{ steps.vars.outputs.tag }}-${{ matrix.arch }}
             ${{ env.REGISTRY_IMAGE }}:latest-${{ matrix.arch }}
-      -
-        id: image
-        run: echo "::set-output name=image::$(echo ${{ env.REGISTRY_IMAGE }}:${{ steps.vars.outputs.tag }}-${{ matrix.arch }})"
 
   pytest-docker:
     needs: [build-push]
@@ -195,8 +192,8 @@ jobs:
         run: poetry install --only test --no-root --no-cache
       -
         name: Run pytest
-        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 CONNECTOR_IMAGE=${{ needs.build-push.outputs.image }}-amd64 OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest
-
+        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 CONNECTOR_IMAGE=${{ env.REGISTRY_IMAGE }}:${{ needs.build-push.outputs.tag }}-amd64 OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest
+        
   pytest-docker-inference:
     needs: [ build-push ]
     runs-on: ubuntu-latest
@@ -226,8 +223,8 @@ jobs:
       - name: Install dependencies
         run: poetry install --only test --no-root --no-cache
       - name: Run pytest
-        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 CONNECTOR_IMAGE=${{ needs.build-push.outputs.image }}-amd64 INFERENCE_IMAGE=holisticon/bpm-ai-inference:latest-cpu OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest
-
+        run: ZEEBE_TEST_IMAGE_TAG=8.4.0 CONNECTOR_IMAGE=${{ env.REGISTRY_IMAGE }}:${{ needs.build-push.outputs.tag }}-amd64 OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} poetry run pytest
+        
   create-push-manifest:
     runs-on: ubuntu-latest
     needs: [build-push, pytest-docker, pytest-docker-inference]
