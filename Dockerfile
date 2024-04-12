@@ -48,7 +48,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 COPY --from=build-jvm /app/target/feel-engine-wrapper-runner feel-wrapper
 COPY ./bpm-ai-connectors-c8/bpm_ai_connectors_c8/ ./bpm_ai_connectors_c8/
-COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /home/nonroot/.local/lib/python${PYTHON_VERSION}/site-packages
+COPY --from=build-python /app/.venv/lib/python${PYTHON_VERSION}/site-packages /usr/local/lib/python${PYTHON_VERSION}/site-packages
 
 # Run two processes: connector runtime + feel engine wrapper
 COPY init.py .
