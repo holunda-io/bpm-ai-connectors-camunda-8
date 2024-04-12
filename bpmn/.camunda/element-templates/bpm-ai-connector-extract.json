@@ -51,7 +51,7 @@
       "label": "LLM / Model",
       "group": "model",
       "type": "Dropdown",
-      "value": "gpt-4-turbo-preview",
+      "value": "gpt-4-turbo",
       "choices": [
         { "name": "Anthropic Claude 3 Opus (best)", "value": "claude-3-opus-20240229" },
         { "name": "Anthropic Claude 3 Sonnet", "value": "claude-3-sonnet-20240229" },
