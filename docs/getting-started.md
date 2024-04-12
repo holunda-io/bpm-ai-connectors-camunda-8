@@ -13,8 +13,9 @@ For example, if you input a variable containing the subject of an email, the lab
 
 ### Model
 
-By default, all connectors will use `OpenAI GPT-3.5 Turbo` model. This model is fine for many tasks and very cost-effective and fast.
-If you see undesired behavior for a complex task you should try `OpenAI GPT-4 Turbo`, and fall back to the slower, more expensive but usually smarter `OpenAI GPT-4` (non-Turbo) if needed.
+By default, all connectors will use the `OpenAI GPT-4 Turbo` model. This model is very capable and can natively work with images. 
+We also see very similar performance using `Anthropic Claude 3 Opus`, also natively supporting images. The best "bang for the buck" you will get from `Anthropic Claude 3 Haiku`, the fastest and cheapest model available and at the same time very capable for most tasks (also image enabled). 
+`OpenAI GPT-3.5 Turbo` is not recommended for any task, given Haiku's superior performance and price point.
 
 > [!TIP]
 > For using 100% local, open-source/open-access models, see [here](local-models.md).
