@@ -112,7 +112,7 @@ jobs:
           - arch: arm64
     runs-on: ubuntu-latest
     outputs:
-      image: ${{ steps.image.outputs.image }}
+      tag: ${{ steps.vars.outputs.tag }}
     steps:
       -
         name: Checkout code
