@@ -17,7 +17,7 @@ templates=(
 
 echo "[bpm.ai Wizard]"
 
-mkdir -p bpm-ai/data && cd bpm-ai || exit
+mkdir -p bpm-ai/data bpm-ai/.cache && cd bpm-ai || exit
 
 # download docker-compose.yml
 curl -sSL https://raw.githubusercontent.com/holunda-io/bpm-ai-connectors-camunda-8/main/docker-compose.yml -o docker-compose.yml
