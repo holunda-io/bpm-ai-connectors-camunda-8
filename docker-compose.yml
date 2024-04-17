@@ -1,7 +1,7 @@
 services:
 
   #####################################################################################################################
-  # AI Connectors                                              #
+  # AI Connectors                                                                                                     #
   #####################################################################################################################
 
   connectors:
@@ -30,7 +30,7 @@ services:
       - INFERENCE_SERVER_ADDRESS=bpm-ai-inference:6666
 
   #####################################################################################################################
-  # Optional extension for local AI inference - enabled by profile `--profile inference`                                                   #
+  # Optional extension for local AI inference - enabled by profile `--profile inference`                              #
   #####################################################################################################################
 
   bpm-ai-inference:
@@ -42,6 +42,10 @@ services:
     networks:
       - camunda-platform
     volumes:
+      - type: bind
+        source: ./data
+        target: /opt/bpm-ai
+        read_only: true
       - type: bind
         source: ./.cache
         target: /var/cache/bpm-ai
