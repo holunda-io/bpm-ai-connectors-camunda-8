@@ -213,4 +213,4 @@ done
 # Start docker compose with selected profile(s)
 ##############################################################################################################################
 
-eval "docker compose$profile_flags up -d"
+eval "docker compose$profile_flags up --pull -d"
