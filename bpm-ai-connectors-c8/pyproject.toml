@@ -14,7 +14,7 @@ pyzeebe = "^3.0.4"
 pydantic = "^2.5.3"
 argparse = "^1.4.0"
 pyro5 = "^5.15"
-bpm-ai = "1.6.1"
+bpm-ai = "1.6.2"
 
 
 [tool.poetry.group.test.dependencies]

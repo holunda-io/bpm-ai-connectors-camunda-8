@@ -456,13 +456,13 @@ crt = ["awscrt (==0.19.19)"]
 
 [[package]]
 name = "bpm-ai"
-version = "1.6.1"
+version = "1.6.2"
 description = "AI task automation for BPM engines."
 optional = false
 python-versions = "<3.12,>=3.11"
 files = [
-    {file = "bpm_ai-1.6.1-py3-none-any.whl", hash = "sha256:2846af8e179fe8b8f1e2f08aa0e3f86420ef841f342d5bff835466b192312cda"},
-    {file = "bpm_ai-1.6.1.tar.gz", hash = "sha256:5b008363cb10eb0b4f542e6a5da384387f9033de4297bb435eb098e0ab40991e"},
+    {file = "bpm_ai-1.6.2-py3-none-any.whl", hash = "sha256:0e186afc79323eeea52a5b2bc11e2180d26778c033b26b6116ac071643a9cfa9"},
+    {file = "bpm_ai-1.6.2.tar.gz", hash = "sha256:13d40c27320994230409a3d032b73be6ac37bfda59cac54568e3fd09f8e0b585"},
 ]
 
 [package.dependencies]
@@ -2570,4 +2570,4 @@ protobuf = ">=3,<4"
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "8605342a750349383f45f8d9b59b9a11b638ba33e1f359c3b351626f900cff80"
+content-hash = "af5f94a5d511a534c00f14f2ec1554cd8a2bbd073828ba2130fd9d2e01051d0a"
