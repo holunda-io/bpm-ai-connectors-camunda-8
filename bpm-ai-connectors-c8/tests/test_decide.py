@@ -44,6 +44,22 @@ def test_decide_string(vars_decide_string, runtime_selector, zeebe_test_client: 
     assert result['result']['decision'] == 'CANCEL_ORDER'
 
 
+def test_decide_string_multiple(vars_decide_string, runtime_selector, zeebe_test_client: ZeebeTestClient):
+    # given
+    variables = vars_decide_string
+    variables['instruction'] = "I would like to cancel my order and change my address."
+    zeebe_test_client.deploy_process("bpmn/test_decide_string_multi.bpmn")
+
+    # when
+    _, result = zeebe_test_client.create_process_instance_with_result(
+        "test_decide_string",
+        variables=vars_decide_string
+    )
+
+    # then
+    assert set(result['result']['decision']) == {'CANCEL_ORDER', 'CHANGE_ADDRESS'}
+
+
 def test_decide_boolean(vars_decide_boolean, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_decide_bool.bpmn")
