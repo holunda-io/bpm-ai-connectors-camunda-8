@@ -126,7 +126,7 @@
       "label": "Visual Document Extraction Model",
       "description": "If selected, this will be used for images or PDFs while the LLM or Text Extraction Model will be used for text inputs.",
       "group": "model",
-      "type": "Dropdown",
+      "type": "Hidden",
       "value": "none",
       "choices": [
         { "name": "None", "value": "none" },
@@ -144,7 +144,7 @@
       "label": "HuggingFace Hub DocVQA Model",
       "description": "Must support <code>document-question-answering</code> task.",
       "group": "model",
-      "type": "String",
+      "type": "Hidden",
       "value": "naver-clova-ix/donut-base-finetuned-docvqa",
       "feel": "optional",
       "binding": {

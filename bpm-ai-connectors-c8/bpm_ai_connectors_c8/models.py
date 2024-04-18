@@ -99,9 +99,9 @@ def model_id_to_qa(
 def model_id_to_vqa(
     model_id: str
 ) -> QuestionAnswering | None:
-    if model_id == "amazon-text-translate":
+    if model_id == "amazon-textract":
         return AmazonTextractDocVQA()
-    elif model_id == "azure-text-translation":
+    elif model_id == "azure-document-intelligence":
         return AzureDocVQA()
     elif '/' in model_id:
         return remote_model("TransformersDocVQA", model=model_id)

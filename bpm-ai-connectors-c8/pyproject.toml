@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bpm-ai-connectors-c8"
-version = "1.1.3"
+version = "1.2.0"
 description = "AI connectors for Camunda 8 based on the bpm-ai project."
 authors = ["Bennet Krause <bennet.krause@holisticon.de>"]
 repository = "https://github.com/holunda-io/bpm-ai-connectors-camunda-8"
@@ -14,7 +14,7 @@ pyzeebe = "^3.0.4"
 pydantic = "^2.5.3"
 argparse = "^1.4.0"
 pyro5 = "^5.15"
-bpm-ai = "1.5.0"
+bpm-ai = "1.6.1"
 
 
 [tool.poetry.group.test.dependencies]

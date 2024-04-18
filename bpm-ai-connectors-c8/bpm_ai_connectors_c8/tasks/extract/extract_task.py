@@ -39,7 +39,7 @@ async def extract(
             qa=qa,
             vqa=vqa,
             classifier=remote_model("TransformersClassifier"),  # non-configurable right now
-            token_classifier=remote_model("TransformersTokenClassifier"),  # non-configurable right now
+            token_classifier=remote_model("GlinerTokenClassifier"),  # non-configurable right now
             asr=asr,
             ocr=ocr,
             input_data=input_json,

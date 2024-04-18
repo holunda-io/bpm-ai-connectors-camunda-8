@@ -183,7 +183,7 @@
         "oneOf": [
           "gpt-3.5-turbo",
           "gpt-4",
-          "gpt-4-turbo-preview",
+          "gpt-4-turbo",
           "claude-3-opus-20240229",
           "claude-3-sonnet-20240229",
           "claude-3-haiku-20240307",
@@ -222,6 +222,21 @@
       "binding": {
         "type": "zeebe:input",
         "name": "output_type"
+      }
+    },
+    {
+      "label": "Output Mode",
+      "description": "Whether to decide for the single, most fitting value or a list of potentially multiple fitting values.",
+      "group": "decision",
+      "type": "Dropdown",
+      "value": "single",
+      "choices": [
+        { "name": "Single Value", "value": "single" },
+        { "name": "Multiple Values", "value": "multiple" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "output_mode"
       }
     },
     {

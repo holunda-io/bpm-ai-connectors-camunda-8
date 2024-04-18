@@ -22,7 +22,8 @@ async def decide(
         ocr: OCR | None = None,
         classifier: ZeroShotClassifier | None = None,
         possible_values: list[Any] | None = None,
-        strategy: str | None = None
+        strategy: str | None = None,
+        output_mode: str | None = None
 ):
     if llm:
         return await decide_llm(
@@ -33,6 +34,7 @@ async def decide(
             instructions=question,
             output_type=output_type,
             possible_values=possible_values,
+            multiple_decision_values=(output_mode == "multiple"),
             strategy=strategy
         )
     else:
@@ -44,4 +46,5 @@ async def decide(
             question=question,
             output_type=output_type,
             possible_values=possible_values,
+            multiple_decision_values=(output_mode == "multiple"),
         )
