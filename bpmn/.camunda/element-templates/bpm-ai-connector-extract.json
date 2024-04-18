@@ -136,10 +136,6 @@
       "binding": {
         "type": "zeebe:input",
         "name": "ocr"
-      },
-      "condition": {
-        "property": "vqa",
-        "equals": "none"
       }
     },
     {
