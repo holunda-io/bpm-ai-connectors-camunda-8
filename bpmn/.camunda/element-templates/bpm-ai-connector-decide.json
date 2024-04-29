@@ -127,9 +127,9 @@
       "type": "Dropdown",
       "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33",
       "choices": [
-        { "name": "DeBERTa Large English (local)", "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33" },
-        { "name": "DeBERTa Base English (local)", "value": "MoritzLaurer/deberta-v3-base-zeroshot-v1.1-all-33" },
-        { "name": "DeBERTa Base Multilingual (local)", "value": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli" },
+        { "name": "DeBERTa Large English (local)", "value": "MoritzLaurer/deberta-v3-large-zeroshot-v2.0" },
+        { "name": "DeBERTa Base English (local)", "value": "MoritzLaurer/deberta-v3-base-zeroshot-v2.0" },
+        { "name": "BGE-M3 Multilingual (local)", "value": "MoritzLaurer/bge-m3-zeroshot-v2.0" },
         { "name": "Custom HuggingFace Transformer (local)", "value": "custom" }
       ],
       "binding": {
@@ -165,7 +165,7 @@
       "description": "Must support <code>text-classification</code> or <code>zero-shot-classification</code> task.",
       "group": "model",
       "type": "String",
-      "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33",
+      "value": "MoritzLaurer/deberta-v3-large-zeroshot-v2.0",
       "feel": "optional",
       "binding": {
         "type": "zeebe:input",

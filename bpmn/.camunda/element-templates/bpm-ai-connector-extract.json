@@ -162,41 +162,6 @@
       }
     },
     {
-      "id": "vqa",
-      "label": "Visual Document Extraction Model",
-      "description": "If selected, this will be used for images or PDFs while the LLM or Text Extraction Model will be used for text inputs.",
-      "group": "model",
-      "type": "Hidden",
-      "value": "none",
-      "choices": [
-        { "name": "None", "value": "none" },
-        { "name": "Amazon Textract", "value": "amazon-textract" },
-        { "name": "Azure Document Intelligence", "value": "azure-document-intelligence" },
-        { "name": "Donut Base (local)", "value": "naver-clova-ix/donut-base-finetuned-docvqa" },
-        { "name": "Custom HuggingFace Transformer (local)", "value": "custom" }
-      ],
-      "binding": {
-        "type": "zeebe:input",
-        "name": "vqa"
-      }
-    },
-    {
-      "label": "HuggingFace Hub DocVQA Model",
-      "description": "Must support <code>document-question-answering</code> task.",
-      "group": "model",
-      "type": "Hidden",
-      "value": "naver-clova-ix/donut-base-finetuned-docvqa",
-      "feel": "optional",
-      "binding": {
-        "type": "zeebe:input",
-        "name": "custom_vqa"
-      },
-      "condition": {
-        "property": "vqa",
-        "equals": "custom"
-      }
-    },
-    {
       "label": "OCR Model",
       "description": "Can be used to enable text-only LLMs and models to work with images or PDFs.",
       "group": "model",
@@ -211,10 +176,6 @@
       "binding": {
         "type": "zeebe:input",
         "name": "ocr"
-      },
-      "condition": {
-        "property": "vqa",
-        "equals": "none"
       }
     },
     {

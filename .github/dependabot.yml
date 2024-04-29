@@ -5,13 +5,19 @@ updates:
   schedule:
     interval: weekly
   open-pull-requests-limit: 10
+  ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major"]
   labels:
-  - "Type: dependencies"
+    - "Type: dependencies"
 - package-ecosystem: docker
   directory: "/"
   schedule:
     interval: weekly
   open-pull-requests-limit: 5
+  ignore:
+    - dependency-name: "*"
+      update-types: ["version-update:semver-major"]
   labels:
     - "Type: dependencies"
 
