@@ -56,7 +56,7 @@ The following LLMs support images natively and do not require conversion:
 - Anthropic Claude 3 Sonnet
 - Anthropic Claude 3 Haiku
 - OpenAI GPT-4 Turbo
-- All `Visual Document Extraction Models` in the extract connector
+- `Image Classification` models in the decide connector
 
 ### OCR
 You can use any text-only model with images or documents by selecting an OCR model in the dropdown.

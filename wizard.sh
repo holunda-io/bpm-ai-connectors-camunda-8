@@ -15,7 +15,7 @@ templates=(
 # Download docker-compose.yml, create .env file and ./bpm-ai/data directory to mount into the container
 ##############################################################################################################################
 
-echo "[bpm.ai Wizard]"
+echo "[BPM AI Installation Wizard]"
 
 mkdir -p bpm-ai/data bpm-ai/.cache && cd bpm-ai || exit
 
@@ -36,7 +36,7 @@ fi
 
 # Ask for cluster_type if not determined by .env
 if [ -z "$cluster_type" ]; then
-  read -rp "Use Camunda Cloud or local cluster (started automatically)? [cloud/local] (default: local): " input_cluster_type
+  read -rp "Use Camunda 8 Cloud or local cluster (started automatically)? [cloud/local] (default: local): " input_cluster_type
   cluster_type=${input_cluster_type:-local}
 fi
 
@@ -67,12 +67,15 @@ fi
 if ! grep -q "OPENAI_API_KEY" .env; then
   read -rp "OpenAI API Key (leave blank if not needed): " x && echo "OPENAI_API_KEY=$x" >> .env
 fi
+if ! grep -q "ANTHROPIC_API_KEY" .env; then
+  read -rp "Anthropic API Key (leave blank if not needed): " x && echo "ANTHROPIC_API_KEY=$x" >> .env
+fi
 
 if [ "$cluster_type" = "local" ]; then
   profile_flags="$profile_flags --profile platform"
 fi
 
-read -rp "Enable local AI models for decide/extract/translate and OCR (larger download)? [y/n] (default: n): " inference
+read -rp "Enable local LLMs and AI models? [y/n] (default: n): " inference
 # Set 'n' as the default choice if the user just hits enter
 inference=${inference:-n}
 

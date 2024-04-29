@@ -1,4 +1,7 @@
 # Local Models
+> [!NOTE]
+> This section is about small, specialized, non-LLM transformer AI models.
+> [⏩ See here for local LLMs](local-llms.md)
 
 When starting the `bpm-ai-inference` extension container in addition to the main connector container, you gain the possibility to use free, 100% local AI models instead of API based services.
 
@@ -9,7 +12,7 @@ This means that accuracy will not always match that of a big LLM, but sometimes 
 Here are some general notes and limitations:
 * Average model size is 1-2 GB
 * Models are loaded on demand
-* For best experience, 16+ GB of RAM and at least 4 CPU cores should be available (check docker engine config)
+* For best experience, 16+ GB of RAM and at least 4 CPU cores should be available (**check docker engine config!**)
 * Most models work best with English. We try to provide multilingual alternatives, but mileage may vary
 * The models are usually less flexible and behave a bit differently than LLMs, the connectors try to mask that as good as possible. See details for specific connectors below
 
@@ -22,15 +25,19 @@ docker compose --profile inference up -d
 
 ## Decide Connector
 
-Select `Classifier` as `LLM / Model`.
+Select `Text Classifier` or `Image Classifier` as `LLM / Model`.
 
 Select a fitting model based on the desired speed/accuracy tradeoff and language.
 
-You can also use any model from the HuggingFace Hub that supports the `zero-shot-classification` task.
+You can also use any model from the HuggingFace Hub that supports the `zero-shot-classification` or `text-classification` task (or `zero-shot-image-classification` or `image-classification` for Image Classifier).
+
+In the case of `Image Classifier` you must provide a **single** variable as input that contains a path/url to an image file or single-page PDF (for multiple pages only the first is used). 
+This is because this kind of model can only accept a single image and there is no meaningful way to combine multiple results into one. Use multiple connectors/activities instead.
 
 #### Usage Differences to LLMs
-* List of possible values is always required
-* The decision task is best provided as a single, fully formed question
+* List of possible values is always required for zero-shot models (all that are pre-configured). 
+  * If your model has fixed output labels, `possible values` must be left empty!
+* The decision task is best left empty or provided as a single, fully formed question
 * The model does not provide a reasoning for its decision, the corresponding result field is null
 
 ## Extract Connector

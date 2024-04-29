@@ -75,6 +75,21 @@ def test_decide_boolean(vars_decide_boolean, runtime_selector, zeebe_test_client
 
 
 @local_inference()
+def test_decide_string_local(vars_decide_string, runtime_selector, zeebe_test_client: ZeebeTestClient):
+    # given
+    zeebe_test_client.deploy_process("bpmn/test_decide_string_local.bpmn")
+
+    # when
+    _, result = zeebe_test_client.create_process_instance_with_result(
+        "test_decide_string",
+        variables=vars_decide_string
+    )
+
+    # then
+    assert result['result']['decision'] == 'CANCEL_ORDER'
+
+
+@local_inference()
 def test_decide_classifier_string(vars_decide_string, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_decide_classifier_string.bpmn")

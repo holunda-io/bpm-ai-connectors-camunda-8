@@ -1,7 +1,7 @@
 import os
 from typing import Any
 
-from bpm_ai_core.classification.zero_shot_classifier import ZeroShotClassifier
+from bpm_ai_core.image_classification.image_classifier import ImageClassifier
 from bpm_ai_core.llm.anthropic_chat.anthropic_chat import ChatAnthropic
 from bpm_ai_core.llm.openai_chat.openai_chat import ChatOpenAI
 from bpm_ai_core.ocr.amazon_textract import AmazonTextractOCR
@@ -13,14 +13,15 @@ from bpm_ai_core.llm.common.llm import LLM
 from bpm_ai_core.ocr.ocr import OCR
 from bpm_ai_core.speech_recognition.asr import ASRModel
 from bpm_ai_core.speech_recognition.openai_whisper import OpenAIWhisperASR
+from bpm_ai_core.text_classification.text_classifier import TextClassifier
 from bpm_ai_core.translation.amazon_translate import AmazonTranslate
 from bpm_ai_core.translation.azure_translation import AzureTranslation
 from bpm_ai_core.translation.nmt import NMTModel
-from bpm_ai_core.util.remote_object import remote_object
+from bpm_ai_core.util.rpc import remote_object
 
 # job variable names that define model parameters that should not be injected into the task function
 # (instead only the final constructed model object is injected)
-EXTRA_VARS = ["custom_asr", "custom_classifier", "custom_qa", "custom_vqa", "custom_nmt", "model_endpoint"]
+EXTRA_VARS = ["custom_asr", "custom_classifier", "custom_image_classifier", "custom_qa", "custom_vqa", "custom_nmt", "model_endpoint", "model_filename"]
 
 
 def model_ids_to_models(kwargs: dict):
@@ -31,7 +32,9 @@ def model_ids_to_models(kwargs: dict):
     if "asr" in kwargs.keys():
         kwargs["asr"] = model_id_to_asr(kwargs.get("custom_asr", kwargs["asr"]))
     if "classifier" in kwargs.keys():
-        kwargs["classifier"] = model_id_to_classifier(kwargs.get("custom_classifier", kwargs["classifier"]))
+        kwargs["classifier"] = model_id_to_classifier(kwargs.get("custom_classifier", kwargs["classifier"]), kwargs)
+    if "image_classifier" in kwargs.keys():
+        kwargs["image_classifier"] = model_id_to_image_classifier(kwargs.get("custom_image_classifier", kwargs["image_classifier"]), kwargs)
     if "qa" in kwargs.keys():
         kwargs["qa"] = model_id_to_qa(kwargs.get("custom_qa", kwargs["qa"]))
     if "vqa" in kwargs.keys():
@@ -53,6 +56,10 @@ def model_id_to_llm(
         return ChatOpenAI.for_openai_compatible(endpoint=kwargs["model_endpoint"])
     elif model_id.startswith("claude"):
         return ChatAnthropic.for_anthropic(model=model_id)
+    elif model_id.startswith("groq"):
+        return ChatOpenAI.for_groq()
+    elif model_id == "local-llm":
+        return remote_model("ChatLlamaCpp", model=kwargs["local_llm"], filename=kwargs["model_filename"])
     else:
         return None
 
@@ -82,9 +89,17 @@ def model_id_to_asr(
 
 
 def model_id_to_classifier(
-    model_id: str
-) -> ZeroShotClassifier | None:
-    return remote_model("TransformersClassifier", model=model_id)
+    model_id: str,
+    kwargs: dict
+) -> TextClassifier | None:
+    return remote_model("TransformersClassifier", model=model_id, zero_shot=kwargs["possible_values"] is not None)
+
+
+def model_id_to_image_classifier(
+    model_id: str,
+    kwargs: dict
+) -> ImageClassifier | None:
+    return remote_model("TransformersImageClassifier", model=model_id, zero_shot=kwargs["possible_values"] is not None)
 
 
 def model_id_to_qa(
@@ -127,4 +142,4 @@ def remote_model(name: str, *args, **kwargs) -> Any:
     if not inference_server_address:
         raise Exception("INFERENCE_SERVER_ADDRESS env variable must be set if using local AI models.")
     host, port = inference_server_address.rsplit(":")
-    return remote_object(name, host=host, port=int(port), *args, **kwargs)
+    return remote_object(name, host, int(port), *args, **kwargs)

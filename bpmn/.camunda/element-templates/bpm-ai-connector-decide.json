@@ -57,11 +57,52 @@
         { "name": "OpenAI GPT-3.5 Turbo", "value": "gpt-3.5-turbo" },
         { "name": "Azure OpenAI", "value": "azure-openai" },
         { "name": "OpenAI Compatible Server", "value": "openai-compatible" },
-        { "name": "Classifier", "value": "none" }
+        { "name": "Groq Llama 3 70B", "value": "groq-llama3-70b-8192" },
+        { "name": "Local LLM", "value": "local-llm" },
+        { "name": "Text Classifier", "value": "text-classifier" },
+        { "name": "Image Classifier", "value": "image-classifier" }
       ],
       "binding": {
         "type": "zeebe:input",
         "name": "llm"
+      }
+    },
+    {
+      "label": "Local LLM",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "QuantFactory/Phi-3-mini-4k-instruct-GGUF",
+      "choices": [
+        { "name": "Microsoft Phi-3 Mini (local)", "value": "QuantFactory/Phi-3-mini-4k-instruct-GGUF" },
+        { "name": "Meta Llama 3 8B (local)", "value": "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF" },
+        { "name": "Mistral 7B (local)", "value": "NousResearch/Hermes-2-Pro-Mistral-7B-GGUF" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "local_llm"
+      },
+      "condition": {
+        "property": "llm",
+        "equals": "local-llm"
+      }
+    },
+    {
+      "label": "LLM Precision",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "*Q5_K_M.gguf",
+      "choices": [
+        { "name": "Low (smallest & fastest)", "value": "*Q2_K.gguf" },
+        { "name": "Balanced", "value": "*Q5_K_M.gguf" },
+        { "name": "High (largest & slowest)", "value": "*Q8_0.gguf" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "model_filename"
+      },
+      "condition": {
+        "property": "llm",
+        "equals": "local-llm"
       }
     },
     {
@@ -81,7 +122,7 @@
     },
     {
       "id": "classifier",
-      "label": "Classifier",
+      "label": "Text Classifier",
       "group": "model",
       "type": "Dropdown",
       "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33",
@@ -97,12 +138,31 @@
       },
       "condition": {
         "property": "llm",
-        "equals": "none"
+        "equals": "text-classifier"
+      }
+    },
+     {
+      "id": "image_classifier",
+      "label": "Image Classifier",
+      "group": "model",
+      "type": "Dropdown",
+      "value": "google/siglip-so400m-patch14-384",
+      "choices": [
+        { "name": "Google SigLIP 384x384 (local)", "value": "google/siglip-so400m-patch14-384" },
+        { "name": "Custom HuggingFace Transformer (local)", "value": "custom" }
+      ],
+      "binding": {
+        "type": "zeebe:input",
+        "name": "image_classifier"
+      },
+      "condition": {
+        "property": "llm",
+        "equals": "image-classifier"
       }
     },
     {
-      "label": "HuggingFace Hub Classification Model",
-      "description": "Must support <code>zero-shot-classification</code> task.",
+      "label": "HuggingFace Hub Text Classification Model",
+      "description": "Must support <code>text-classification</code> or <code>zero-shot-classification</code> task.",
       "group": "model",
       "type": "String",
       "value": "MoritzLaurer/deberta-v3-large-zeroshot-v1.1-all-33",
@@ -113,6 +173,22 @@
       },
       "condition": {
         "property": "classifier",
+        "equals": "custom"
+      }
+    },
+    {
+      "label": "HuggingFace Hub Image Classification Model",
+      "description": "Must support <code>image-classification</code> or <code>zero-shot-image-classification</code> task.",
+      "group": "model",
+      "type": "String",
+      "value": "google/siglip-so400m-patch14-384",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "custom_image_classifier"
+      },
+      "condition": {
+        "property": "image_classifier",
         "equals": "custom"
       }
     },
@@ -188,7 +264,9 @@
           "claude-3-sonnet-20240229",
           "claude-3-haiku-20240307",
           "azure-openai",
-          "openai-compatible"
+          "openai-compatible",
+          "groq-llama3-70b-8192",
+          "local-llm"
         ]
       }
     },

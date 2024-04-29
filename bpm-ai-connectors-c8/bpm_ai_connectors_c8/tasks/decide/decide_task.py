@@ -1,10 +1,11 @@
 from typing import Any
 
 from bpm_ai.decide.decide import decide_llm, decide_classifier
-from bpm_ai_core.classification.zero_shot_classifier import ZeroShotClassifier
+from bpm_ai_core.image_classification.image_classifier import ImageClassifier
 from bpm_ai_core.llm.common.llm import LLM
 from bpm_ai_core.ocr.ocr import OCR
 from bpm_ai_core.speech_recognition.asr import ASRModel
+from bpm_ai_core.text_classification.text_classifier import TextClassifier
 from pyzeebe import ZeebeTaskRouter
 
 from bpm_ai_connectors_c8.decorators import ai_task
@@ -20,7 +21,8 @@ async def decide(
         output_type: str,
         asr: ASRModel | None = None,
         ocr: OCR | None = None,
-        classifier: ZeroShotClassifier | None = None,
+        classifier: TextClassifier | None = None,
+        image_classifier: ImageClassifier | None = None,
         possible_values: list[Any] | None = None,
         strategy: str | None = None,
         output_mode: str | None = None
@@ -40,6 +42,7 @@ async def decide(
     else:
         return await decide_classifier(
             classifier=classifier,
+            image_classifier=image_classifier,
             asr=asr,
             ocr=ocr,
             input_data=input_json,

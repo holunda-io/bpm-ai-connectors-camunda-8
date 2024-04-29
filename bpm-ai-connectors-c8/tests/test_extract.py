@@ -60,6 +60,21 @@ def test_extract_multiple(vars_extract_multiple, runtime_selector, zeebe_test_cl
 
 
 @local_inference()
+def test_extract_single_local(vars_extract_single, runtime_selector, zeebe_test_client: ZeebeTestClient):
+    # given
+    zeebe_test_client.deploy_process("bpmn/test_extract_single_local.bpmn")
+
+    # when
+    _, result = zeebe_test_client.create_process_instance_with_result(
+        "test_extract_single",
+        variables=vars_extract_single
+    )
+
+    # then
+    assert result['result'] == {'name': 'John Watts', 'age': 20}
+
+
+@local_inference()
 def test_extract_qa_single(vars_extract_single, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     zeebe_test_client.deploy_process("bpmn/test_extract_qa_single.bpmn")

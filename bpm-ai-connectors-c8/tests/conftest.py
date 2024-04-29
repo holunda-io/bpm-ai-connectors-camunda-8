@@ -97,7 +97,7 @@ def docker_inference_runtime():
     container = DockerContainer(os.environ.get('INFERENCE_IMAGE'))
     container.with_exposed_ports(6666)
     container.start()
-    wait_for_logs(container, "Object daemon created for 0.0.0.0:6666")
+    wait_for_logs(container, "======== Running on http://0.0.0.0:6666 ========")
     yield container
     stdout, stderr = container.get_logs()
     logger.info(stdout)

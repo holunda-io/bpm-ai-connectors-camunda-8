@@ -13,7 +13,7 @@ The connectors automate activities in business processes that previously require
 * ✍🏼 **Text Generation** for emails, letters, etc.
 * 🌍 **Translation**
 
-Use API-based LLMs and AI services like OpenAI GPT-4 or go **100% local with open-access AI models** from [HuggingFace Hub](https://huggingface.co/models), 
+Use API-based LLMs and AI services like OpenAI GPT-4 or go **100% local with open-access LLMs and AI models** from [HuggingFace Hub](https://huggingface.co/models), 
 local OCR with tesseract and local audio transcription with Whisper. All running CPU-only, no GPU required.
 
 <figure>
@@ -21,6 +21,7 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 </figure>
 
 ### 🆕 What's New
+* Use **100% local LLMs** with zero configuration!
 * Anthropic Claude 3 model options (all support images/PDFs)
 * New GPT-4 Turbo (supports images/PDFs)
 * Use any OpenAI compatible LLM API
@@ -35,7 +36,6 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 
 ### 🔜 Upcoming
 * higher quality local OCR
-* support for local, open-access LLMs
 
 ---
 
@@ -47,7 +47,8 @@ local OCR with tesseract and local audio transcription with Whisper. All running
 * 📚 [Connector Documentation](#-connector-documentation)
   * [Getting Started](docs/getting-started.md)
   * [Connectors](docs/base-connectors.md)
-  * [Use Local Models](docs/local-models.md)
+  * [Use Local LLMs](docs/local-llms.md)
+  * [Use Local Specialized Models](docs/local-models.md)
   * [Use Images & Audio](docs/multi-modality.md)
   * [Example Usecases & HowTos](docs/usecases.md)
 * 🕵 [Logging & Tracing](#-logging--tracing)
@@ -120,8 +121,7 @@ docker compose --profile inference --profile platform up -d
 
 Two types of Docker images are available on [DockerHub](https://hub.docker.com/r/holisticon/bpm-ai-connectors-camunda-8):
 * The main image suitable for users only needing the Anthropic/OpenAI and Azure/Amazon APIs (and other future API-based services)
-* An optional inference image that contains all dependencies to run transformer AI models (and more) **locally on the CPU**, 
-allowing you to use the `decide`, `extract` and `translate` connectors 100% locally and perform OCR without any API key needed
+* An optional inference image that contains all dependencies to run local LLMs and other AI models **locally on the CPU**
 
 ## 📚 Connector Documentation
 
@@ -129,7 +129,8 @@ Learn how to effectively use the connectors in your processes, use fully local A
 
 * [Getting Started](docs/getting-started.md)
 * [Connectors](docs/base-connectors.md)
-* [Use Local Models](docs/local-models.md)
+* [Use Local LLMs](docs/local-llms.md)
+* [Use Local Specialized Models](docs/local-models.md)
 * [Use Images & Audio](docs/multi-modality.md)
 * [Example Usecases & HowTos](docs/usecases.md)
 

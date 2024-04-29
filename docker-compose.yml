@@ -63,7 +63,7 @@ services:
 
   zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
     profiles: [platform]
-    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-latest}
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.5.0}
     container_name: zeebe
     ports:
       - "26500:26500"
@@ -93,7 +93,7 @@ services:
 
   operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
     profiles: [platform]
-    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-latest}
+    image: camunda/operate:${CAMUNDA_PLATFORM_VERSION:-8.5.0}
     container_name: operate
     ports:
       - "8081:8080"
@@ -117,7 +117,7 @@ services:
 
   tasklist: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#tasklist
     profiles: [platform]
-    image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-latest}
+    image: camunda/tasklist:${CAMUNDA_PLATFORM_VERSION:-8.5.0}
     container_name: tasklist
     ports:
       - "8082:8080"
