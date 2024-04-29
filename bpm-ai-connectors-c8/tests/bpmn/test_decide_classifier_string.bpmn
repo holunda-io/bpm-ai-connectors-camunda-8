@@ -16,7 +16,7 @@
           <zeebe:input source="none" target="llm" />
           <zeebe:input source="none" target="asr" />
           <zeebe:input source="none" target="ocr" />
-          <zeebe:input source="MoritzLaurer/deberta-v3-base-zeroshot-v1.1-all-33" target="classifier" />
+          <zeebe:input source="MoritzLaurer/deberta-v3-base-zeroshot-v2.0" target="classifier" />
           <zeebe:input source="={ &#10;  &#34;text&#34;: text&#10;}" target="input_json" />
           <zeebe:input source="=instruction" target="question" />
           <zeebe:input source="string" target="output_type" />

@@ -93,7 +93,7 @@ def test_extract_qa_single(vars_extract_single, runtime_selector, zeebe_test_cli
 def test_extract_qa_multiple(vars_extract_multiple, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     variables = {
-        "text": "We received the following: #123 and #353. Please pack them up.",
+        "text": "We received the following orders: #123 and #353. Please pack them up.",
         "schema": {"order_number": {"type": "integer", "description": "What is the order number?"}}
     }
     zeebe_test_client.deploy_process("bpmn/test_extract_qa_multiple.bpmn")
