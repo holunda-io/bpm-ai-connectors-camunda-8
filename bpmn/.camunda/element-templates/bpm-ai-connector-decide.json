@@ -280,9 +280,6 @@
       "binding": {
         "type": "zeebe:input",
         "name": "question"
-      },
-      "constraints": {
-        "notEmpty": true
       }
     },
     {
