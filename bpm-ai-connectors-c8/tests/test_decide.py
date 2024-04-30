@@ -3,6 +3,7 @@ import logging
 import pytest
 from pytest_zeebe.client.zeebe_test_client import ZeebeTestClient
 
+from bpm_ai_connectors_c8.tasks.decide.decide_task import decide
 from tests.conftest import local_inference
 
 logger = logging.getLogger(__name__)
@@ -14,8 +15,8 @@ def vars_decide_string():
         "text": "I would like to cancel my order",
         "instruction": "What is the intention of the customer?",
         "options": [
-            "CANCEL_ORDER",
-            "CHANGE_ADDRESS",
+            "CANCEL ORDER",
+            "CHANGE ADDRESS",
             "COMPLAINT",
             "OTHER"
         ]
@@ -41,7 +42,7 @@ def test_decide_string(vars_decide_string, runtime_selector, zeebe_test_client: 
     )
 
     # then
-    assert result['result']['decision'] == 'CANCEL_ORDER'
+    assert result['result']['decision'] == 'CANCEL ORDER'
 
 
 def test_decide_string_multiple(vars_decide_string, runtime_selector, zeebe_test_client: ZeebeTestClient):
@@ -57,7 +58,7 @@ def test_decide_string_multiple(vars_decide_string, runtime_selector, zeebe_test
     )
 
     # then
-    assert set(result['result']['decision']) == {'CANCEL_ORDER', 'CHANGE_ADDRESS'}
+    assert set(result['result']['decision']) == {'CANCEL ORDER', 'CHANGE ADDRESS'}
 
 
 def test_decide_boolean(vars_decide_boolean, runtime_selector, zeebe_test_client: ZeebeTestClient):
@@ -86,7 +87,7 @@ def test_decide_string_local(vars_decide_string, runtime_selector, zeebe_test_cl
     )
 
     # then
-    assert result['result']['decision'] == 'CANCEL_ORDER'
+    assert result['result']['decision'] == 'CANCEL ORDER'
 
 
 @local_inference()
@@ -101,7 +102,7 @@ def test_decide_classifier_string(vars_decide_string, runtime_selector, zeebe_te
     )
 
     # then
-    assert result['result']['decision'] == 'CANCEL_ORDER'
+    assert result['result']['decision'] == 'CANCEL ORDER'
 
 
 @local_inference()

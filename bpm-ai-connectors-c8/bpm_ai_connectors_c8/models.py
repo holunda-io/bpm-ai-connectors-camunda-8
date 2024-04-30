@@ -92,14 +92,14 @@ def model_id_to_classifier(
     model_id: str,
     kwargs: dict
 ) -> TextClassifier | None:
-    return remote_model("TransformersClassifier", model=model_id, zero_shot=kwargs["possible_values"] is not None)
+    return remote_model("TransformersClassifier", model=model_id, zero_shot=(kwargs.get("possible_values", None) is not None or kwargs.get("output_type", None) == "boolean"))
 
 
 def model_id_to_image_classifier(
     model_id: str,
     kwargs: dict
 ) -> ImageClassifier | None:
-    return remote_model("TransformersImageClassifier", model=model_id, zero_shot=kwargs["possible_values"] is not None)
+    return remote_model("TransformersImageClassifier", model=model_id, zero_shot=(kwargs.get("possible_values", None) is not None or kwargs.get("output_type", None) == "boolean"))
 
 
 def model_id_to_qa(

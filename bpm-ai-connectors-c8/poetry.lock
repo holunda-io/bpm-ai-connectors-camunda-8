@@ -1203,13 +1203,13 @@ files = [
 
 [[package]]
 name = "langfuse"
-version = "2.27.2"
+version = "2.27.3"
 description = "A client library for accessing langfuse"
 optional = false
 python-versions = "<4.0,>=3.8.1"
 files = [
-    {file = "langfuse-2.27.2-py3-none-any.whl", hash = "sha256:6556dcd942ed596c6cbcd688bfed2aeca37065b68b9009f5e4ed829a32a9e513"},
-    {file = "langfuse-2.27.2.tar.gz", hash = "sha256:7b77f188fd72261473fb329151a15ff676c49261b5084eb25a3ded49d1577234"},
+    {file = "langfuse-2.27.3-py3-none-any.whl", hash = "sha256:e5522abac56cb64b08fdcfc8a81317cb322b361cbd693f3fd7a19200e1fe5efc"},
+    {file = "langfuse-2.27.3.tar.gz", hash = "sha256:4d6b9434702c3d729a8b898f07e6065a8026ba568bdae603813b4f0678a17884"},
 ]
 
 [package.dependencies]
@@ -1451,13 +1451,13 @@ signedtoken = ["cryptography (>=3.0.0,<4)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
 name = "openai"
-version = "1.23.6"
+version = "1.24.0"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.23.6-py3-none-any.whl", hash = "sha256:f406c76ba279d16b9aca5a89cee0d968488e39f671f4dc6f0d690ac3c6f6fca1"},
-    {file = "openai-1.23.6.tar.gz", hash = "sha256:612de2d54cf580920a1156273f84aada6b3dca26d048f62eb5364a4314d7f449"},
+    {file = "openai-1.24.0-py3-none-any.whl", hash = "sha256:81eed0d850a35a170797d15d94144eb993459411ba56325891ab488708f1b612"},
+    {file = "openai-1.24.0.tar.gz", hash = "sha256:9cc6ac92bac9d57c8d4bc101e9e4c7201304c88efb89320d0f0348625fa8647d"},
 ]
 
 [package.dependencies]
