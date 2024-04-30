@@ -3,7 +3,6 @@ import logging
 import pytest
 from pytest_zeebe.client.zeebe_test_client import ZeebeTestClient
 
-from bpm_ai_connectors_c8.tasks.decide.decide_task import decide
 from tests.conftest import local_inference
 
 logger = logging.getLogger(__name__)
