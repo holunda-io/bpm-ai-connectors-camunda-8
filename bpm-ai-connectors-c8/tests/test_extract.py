@@ -93,8 +93,8 @@ def test_extract_qa_single(vars_extract_single, runtime_selector, zeebe_test_cli
 def test_extract_qa_multiple(vars_extract_multiple, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
     variables = {
-        "text": "We received orders with the following order numbers: #123 and #353. Please pack them up.",
-        "schema": {"order_number": {"type": "integer", "description": "What is the order number?"}}
+        "text": "We received the following orders: Pizza (10.99€) and Steak (28.89€).",
+        "schema": {"order": {"type": "string", "description": "What is the meal name?"}}
     }
     zeebe_test_client.deploy_process("bpmn/test_extract_qa_multiple.bpmn")
 
@@ -105,4 +105,4 @@ def test_extract_qa_multiple(vars_extract_multiple, runtime_selector, zeebe_test
     )
 
     # then
-    assert sorted(result['result'], key=repr) == sorted([{'order_number': 123}, {'order_number': 353}], key=repr)
+    assert sorted(result['result'], key=repr) == sorted([{'order': "Pizza"}, {'order': "Steak"}], key=repr)

@@ -20,7 +20,7 @@
           <zeebe:input source="={ &#10;  &#34;text&#34;: text&#10;}" target="input_json" />
           <zeebe:input source="=schema" target="output_schema" />
           <zeebe:input source="MULTIPLE" target="mode" />
-          <zeebe:input source="Order number" target="entities_description" />
+          <zeebe:input source="Meal" target="entities_description" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="result_expression" value="={&#10;  result: result&#10;}" />
