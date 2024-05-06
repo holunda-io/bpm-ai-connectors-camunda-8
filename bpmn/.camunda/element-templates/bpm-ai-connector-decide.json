@@ -275,6 +275,7 @@
       "description": "Question to decide. For LLMs, this can also be a more complex task.",
       "group": "decision",
       "type": "Text",
+      "optional": true,
       "feel": "optional",
       "value": "What ...?",
       "binding": {
