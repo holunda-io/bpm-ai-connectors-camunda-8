@@ -6,7 +6,7 @@
   <artifactId>feel-engine-wrapper</artifactId>
   <version>1.0</version>
   <properties>
-    <camunda-connectors.version>8.4.4</camunda-connectors.version>
+    <camunda-connectors.version>8.5.4</camunda-connectors.version>
     <compiler-plugin.version>3.11.0</compiler-plugin.version>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
