@@ -60,7 +60,7 @@
         { "name": "Azure OpenAI", "value": "azure-openai" },
         { "name": "OpenAI Compatible Server", "value": "openai-compatible" },
         { "name": "Groq Llama 3 70B", "value": "groq-llama3-70b-8192" },
-        { "name": "Local LLM", "value": "local-llm" }
+        { "name": "Local LLM", "value": "local-llm" },
         { "name": "Neural Machine Translation", "value": "none" }
       ],
       "binding": {
