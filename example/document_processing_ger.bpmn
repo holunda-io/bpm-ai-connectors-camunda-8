@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1o6kwc1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:process id="Process_1wxmzb8" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Dokument eingegangen">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=&#34;/opt/bpm-ai/document2.pdf&#34;" target="document" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_094jdsw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_094jdsw" sourceRef="StartEvent_1" targetRef="Activity_1kavo35" />
+    <bpmn:serviceTask id="Activity_1kavo35" name="Dokument klassifizieren" zeebe:modelerTemplate="io.holunda.connector.decide.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0yMCAxNEMyMS4xMDQ2IDE0IDIyIDEzLjEwNDYgMjIgMTJDMjIgMTAuODk1NCAyMS4xMDQ2IDEwIDIwIDEwQzE4Ljg5NTQgMTAgMTggMTAuODk1NCAxOCAxMkMxOCAxMy4xMDQ2IDE4Ljg5NTQgMTQgMjAgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCA2QzIxLjEwNDYgNiAyMiA1LjEwNDU3IDIyIDRDMjIgMi44OTU0MyAyMS4xMDQ2IDIgMjAgMkMxOC44OTU0IDIgMTggMi44OTU0MyAxOCA0QzE4IDUuMTA0NTcgMTguODk1NCA2IDIwIDZaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCAyMkMyMS4xMDQ2IDIyIDIyIDIxLjEwNDYgMjIgMjBDMjIgMTguODk1NCAyMS4xMDQ2IDE4IDIwIDE4QzE4Ljg5NTQgMTggMTggMTguODk1NCAxOCAyMEMxOCAyMS4xMDQ2IDE4Ljg5NTQgMjIgMjAgMjJaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik00IDE0QzUuMTA0NTcgMTQgNiAxMy4xMDQ2IDYgMTJDNiAxMC44OTU0IDUuMTA0NTcgMTAgNCAxMEMyLjg5NTQzIDEwIDIgMTAuODk1NCAyIDEyQzIgMTMuMTA0NiAyLjg5NTQzIDE0IDQgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02IDEySDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xOCA0SDE0QzEyIDQgMTEgNSAxMSA3VjE3QzExIDE5IDEyIDIwIDE0IDIwSDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-decide:2" />
+        <zeebe:ioMapping>
+          <zeebe:input source="text-classifier" target="llm" />
+          <zeebe:input source="MoritzLaurer/deberta-v3-large-zeroshot-v2.0" target="classifier" />
+          <zeebe:input source="tesseract" target="ocr" />
+          <zeebe:input source="none" target="asr" />
+          <zeebe:input source="={ &#34;document&#34;: document }" target="input_json" />
+          <zeebe:input source="What kind of document is that ?" target="question" />
+          <zeebe:input source="string" target="output_type" />
+          <zeebe:input source="single" target="output_mode" />
+          <zeebe:input source="=[&#10;  &#34;INVOICE&#34;,&#10;  &#34;APPLICATION&#34;,&#10;  &#34;COMPLAINT&#34;&#10;]" target="possible_values" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="result_expression" value="={&#10;  documentType: result.decision,&#10;  documentTypeReasoning: result.reasoning&#10;}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_094jdsw</bpmn:incoming>
+      <bpmn:outgoing>Flow_16i5grr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0b2igtf" name="Typ?">
+      <bpmn:incoming>Flow_16i5grr</bpmn:incoming>
+      <bpmn:outgoing>Flow_164ftyb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1db2ahx</bpmn:outgoing>
+      <bpmn:outgoing>Flow_16w67s2</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_16i5grr" sourceRef="Activity_1kavo35" targetRef="Gateway_0b2igtf" />
+    <bpmn:endEvent id="Event_0vdpxhs" name="Rechnung verarbeitet">
+      <bpmn:incoming>Flow_14l5k7y</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_164ftyb" name="Rechnung" sourceRef="Gateway_0b2igtf" targetRef="Activity_12rnwic">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=documentType = "INVOICE"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1q2bclc">
+      <bpmn:incoming>Flow_0pu6v56</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1db2ahx" name="Antrag" sourceRef="Gateway_0b2igtf" targetRef="Activity_0e2nffw">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=documentType = "APPLICATION"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0ym85dv" name="Beschwerde &#34;bearbeitet&#34;">
+      <bpmn:incoming>Flow_16w67s2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_16w67s2" name="Beschwerde" sourceRef="Gateway_0b2igtf" targetRef="Event_0ym85dv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=documentType = "COMPLAINT"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0dnr5as" sourceRef="Activity_12rnwic" targetRef="Activity_01kgov0" />
+    <bpmn:serviceTask id="Activity_12rnwic" name="Rechnungs-details extrahieren" zeebe:modelerTemplate="io.holunda.connector.extract.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-extract:2" />
+        <zeebe:ioMapping>
+          <zeebe:input source="none" target="llm" />
+          <zeebe:input source="deepset/deberta-v3-large-squad2" target="qa" />
+          <zeebe:input source="tesseract" target="ocr" />
+          <zeebe:input source="none" target="asr" />
+          <zeebe:input source="={ &#34;document&#34;: document }" target="input_json" />
+          <zeebe:input source="={&#10;  invoiceNumber: &#34;invoice number&#34;,&#10;  total: { type: &#34;number&#34;, description: &#34;the total amount due&#34; },&#10;  dueDate: &#34;the due date&#34;&#10;}" target="output_schema" />
+          <zeebe:input source="SINGLE" target="mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="result_expression" value="={invoice: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_164ftyb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dnr5as</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_14l5k7y" sourceRef="Activity_01kgov0" targetRef="Event_0vdpxhs" />
+    <bpmn:sendTask id="Activity_01kgov0" name="An Accounting schicken">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="dummy" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0dnr5as</bpmn:incoming>
+      <bpmn:outgoing>Flow_14l5k7y</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_1s5bie9" sourceRef="Activity_0e2nffw" targetRef="Activity_1xoa1zp" />
+    <bpmn:serviceTask id="Activity_0e2nffw" name="Antragsdetails extrahieren" zeebe:modelerTemplate="io.holunda.connector.extract.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xNC4zMjAxIDE5LjA3QzE0LjMyMDEgMTkuNjggMTMuOTIgMjAuNDggMTMuNDEgMjAuNzlMMTIuMDAwMSAyMS43QzEwLjY5MDEgMjIuNTEgOC44NzAwNiAyMS42IDguODcwMDYgMTkuOThWMTQuNjNDOC44NzAwNiAxMy45MiA4LjQ3MDA2IDEzLjAxIDguMDYwMDYgMTIuNTFMNC4yMjAwMyA4LjQ3QzMuNzEwMDMgNy45NiAzLjMxMDA2IDcuMDYwMDEgMy4zMTAwNiA2LjQ1MDAxVjQuMTNDMy4zMTAwNiAyLjkyIDQuMjIwMDggMi4wMTAwMSA1LjMzMDA4IDIuMDEwMDFIMTguNjdDMTkuNzggMi4wMTAwMSAyMC42OTAxIDIuOTIgMjAuNjkwMSA0LjAzVjYuMjVDMjAuNjkwMSA3LjA2IDIwLjE4MDEgOC4wNzAwMSAxOS42ODAxIDguNTcwMDEiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTYuMDcgMTYuNTJDMTcuODM3MyAxNi41MiAxOS4yNyAxNS4wODczIDE5LjI3IDEzLjMyQzE5LjI3IDExLjU1MjcgMTcuODM3MyAxMC4xMiAxNi4wNyAxMC4xMkMxNC4zMDI3IDEwLjEyIDEyLjg3IDExLjU1MjcgMTIuODcgMTMuMzJDMTIuODcgMTUuMDg3MyAxNC4zMDI3IDE2LjUyIDE2LjA3IDE2LjUyWiIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTkuODcgMTcuMTJMMTguODcgMTYuMTIiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-extract:2" />
+        <zeebe:ioMapping>
+          <zeebe:input source="none" target="llm" />
+          <zeebe:input source="deepset/deberta-v3-large-squad2" target="qa" />
+          <zeebe:input source="tesseract" target="ocr" />
+          <zeebe:input source="none" target="asr" />
+          <zeebe:input source="={ &#34;document&#34;: document }" target="input_json" />
+          <zeebe:input source="={&#10;  name: &#34;the full name of the applicant&#34;,&#10;  date: &#34;the date of the application&#34;&#10;}" target="output_schema" />
+          <zeebe:input source="SINGLE" target="mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="result_expression" value="={application: result}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1db2ahx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s5bie9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_14zhttf" sourceRef="Activity_0kwsw28" targetRef="Activity_0aw27m0" />
+    <bpmn:userTask id="Activity_0kwsw28" name="Antrag prüfen">
+      <bpmn:incoming>Flow_1s57xbs</bpmn:incoming>
+      <bpmn:outgoing>Flow_14zhttf</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0viw79a" sourceRef="Activity_1xoa1zp" targetRef="Gateway_1izxl8p" />
+    <bpmn:serviceTask id="Activity_1xoa1zp" name="Sprache erkennen" zeebe:modelerTemplate="io.holunda.connector.decide.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0yMCAxNEMyMS4xMDQ2IDE0IDIyIDEzLjEwNDYgMjIgMTJDMjIgMTAuODk1NCAyMS4xMDQ2IDEwIDIwIDEwQzE4Ljg5NTQgMTAgMTggMTAuODk1NCAxOCAxMkMxOCAxMy4xMDQ2IDE4Ljg5NTQgMTQgMjAgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCA2QzIxLjEwNDYgNiAyMiA1LjEwNDU3IDIyIDRDMjIgMi44OTU0MyAyMS4xMDQ2IDIgMjAgMkMxOC44OTU0IDIgMTggMi44OTU0MyAxOCA0QzE4IDUuMTA0NTcgMTguODk1NCA2IDIwIDZaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yMCAyMkMyMS4xMDQ2IDIyIDIyIDIxLjEwNDYgMjIgMjBDMjIgMTguODk1NCAyMS4xMDQ2IDE4IDIwIDE4QzE4Ljg5NTQgMTggMTggMTguODk1NCAxOCAyMEMxOCAyMS4xMDQ2IDE4Ljg5NTQgMjIgMjAgMjJaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik00IDE0QzUuMTA0NTcgMTQgNiAxMy4xMDQ2IDYgMTJDNiAxMC44OTU0IDUuMTA0NTcgMTAgNCAxMEMyLjg5NTQzIDEwIDIgMTAuODk1NCAyIDEyQzIgMTMuMTA0NiAyLjg5NTQzIDE0IDQgMTRaIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02IDEySDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0xOCA0SDE0QzEyIDQgMTEgNSAxMSA3VjE3QzExIDE5IDEyIDIwIDE0IDIwSDE4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-decide:2" />
+        <zeebe:ioMapping>
+          <zeebe:input source="text-classifier" target="llm" />
+          <zeebe:input source="custom" target="classifier" />
+          <zeebe:input source="papluca/xlm-roberta-base-language-detection" target="custom_classifier" />
+          <zeebe:input source="tesseract" target="ocr" />
+          <zeebe:input source="none" target="asr" />
+          <zeebe:input source="={ &#34;document&#34;: document }" target="input_json" />
+          <zeebe:input source="What language is the application written in?" target="question" />
+          <zeebe:input source="string" target="output_type" />
+          <zeebe:input source="single" target="output_mode" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="result_expression" value="={&#10;  language: result.decision,&#10;  languageReasoning: result.reasoning&#10;}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1s5bie9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0viw79a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1izxl8p" name="Deutsch?" default="Flow_0cra7ec">
+      <bpmn:incoming>Flow_0viw79a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wuk0ex</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0cra7ec</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0wuk0ex" sourceRef="Gateway_1izxl8p" targetRef="Gateway_1wnepcw">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=language = "de"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0cra7ec" sourceRef="Gateway_1izxl8p" targetRef="Activity_0t30b9c" />
+    <bpmn:exclusiveGateway id="Gateway_1wnepcw">
+      <bpmn:incoming>Flow_18sws7j</bpmn:incoming>
+      <bpmn:incoming>Flow_0wuk0ex</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s57xbs</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_18sws7j" sourceRef="Activity_0t30b9c" targetRef="Gateway_1wnepcw" />
+    <bpmn:sequenceFlow id="Flow_1s57xbs" sourceRef="Gateway_1wnepcw" targetRef="Activity_0kwsw28" />
+    <bpmn:serviceTask id="Activity_0t30b9c" name="Antrag übersetzen" zeebe:modelerTemplate="io.holunda.connector.translate.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xOS4wNiAxOC42Njk5TDE2LjkyIDE0LjM5OTlMMTQuNzggMTguNjY5OSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTUuMTY5OSAxNy45MDk5SDE4LjY4OTkiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE2LjkyMDEgMjIuMDAwMUMxNC4xMjAxIDIyLjAwMDEgMTEuODQwMSAxOS43MyAxMS44NDAxIDE2LjkyQzExLjg0MDEgMTQuMTIgMTQuMTEwMSAxMS44NDAxIDE2LjkyMDEgMTEuODQwMUMxOS43MjAxIDExLjg0MDEgMjIuMDAwMSAxNC4xMSAyMi4wMDAxIDE2LjkyQzIyLjAwMDEgMTkuNzMgMTkuNzMwMSAyMi4wMDAxIDE2LjkyMDEgMjIuMDAwMVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTUuMDIgMkg4Ljk0QzExLjAxIDIgMTIuMDEgMy4wMDAwMiAxMS45NiA1LjAyMDAyVjguOTRDMTIuMDEgMTEuMDEgMTEuMDEgMTIuMDEgOC45NCAxMS45Nkg1LjAyQzMgMTIgMiAxMSAyIDguOTI5OTlWNS4wMTAwMUMyIDMuMDAwMDEgMyAyIDUuMDIgMloiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTkuMDA5OTUgNS44NDk4NUg0Ljk0OTk1IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik02Ljk2OTk3IDUuMTY5OTJWNS44NDk5MSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNNy45ODk5NCA1LjgzOTg0QzcuOTg5OTQgNy41ODk4NCA2LjYxOTk0IDkuMDA5ODMgNC45Mzk5NCA5LjAwOTgzIiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik05LjAwOTkgOS4wMTAwMUM4LjI3OTkgOS4wMTAwMSA3LjYxOTkxIDguNjIgNy4xNTk5MSA4IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4NCjxwYXRoIGQ9Ik0yIDE1QzIgMTguODcgNS4xMyAyMiA5IDIyTDcuOTUgMjAuMjUiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTIyIDlDMjIgNS4xMyAxOC44NyAyIDE1IDJMMTYuMDUgMy43NSIgc3Ryb2tlPSIjMjkyRDMyIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8L3N2Zz4=">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-translate:2" />
+        <zeebe:ioMapping>
+          <zeebe:input source="local-llm" target="llm" />
+          <zeebe:input source="unsloth/Llama-3.2-3B-Instruct-GGUF" target="local_llm" />
+          <zeebe:input source="*Q5_K_M.gguf" target="model_filename" />
+          <zeebe:input source="tesseract" target="ocr" />
+          <zeebe:input source="none" target="asr" />
+          <zeebe:input source="={ &#34;document&#34;: document }" target="input_json" />
+          <zeebe:input source="German" target="language" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="result_expression" value="={applicationTranslated: result.document}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0cra7ec</bpmn:incoming>
+      <bpmn:outgoing>Flow_18sws7j</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0pu6v56" sourceRef="Activity_0aw27m0" targetRef="Event_1q2bclc" />
+    <bpmn:serviceTask id="Activity_0aw27m0" name="Antwort verfassen" zeebe:modelerTemplate="io.holunda.connector.compose.v1" zeebe:modelerTemplateVersion="2" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOiBTVkcgUmVwbywgd3d3LnN2Z3JlcG8uY29tLCBHZW5lcmF0b3I6IFNWRyBSZXBvIE1peGVyIFRvb2xzIC0tPg0KPHN2ZyB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik0xMSAySDlDNCAyIDIgNCAyIDlWMTVDMiAyMCA0IDIyIDkgMjJIMTVDMjAgMjIgMjIgMjAgMjIgMTVWMTMiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPHBhdGggZD0iTTE2LjA0IDMuMDIwMDFMOC4xNiAxMC45QzcuODYgMTEuMiA3LjU2IDExLjc5IDcuNSAxMi4yMkw3LjA3IDE1LjIzQzYuOTEgMTYuMzIgNy42OCAxNy4wOCA4Ljc3IDE2LjkzTDExLjc4IDE2LjVDMTIuMiAxNi40NCAxMi43OSAxNi4xNCAxMy4xIDE1Ljg0TDIwLjk4IDcuOTYwMDFDMjIuMzQgNi42MDAwMSAyMi45OCA1LjAyMDAxIDIwLjk4IDMuMDIwMDFDMTguOTggMS4wMjAwMSAxNy40IDEuNjYwMDEgMTYuMDQgMy4wMjAwMVoiIHN0cm9rZT0iIzI5MkQzMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTQuOTEgNC4xNDk5QzE1LjU4IDYuNTM5OSAxNy40NSA4LjQwOTkgMTkuODUgOS4wODk5IiBzdHJva2U9IiMyOTJEMzIiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.holunda:connector-compose:2" />
+        <zeebe:ioMapping>
+          <zeebe:input source="local-llm" target="llm" />
+          <zeebe:input source="bartowski/Hermes-3-Llama-3.1-8B-GGUF" target="local_llm" />
+          <zeebe:input source="*Q5_K_M.gguf" target="model_filename" />
+          <zeebe:input source="none" target="ocr" />
+          <zeebe:input source="openai-whisper-1" target="asr" />
+          <zeebe:input source="={ &#34;name&#34;: application.name,&#10;&#34;briefDecision&#34;: userTaskDecision}" target="input_json" />
+          <zeebe:input source="letter" target="properties.type" />
+          <zeebe:input source="formal" target="properties.style" />
+          <zeebe:input source="friendly" target="properties.tone" />
+          <zeebe:input source="German" target="properties.language" />
+          <zeebe:input source="lengthy" target="properties.length" />
+          <zeebe:input source="0.0" target="properties.temperature" />
+          <zeebe:input source="Hallo {name},&#10;&#10;{ teile die Entscheidung über den Antrag freundlich mit }&#10;&#10;Deine Firma XY" target="template" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="result_expression" value="={&#34;text&#34;: result.text}" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14zhttf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pu6v56</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1wxmzb8">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="152" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d1eubf_di" bpmnElement="Activity_1kavo35">
+        <dc:Bounds x="270" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0b2igtf_di" bpmnElement="Gateway_0b2igtf" isMarkerVisible="true">
+        <dc:Bounds x="425" y="102" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="438" y="78" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ym85dv_di" bpmnElement="Event_0ym85dv">
+        <dc:Bounds x="532" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="520" y="375" width="61" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1y0cbr5_di" bpmnElement="Activity_12rnwic">
+        <dc:Bounds x="570" y="87" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vdpxhs_di" bpmnElement="Event_0vdpxhs">
+        <dc:Bounds x="882" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="874" y="152" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16nahwo_di" bpmnElement="Activity_01kgov0">
+        <dc:Bounds x="720" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13h1b26_di" bpmnElement="Activity_0e2nffw">
+        <dc:Bounds x="570" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07kgaw8_di" bpmnElement="Activity_1xoa1zp">
+        <dc:Bounds x="720" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1izxl8p_di" bpmnElement="Gateway_1izxl8p" isMarkerVisible="true">
+        <dc:Bounds x="855" y="215" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="856" y="191" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1wnepcw_di" bpmnElement="Gateway_1wnepcw" isMarkerVisible="true">
+        <dc:Bounds x="1045" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07fghx8_di" bpmnElement="Activity_0t30b9c">
+        <dc:Bounds x="930" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1q2bclc_di" bpmnElement="Event_1q2bclc">
+        <dc:Bounds x="1422" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18vf70b_di" bpmnElement="Activity_0kwsw28">
+        <dc:Bounds x="1130" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07esjco_di" bpmnElement="Activity_0aw27m0">
+        <dc:Bounds x="1270" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_094jdsw_di" bpmnElement="Flow_094jdsw">
+        <di:waypoint x="215" y="127" />
+        <di:waypoint x="270" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16i5grr_di" bpmnElement="Flow_16i5grr">
+        <di:waypoint x="370" y="127" />
+        <di:waypoint x="425" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_164ftyb_di" bpmnElement="Flow_164ftyb">
+        <di:waypoint x="475" y="127" />
+        <di:waypoint x="570" y="127" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="484" y="109" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1db2ahx_di" bpmnElement="Flow_1db2ahx">
+        <di:waypoint x="450" y="152" />
+        <di:waypoint x="450" y="240" />
+        <di:waypoint x="570" y="240" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="470" y="213" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16w67s2_di" bpmnElement="Flow_16w67s2">
+        <di:waypoint x="450" y="152" />
+        <di:waypoint x="450" y="350" />
+        <di:waypoint x="532" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="459" y="323" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dnr5as_di" bpmnElement="Flow_0dnr5as">
+        <di:waypoint x="670" y="127" />
+        <di:waypoint x="720" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14l5k7y_di" bpmnElement="Flow_14l5k7y">
+        <di:waypoint x="820" y="127" />
+        <di:waypoint x="882" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s5bie9_di" bpmnElement="Flow_1s5bie9">
+        <di:waypoint x="670" y="240" />
+        <di:waypoint x="720" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14zhttf_di" bpmnElement="Flow_14zhttf">
+        <di:waypoint x="1230" y="240" />
+        <di:waypoint x="1270" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0viw79a_di" bpmnElement="Flow_0viw79a">
+        <di:waypoint x="820" y="240" />
+        <di:waypoint x="855" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wuk0ex_di" bpmnElement="Flow_0wuk0ex">
+        <di:waypoint x="905" y="240" />
+        <di:waypoint x="1045" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cra7ec_di" bpmnElement="Flow_0cra7ec">
+        <di:waypoint x="880" y="265" />
+        <di:waypoint x="880" y="350" />
+        <di:waypoint x="930" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18sws7j_di" bpmnElement="Flow_18sws7j">
+        <di:waypoint x="1030" y="350" />
+        <di:waypoint x="1070" y="350" />
+        <di:waypoint x="1070" y="265" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s57xbs_di" bpmnElement="Flow_1s57xbs">
+        <di:waypoint x="1095" y="240" />
+        <di:waypoint x="1130" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pu6v56_di" bpmnElement="Flow_0pu6v56">
+        <di:waypoint x="1370" y="240" />
+        <di:waypoint x="1422" y="240" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
