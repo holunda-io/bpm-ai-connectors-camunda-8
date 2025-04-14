@@ -57,6 +57,7 @@ services:
     environment:
       - HF_HOME=/var/cache/bpm-ai/hf
       - BPM_AI_CACHE_DIR=/var/cache/bpm-ai
+      - LLAMA_CPP_N_CTX=4096
 
   #####################################################################################################################
   # Core Camunda Platform - enabled by profile `--profile platform`                                                   #
