@@ -138,7 +138,7 @@ def model_id_to_nmt(
 
 
 def remote_model(name: str, *args, **kwargs) -> Any:
-    inference_server_address = os.environ.get("INFERENCE_SERVER_ADDRESS", None)
+    inference_server_address = os.environ.get("INFERENCE_SERVER_ADDRESS", "localhost:6666")
     if not inference_server_address:
         raise Exception("INFERENCE_SERVER_ADDRESS env variable must be set if using local AI models.")
     host, port = inference_server_address.rsplit(":")

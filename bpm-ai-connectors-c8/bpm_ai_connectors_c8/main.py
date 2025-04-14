@@ -14,6 +14,7 @@ from bpm_ai_connectors_c8.tasks.compose.compose_task import compose_router
 from bpm_ai_connectors_c8.tasks.decide.decide_task import decide_router
 from bpm_ai_connectors_c8.tasks.extract.extract_task import extract_router
 from bpm_ai_connectors_c8.tasks.generic.generic_task import generic_router
+from bpm_ai_connectors_c8.tasks.retrieval.retrieval_task import retrieval_router
 from bpm_ai_connectors_c8.tasks.translate.translate_task import translate_router
 
 logger = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ def include_connectors(worker: ZeebeWorker):
     worker.include_router(compose_router)
     worker.include_router(translate_router)
     worker.include_router(generic_router)
+    worker.include_router(retrieval_router)
 
 
 async def main(host=None, port=None):
