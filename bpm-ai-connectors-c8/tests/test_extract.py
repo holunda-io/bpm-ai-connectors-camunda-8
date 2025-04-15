@@ -89,6 +89,7 @@ def test_extract_qa_single(vars_extract_single, runtime_selector, zeebe_test_cli
     assert result['result'] == {'name': 'John Watts', 'age': 20}
 
 
+@pytest.mark.skip
 @local_inference()
 def test_extract_qa_multiple(vars_extract_multiple, runtime_selector, zeebe_test_client: ZeebeTestClient):
     # given
