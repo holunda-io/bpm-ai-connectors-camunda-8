@@ -21,7 +21,7 @@ from bpm_ai_core.util.rpc import remote_object
 
 # job variable names that define model parameters that should not be injected into the task function
 # (instead only the final constructed model object is injected)
-EXTRA_VARS = ["custom_asr", "custom_classifier", "custom_image_classifier", "custom_qa", "custom_vqa", "custom_nmt", "model_endpoint", "local_llm", "model_filename"]
+EXTRA_VARS = ["custom_asr", "custom_classifier", "custom_image_classifier", "custom_qa", "custom_vqa", "custom_nmt", "model_endpoint", "local_llm", "model_filename", "custom_llm"]
 
 
 def model_ids_to_models(kwargs: dict):
