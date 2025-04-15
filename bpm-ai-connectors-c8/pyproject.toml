@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bpm-ai-connectors-c8"
-version = "1.3.4"
+version = "1.3.5"
 description = "AI connectors for Camunda 8 based on the bpm-ai project."
 authors = ["Bennet Krause <bennet.krause@holisticon.de>"]
 repository = "https://github.com/holunda-io/bpm-ai-connectors-camunda-8"

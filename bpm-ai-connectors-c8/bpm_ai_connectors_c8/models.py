@@ -53,7 +53,7 @@ def model_id_to_llm(
     elif model_id == "azure-openai":
         return ChatOpenAI.for_azure(endpoint=kwargs["model_endpoint"])
     elif model_id == "openai-compatible":
-        return ChatOpenAI.for_openai_compatible(endpoint=kwargs["model_endpoint"])
+        return ChatOpenAI.for_openai_compatible(endpoint=kwargs["model_endpoint"], model=kwargs["custom_llm"])
     elif model_id.startswith("claude"):
         return ChatAnthropic.for_anthropic(model=model_id)
     elif model_id.startswith("groq"):

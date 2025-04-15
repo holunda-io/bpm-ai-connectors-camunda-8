@@ -110,6 +110,21 @@
       }
     },
     {
+      "label": "Model ID",
+      "group": "model",
+      "type": "String",
+      "value": "",
+      "feel": "optional",
+      "binding": {
+        "type": "zeebe:input",
+        "name": "custom_llm"
+      },
+      "condition": {
+        "property": "llm",
+        "equals": "openai-compatible"
+      }
+    },
+    {
       "label": "Endpoint",
       "group": "model",
       "type": "String",
