@@ -60,7 +60,7 @@
         { "name": "OpenAI GPT-4.1 nano", "value": "gpt-4.1-nano" },
         { "name": "Azure OpenAI", "value": "azure-openai" },
         { "name": "OpenAI Compatible Server", "value": "openai-compatible" },
-        { "name": "Local LLM", "value": "local-llm" }
+        { "name": "Local LLM", "value": "local-llm" },
         { "name": "Text Classifier", "value": "text-classifier" },
         { "name": "Image Classifier", "value": "image-classifier" }
       ],
