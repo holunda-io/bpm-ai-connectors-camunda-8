@@ -49,13 +49,13 @@ def model_id_to_llm(
     kwargs: dict
 ) -> LLM | None:
     if model_id.startswith("gpt"):
-        return ChatOpenAI.for_openai(model=model_id)
+        return ChatOpenAI.for_openai(model=model_id, temperature=1.0)
     elif model_id == "azure-openai":
-        return ChatOpenAI.for_azure(endpoint=kwargs["model_endpoint"])
+        return ChatOpenAI.for_azure(endpoint=kwargs["model_endpoint"], temperature=1.0)
     elif model_id == "openai-compatible":
-        return ChatOpenAI.for_openai_compatible(endpoint=kwargs["model_endpoint"], model=kwargs["custom_llm"])
+        return ChatOpenAI.for_openai_compatible(endpoint=kwargs["model_endpoint"], model=kwargs["custom_llm"], temperature=1.0)
     elif model_id.startswith("claude"):
-        return ChatAnthropic.for_anthropic(model=model_id)
+        return ChatAnthropic.for_anthropic(model=model_id, temperature=1.0)
     elif model_id.startswith("groq"):
         return ChatOpenAI.for_groq()
     elif model_id == "local-llm":
